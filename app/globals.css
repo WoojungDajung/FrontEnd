@@ -47,5 +47,81 @@
 @theme inline {
 }
 
+@layer base {
+  .typo-48-semibold {
+    font-size: 48px;
+    line-height: 64px;
+    letter-spacing: -2.5%;
+    font-weight: 600;
+  }
+  .typo-32-semibold {
+    font-size: 32px;
+    line-height: 44px;
+    letter-spacing: -2.5%;
+    font-weight: 600;
+  }
+  .typo-28-semibold {
+    font-size: 28px;
+    line-height: 40px;
+    letter-spacing: -2.5%;
+    font-weight: 600;
+  }
+  .typo-24-bold {
+    font-size: 24px;
+    line-height: 36px;
+    letter-spacing: -2.5%;
+    font-weight: 700;
+  }
+  .typo-20-bold {
+    font-size: 20px;
+    line-height: 32px;
+    letter-spacing: -2.5%;
+    font-weight: 700;
+  }
+  .typo-18-semibold {
+    font-size: 18px;
+    line-height: 26px;
+    letter-spacing: -2.5%;
+    font-weight: 600;
+  }
+  .typo-18-regular {
+    font-size: 18px;
+    line-height: 26px;
+    letter-spacing: -2.5%;
+    font-weight: 400;
+  }
+  .typo-16-semibold {
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -2.5%;
+    font-weight: 600;
+  }
+  .typo-16-regular {
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -2.5%;
+    font-weight: 400;
+  }
+  .typo-14-medium {
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: -2.5%;
+    font-weight: 500;
+  }
+  .typo-14-regular {
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: -2.5%;
+    font-weight: 400;
+  }
+  .typo-12-regular {
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: -2.5%;
+    font-weight: 400;
+  }
+}
+
 body {
+  font-family: var(--font-pretendard);
 }
