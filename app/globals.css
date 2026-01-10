@@ -47,6 +47,12 @@
 @theme inline {
 }
 
+@layer theme {
+  :root {
+    --spacing: 1px;
+  }
+}
+
 @layer base {
   .typo-48-semibold {
     font-size: 48px;
