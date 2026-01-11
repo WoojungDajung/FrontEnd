@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { pretendard } from "./fonts";
+import Footer from "@/components/shared/Footer";
 
 export const metadata: Metadata = {
   title: "만날우정",
@@ -16,8 +17,9 @@ export default function RootLayout({
     <html lang="en" className={pretendard.variable}>
       <body>
         <div className="w-390 mx-auto">
-          <div className="w-342 mt-96 mb-40">
+          <div className="w-342 mt-96 mb-40 flex flex-col gap-40">
             {children}
+            <Footer />
           </div>
         </div>
       </body>
