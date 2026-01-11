@@ -22,7 +22,7 @@ const SmilingFaceIcon = () => {
         height="47"
         rx="23.5"
         stroke="var(--color-primary-400)"
-        stroke-dasharray="4 4"
+        strokeDasharray="4 4"
       />
       <ellipse
         cx="18"
@@ -41,7 +41,7 @@ const SmilingFaceIcon = () => {
       <path
         d="M15 28C15 28 17.1429 33 24 33C30.8571 33 33 28 33 28"
         stroke="var(--color-primary-400)"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
     </svg>
   );
