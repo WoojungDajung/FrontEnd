@@ -126,6 +126,67 @@
     letter-spacing: -2.5%;
     font-weight: 400;
   }
+
+  input {
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+@layer components {
+  /* input */
+  .input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input-label {
+    color: var(--color-gray-800);
+  }
+
+  .input-container {
+    border: 1px solid;
+    border-color: var(--color-gray-300);
+    background-color: white;
+    border-radius: 16px;
+    padding: 16px 24px;
+
+    &:focus-within,
+    &[data-focus="true"] {
+      border-color: var(--color-primary-400);
+    }
+  }
+
+  .input {
+    color: var(--color-gray-800);
+
+    &::placeholder {
+      color: var(--color-gray-400);
+    }
+
+    &::-webkit-calendar-picker-indicator {
+      display: none;
+    }
+  }
+
+  .input-placeholder {
+    color: var(--color-gray-400);
+  }
+
+  /* button */
+  .button {
+    background-color: var(--color-primary-400);
+    color: var(--color-white);
+    border-radius: 16px;
+    cursor: pointer;
+
+    &:disabled {
+      background-color: var(--color-primary-100);
+      cursor: default;
+    }
+  }
 }
 
 body {

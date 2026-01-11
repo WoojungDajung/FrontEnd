@@ -14,7 +14,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={pretendard.variable}>
-      <body>{children}</body>
+      <body>
+        <div className="w-390 mx-auto">
+          <div className="w-342 mt-96 mb-40">
+            {children}
+          </div>
+        </div>
+      </body>
     </html>
   );
 }
