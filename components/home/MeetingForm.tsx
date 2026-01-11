@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import CalendarIcon from "./CalendarIcon";
 import DatePicker from "./DatePicker";
+import Button from "../shared/Button";
 
 function formatDate(date: Date): string {
   const y = date.getFullYear();
@@ -104,13 +105,14 @@ const MeetingForm = () => {
           </div>
         </div>
 
-        <button
-          className="button typo-18-semibold w-full h-64"
-          type="submit"
+        <Button
+          size="Large"
+          color="Primary"
+          className="w-full"
           disabled={isButtonDisabled(meetingName, deadline)}
         >
           약속 정하러 가기
-        </button>
+        </Button>
       </form>
     </section>
   );

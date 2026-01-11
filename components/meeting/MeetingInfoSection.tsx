@@ -1,3 +1,4 @@
+import Button from "../shared/Button";
 import PencilIcon from "./PencilIcon";
 import SmilingFaceIcon from "./SmilngFaceIcon";
 
@@ -23,9 +24,7 @@ const MeetingInfoSection = () => {
       <div className="flex justify-center">
         <SmilingFaceIcon />
       </div>
-      <button className="button typo-18-semibold w-310 h-48">
-        내 정보 입력하기
-      </button>
+      <Button size="Medium" color="Primary" className="w-310">내 정보 입력하기</Button>
     </section>
   );
 };

@@ -135,6 +135,71 @@
 }
 
 @layer components {
+  /* button */
+  .button {
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+  /* size */
+  .button--lg {
+    height: 64px;
+    border-radius: 16px;
+  }
+  .button--md {
+    height: 48px;
+    border-radius: 12px;
+  }
+  .button --sm {
+    height: 48px;
+    border-radius: 12px;
+  }
+  /* color */
+  .button--primary {
+    background-color: var(--color-primary-400);
+    color: white;
+
+    &:disabled {
+      background-color: var(--color-primary-100);
+    }
+
+    &:active {
+      background-color: var(--color-primary-600);
+    }
+  }
+  .button--white {
+    background-color: white;
+    border: 1px solid;
+    border-color: var(--color-gray-200);
+    color: var(--color-gray-800);
+
+    &:disabled {
+      color: var(--color-gray-400);
+    }
+
+    &:active {
+      background-color: var(--color-gray-300);
+    }
+  }
+  .button--danger {
+    background-color: var(--color-error-500);
+    color: white;
+
+    &:active {
+      background-color: var(--color-error-700);
+    }
+  }
+  .button--gray {
+    background-color: white;
+    color: var(--color-gray-800);
+
+    &:active {
+      background-color: var(--color-gray-300);
+    }
+  }
+
   /* input */
   .input-field {
     display: flex;
@@ -173,19 +238,6 @@
 
   .input-placeholder {
     color: var(--color-gray-400);
-  }
-
-  /* button */
-  .button {
-    background-color: var(--color-primary-400);
-    color: var(--color-white);
-    border-radius: 16px;
-    cursor: pointer;
-
-    &:disabled {
-      background-color: var(--color-primary-100);
-      cursor: default;
-    }
   }
 }
 
