@@ -7,7 +7,7 @@ interface DatePickerProps {
   onSelect: (selected: Date | undefined) => void;
 }
 
-const DatePicker = ({ onSelect }: DatePickerProps) => {
+const DatePicker = ({ onSelect, selected }: DatePickerProps) => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow.setHours(0, 0, 0, 0);
@@ -17,6 +17,7 @@ const DatePicker = ({ onSelect }: DatePickerProps) => {
       mode="single"
       className="bg-white border border-gray-300 p-12"
       onSelect={onSelect}
+      selected={selected}
       locale={ko}
       startMonth={new Date()}
       disabled={{ before: tomorrow }}
