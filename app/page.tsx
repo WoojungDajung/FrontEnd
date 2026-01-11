@@ -14,7 +14,7 @@ export default function Home() {
               만나는 날짜, 우리 정하자
             </p>
           </div>
-          <div className="flex flex-row gap-4 bg-primary-25 px-8 py-4 rounded-40">
+          <div className="flex flex-row gap-4 bg-primary-25 px-8 py-4 rounded-[40px]">
             <StarShineIcon />
             <span className="text-primary-400 typo-12-regular">Beta</span>
           </div>
@@ -22,13 +22,13 @@ export default function Home() {
       </section>
 
       <div className="grid grid-cols-2 gap-12">
-        <div className="p-16 bg-gray-50 rounded-16">
+        <div className="p-16 bg-gray-50 rounded-[16px]">
           <p className="text-primary-400 typo-14-medium">애매해도 괜찮아요</p>
           <p className="text-gray-600 typo-12-regular">
             확실하지 않은 날도 선택 가능해서 부담 없이 투표해요.
           </p>
         </div>
-        <div className="p-16 bg-gray-50 rounded-16">
+        <div className="p-16 bg-gray-50 rounded-[16px]">
           <p className="text-primary-400 typo-14-medium">딱 맞는 조합 추천</p>
           <p className="text-gray-600 typo-12-regular">
             날짜, 장소 조합으로 추천하고중간 지점도 알려줘요.
