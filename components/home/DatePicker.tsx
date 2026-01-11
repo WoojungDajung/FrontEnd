@@ -8,12 +8,18 @@ interface DatePickerProps {
 }
 
 const DatePicker = ({ onSelect }: DatePickerProps) => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+
   return (
     <DayPicker
       mode="single"
       className="bg-white border border-gray-300 p-12"
       onSelect={onSelect}
       locale={ko}
+      startMonth={new Date()}
+      disabled={{ before: tomorrow }}
     />
   );
 };
