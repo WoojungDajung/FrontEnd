@@ -31,7 +31,7 @@ export default function Home() {
         <div className="p-16 bg-gray-50 rounded-[16px]">
           <p className="text-primary-400 typo-14-medium">딱 맞는 조합 추천</p>
           <p className="text-gray-600 typo-12-regular">
-            날짜, 장소 조합으로 추천하고중간 지점도 알려줘요.
+            날짜, 장소 조합으로 추천하고 중간 지점도 알려줘요.
           </p>
         </div>
       </div>
