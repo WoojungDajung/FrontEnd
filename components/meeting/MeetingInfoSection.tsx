@@ -1,8 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import Button from "../shared/Button";
 import PencilIcon from "./PencilIcon";
 import SmilingFaceIcon from "./SmilngFaceIcon";
+import EditProfileDrawer from "./EditProfileDrawer";
 
 const MeetingInfoSection = () => {
+  const [open, setOpen] = useState(false);
+
+  // TODO: 자신이 생성한 약속만 제거할 수 있도록 변경 필요
+  const isMyMeeting = true;
+
   return (
     <section className="py-16 flex flex-col gap-24 items-center bg-white border border-gray-100 rounded-[24px]">
       <div className="w-full px-16">
@@ -24,7 +33,20 @@ const MeetingInfoSection = () => {
       <div className="flex justify-center">
         <SmilingFaceIcon />
       </div>
-      <Button size="Medium" color="Primary" className="w-310">내 정보 입력하기</Button>
+      <Button
+        size="Medium"
+        color="Primary"
+        className="w-310"
+        onClick={() => setOpen(true)}
+      >
+        내 정보 입력하기
+      </Button>
+
+      <EditProfileDrawer
+        canDeleteMeeting={isMyMeeting}
+        open={open}
+        setOpen={setOpen}
+      />
     </section>
   );
 };
