@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import CalendarIcon from "./CalendarIcon";
 import DatePicker from "./DatePicker";
 import Button from "../shared/Button";
+import FormField from "../shared/FormField";
 
 function formatDate(date: Date): string {
   const y = date.getFullYear();
@@ -38,13 +39,7 @@ const MeetingForm = () => {
     <section>
       <form className="flex flex-col gap-64" onSubmit={onSubmit}>
         <div className="flex flex-col gap-16">
-          <div className="flex flex-col gap-8">
-            <label
-              className="input-label typo-14-medium ml-8"
-              htmlFor="meeting-name"
-            >
-              약속 이름
-            </label>
+          <FormField label="약속 이름" inputId="meeting-name">
             <div className="input-container">
               <input
                 className="input typo-16-regular w-full"
@@ -58,15 +53,13 @@ const MeetingForm = () => {
                 onChange={(e) => setMeetingName(e.target.value)}
               />
             </div>
-          </div>
+          </FormField>
 
-          <div className="flex flex-col gap-8">
-            <label
-              className="input-label typo-14-medium ml-8"
-              htmlFor="deadline"
-            >
-              투표 마감일
-            </label>
+          <FormField
+            label="투표 마감일"
+            inputId="deadline"
+            description="참여자들은 지정된 마감일까지 투표할 수 있어요."
+          >
             <div
               className="input-container flex flex-row gap-8 relative"
               data-focus={datePickerOpened}
@@ -99,10 +92,7 @@ const MeetingForm = () => {
                 </div>
               )}
             </div>
-            <p className="typo-14-regular text-gray-500 ml-8">
-              참여자들은 지정된 마감일까지 투표할 수 있어요.
-            </p>
-          </div>
+          </FormField>
         </div>
 
         <Button
