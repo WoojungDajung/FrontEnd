@@ -2,7 +2,7 @@ import { cn } from "@/utils/cn";
 import { ReactNode } from "react";
 
 interface ButtonProps {
-  size: "Large" | "Medium" | "Small";
+  size?: "Large" | "Medium" | "Small";
   color?: "Primary" | "White" | "Danger" | "Gray";
   disabled?: boolean;
   onClick?: () => void;
@@ -26,7 +26,9 @@ const Button = ({
           ? "button--lg"
           : size === "Medium"
           ? "button--md"
-          : "button--sm",
+          : size === "Small"
+          ? "button--sm"
+          : undefined,
         color === "Primary"
           ? "button--primary"
           : color === "White"
