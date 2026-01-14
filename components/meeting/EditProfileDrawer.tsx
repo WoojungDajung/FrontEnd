@@ -15,7 +15,7 @@ const EditProfileDrawer = ({
   setOpen,
 }: EditProfileDrawerProps) => {
   return (
-    <BottomDrawer open={open} onOpenChange={setOpen} title="내 정보">
+    <BottomDrawer open={open} onOpenChange={setOpen}>
       {({ close }) => (
         <DefaultDrawerLayout
           title="내 정보"

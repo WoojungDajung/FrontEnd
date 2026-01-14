@@ -8,9 +8,6 @@ type Props = {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  container?: Element | null;
-  title?: string;
-  description?: string;
   children: (api: { close: () => void }) => React.ReactNode;
 };
 
