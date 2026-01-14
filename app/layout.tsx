@@ -23,6 +23,7 @@ export default function RootLayout({
           </div>
           <div id="drawer" />
         </div>
+        <div id="popup" className="z-100 fixed left-0 top-0" />
       </body>
     </html>
   );
