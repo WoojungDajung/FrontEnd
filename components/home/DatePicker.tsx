@@ -3,8 +3,8 @@ import { ko } from "react-day-picker/locale";
 import "react-day-picker/style.css";
 
 interface DatePickerProps {
-  selected: Date | undefined;
-  onSelect: (selected: Date | undefined) => void;
+  selected?: Date | undefined;
+  onSelect?: (selected: Date | undefined) => void;
 }
 
 const DatePicker = ({ onSelect, selected }: DatePickerProps) => {
