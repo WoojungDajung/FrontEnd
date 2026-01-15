@@ -18,10 +18,23 @@ const Button = ({
   className,
   children,
 }: ButtonProps) => {
+  function getFontSize() {
+    if (color === "Primary") {
+      return size === "Small" ? "typo-16-semibold" : "typo-18-semibold";
+    } else if (color === "White") {
+      return size === "Small" ? "typo-16-regular" : "typo-18-regular";
+    } else if (color === "Danger") {
+      return "typo-16-semibold";
+    } else {
+      // color === "Gray"
+      return "typo-16-semibold";
+    }
+  }
+
   return (
     <button
       className={cn(
-        "button typo-18-semibold",
+        "button",
         size === "Large"
           ? "button--lg"
           : size === "Medium"
@@ -36,6 +49,7 @@ const Button = ({
           : color === "Danger"
           ? "button--danger"
           : "button--gray",
+        getFontSize(),
         className
       )}
       disabled={disabled}
