@@ -40,7 +40,7 @@ const EditProfileDrawer = ({ open, setOpen }: EditProfileDrawerProps) => {
                 </div>
               </FormField>
             </div>
-            <Button className="h-56 rounded-[16px]">저장하기</Button>
+            <Button className="h-56" size="Large">저장하기</Button>
           </div>
         </DefaultDrawerLayout>
       )}

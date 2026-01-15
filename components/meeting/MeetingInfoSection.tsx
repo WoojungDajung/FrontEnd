@@ -42,7 +42,6 @@ const MeetingInfoSection = () => {
       <Button
         size="Medium"
         color="Primary"
-        className="w-310"
         onClick={() => setProfileDrawerOpen(true)}
       >
         내 정보 입력하기

@@ -145,14 +145,17 @@
   }
   /* size */
   .button--lg {
+    width: 342px;
     height: 64px;
     border-radius: 16px;
   }
   .button--md {
+    width: 310px;
     height: 48px;
     border-radius: 12px;
   }
-  .button --sm {
+  .button--sm {
+    width: 151px;
     height: 48px;
     border-radius: 12px;
   }

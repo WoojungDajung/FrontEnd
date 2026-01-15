@@ -58,7 +58,7 @@ const EditMeetingDrawer = ({
                 />
               </FormField>
             </div>
-            <Button className="h-56 rounded-[16px]" onClick={editMeeting}>
+            <Button className="h-56" size="Large" onClick={editMeeting}>
               등록하기
             </Button>
           </div>
