@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/utils/cn";
+import { lockBodyScroll } from "@/utils/lockBodyScroll";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -30,25 +31,6 @@ function useControllableBool({
   };
 
   return [value, set] as const;
-}
-
-function lockBodyScroll(lock: boolean) {
-  const body = document.body;
-  if (!body) return;
-
-  if (lock) {
-    const scrollbarWidth =
-      window.innerWidth - document.documentElement.clientWidth;
-    body.dataset.drawerScrollLock = "true";
-    body.style.overflow = "hidden";
-    if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`;
-  } else {
-    if (body.dataset.drawerScrollLock === "true") {
-      delete body.dataset.drawerScrollLock;
-      body.style.overflow = "";
-      body.style.paddingRight = "";
-    }
-  }
 }
 
 const TRANSITION_MS = 300;
