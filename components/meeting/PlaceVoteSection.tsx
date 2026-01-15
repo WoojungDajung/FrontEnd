@@ -3,7 +3,7 @@ import PlaceVoteCard from "./PlaceVoteCard";
 
 const PlaceVoteSection = () => {
   // 프로필 등록 여부 -> TODO: 추후에 수정
-  const isRegistered = false;
+  const isRegistered = true;
 
   return (
     <section className="flex flex-col gap-8">
