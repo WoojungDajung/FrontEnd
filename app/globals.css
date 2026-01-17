@@ -138,6 +138,9 @@
   /* button */
   .button {
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;    
 
     &:disabled {
       cursor: default;
