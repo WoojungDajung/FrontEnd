@@ -2,13 +2,15 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <div className="text-gray-400">
-      <p className="text-center typo-14-regular">
+    <footer>
+      <p className="text-center typo-12-regular text-gray-400">
         문제가 발생했나요?
         <br />
-        오류 신고 및 문의: <Link href={"/"}>구글폼</Link>
+        <Link href={"/"} className="underline">
+          오류 신고 및 문의는 여기를 눌러주세요.
+        </Link>
       </p>
-    </div>
+    </footer>
   );
 };
 
