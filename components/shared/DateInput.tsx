@@ -1,8 +1,8 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
-import CalendarIcon from "../home/CalendarIcon";
-import DatePicker from "../home/DatePicker";
+import CalendarIcon from "./CalendarIcon";
+import DatePicker from "./DatePicker";
 import { createPortal } from "react-dom";
 
 function formatDate(date: Date): string {
