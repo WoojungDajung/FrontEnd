@@ -47,6 +47,12 @@
 @theme inline {
 }
 
+@layer theme {
+  :root {
+    --spacing: 1px;
+  }
+}
+
 @layer base {
   .typo-48-semibold {
     font-size: 48px;
@@ -119,6 +125,122 @@
     line-height: 16px;
     letter-spacing: -2.5%;
     font-weight: 400;
+  }
+
+  input {
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+@layer components {
+  /* button */
+  .button {
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+  /* size */
+  .button--lg {
+    width: 342px;
+    height: 64px;
+    border-radius: 16px;
+  }
+  .button--md {
+    width: 310px;
+    height: 48px;
+    border-radius: 12px;
+  }
+  .button--sm {
+    width: 151px;
+    height: 48px;
+    border-radius: 12px;
+  }
+  /* color */
+  .button--primary {
+    background-color: var(--color-primary-400);
+    color: white;
+
+    &:disabled {
+      background-color: var(--color-primary-100);
+    }
+
+    &:active {
+      background-color: var(--color-primary-600);
+    }
+  }
+  .button--white {
+    background-color: white;
+    border: 1px solid;
+    border-color: var(--color-gray-200);
+    color: var(--color-gray-800);
+
+    &:disabled {
+      color: var(--color-gray-400);
+    }
+
+    &:active {
+      background-color: var(--color-gray-300);
+    }
+  }
+  .button--danger {
+    background-color: var(--color-error-500);
+    color: white;
+
+    &:active {
+      background-color: var(--color-error-700);
+    }
+  }
+  .button--gray {
+    background-color: white;
+    color: var(--color-gray-800);
+
+    &:active {
+      background-color: var(--color-gray-300);
+    }
+  }
+
+  /* input */
+  .input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input-label {
+    color: var(--color-gray-800);
+  }
+
+  .input-container {
+    border: 1px solid;
+    border-color: var(--color-gray-300);
+    background-color: white;
+    border-radius: 16px;
+    padding: 16px 24px;
+
+    &:focus-within,
+    &[data-focus="true"] {
+      border-color: var(--color-primary-400);
+    }
+  }
+
+  .input {
+    color: var(--color-gray-800);
+
+    &::placeholder {
+      color: var(--color-gray-400);
+    }
+
+    &::-webkit-calendar-picker-indicator {
+      display: none;
+    }
+  }
+
+  .input-placeholder {
+    color: var(--color-gray-400);
   }
 }
 
