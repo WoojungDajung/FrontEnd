@@ -1,0 +1,70 @@
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const code = searchParams.get("code");
+  const state = searchParams.get("state"); // 돌아갈 페이지
+
+  const error = searchParams.get("error");
+  const errorDescription = searchParams.get("error_description");
+
+  if (code) {
+    try {
+      // 토큰 요청
+      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`;
+      console.log("요청 url", url);
+      console.log("코드 ", code);
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization_code: code,
+          redirect_base: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback/kakao`,
+        },
+        body: JSON.stringify({}),
+      });
+
+      const resData = await res.json();
+      console.log(resData);
+
+      if (!res.ok) {
+        // 토큰 획득 실패
+        const errorCode = "token_exchanged_failed";
+        return NextResponse.redirect(
+          `${request.nextUrl.origin}/error?code=${errorCode}`,
+        );
+      }
+
+      const { accessToken, refreshToken } = resData.data;
+      // 토큰 처리
+      // saveToken(accessToken, refreshToken);
+
+      // // 약속 페이지로
+      if (state) {
+        return NextResponse.redirect(`${request.nextUrl.origin}${state}`);
+      }
+      return NextResponse.redirect(`${request.nextUrl.origin}/setup-meeting`);
+    } catch (err) {
+      // 에러 처리
+      console.log(`에러 발생:`, err);
+      return NextResponse.redirect(`${request.nextUrl.origin}/error`);
+    }
+  }
+
+  if (error === "access_denied") {
+    // 로그인 취소
+    return NextResponse.redirect(request.nextUrl.origin);
+  }
+
+  const errorCode = "oauth_error";
+  return NextResponse.redirect(
+    `${request.nextUrl.origin}/error?code=${errorCode}`,
+  );
+}
+
+async function saveToken(accessToken: string, refreshToken: string) {
+  const cookieStore = await cookies();
+  cookieStore.set("access-token", accessToken);
+  cookieStore.set("refresh-token", refreshToken);
+}
