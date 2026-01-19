@@ -8,13 +8,14 @@ export async function GET(request: NextRequest) {
 
   const error = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
+  if (error) {
+    console.log(`카카오 로그인 에러: ${errorDescription} (${error})`);
+  }
 
   if (code) {
     try {
       // 토큰 요청
       const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`;
-      console.log("요청 url", url);
-      console.log("코드 ", code);
       const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -26,7 +27,6 @@ export async function GET(request: NextRequest) {
       });
 
       const resData = await res.json();
-      console.log(resData);
 
       if (!res.ok) {
         // 토큰 획득 실패
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
       const { accessToken, refreshToken } = resData.data;
       // 토큰 처리
-      // saveToken(accessToken, refreshToken);
+      saveToken(accessToken, refreshToken);
 
       // // 약속 페이지로
       if (state) {
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${request.nextUrl.origin}/setup-meeting`);
     } catch (err) {
       // 에러 처리
-      console.log(`에러 발생:`, err);
+      console.log(`에러 캐치:`, err);
       return NextResponse.redirect(`${request.nextUrl.origin}/error`);
     }
   }

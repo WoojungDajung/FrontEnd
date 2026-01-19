@@ -4,9 +4,9 @@ import type { NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
   // TODO: 로그인 안하면 접근 X
-  // if (!isAuthenticated()) {
-  //   return NextResponse.redirect(new URL("/", request.url));
-  // }
+  if (!isAuthenticated()) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
 }
 
 export const config = {
