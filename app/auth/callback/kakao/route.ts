@@ -65,6 +65,16 @@ export async function GET(request: NextRequest) {
 
 async function saveToken(accessToken: string, refreshToken: string) {
   const cookieStore = await cookies();
-  cookieStore.set("access-token", accessToken);
-  cookieStore.set("refresh-token", refreshToken);
+  cookieStore.set("access-token", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+  });
+  cookieStore.set("refresh-token", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+  });
 }
