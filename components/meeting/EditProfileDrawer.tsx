@@ -1,14 +1,23 @@
+import { useState } from "react";
 import BottomDrawer from "../shared/BottomDrawer";
 import Button from "../shared/Button";
 import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
 import FormField from "../shared/FormField";
+import { Profile } from "@/types/meeting";
 
 interface EditProfileDrawerProps {
+  initialProfile?: Profile;
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
 
-const EditProfileDrawer = ({ open, setOpen }: EditProfileDrawerProps) => {
+const EditProfileDrawer = ({
+  initialProfile,
+  open,
+  setOpen,
+}: EditProfileDrawerProps) => {
+  const [nickName, setNickName] = useState(initialProfile?.memberNickName);
+
   return (
     <BottomDrawer open={open} onOpenChange={setOpen}>
       {({ close }) => (
@@ -21,7 +30,14 @@ const EditProfileDrawer = ({ open, setOpen }: EditProfileDrawerProps) => {
             <div className="mt-16 flex flex-col gap-16">
               <FormField label="이름" required inputId="name">
                 <div className="input-container">
-                  <input className="input" id="name" name="name" type="text" />
+                  <input
+                    className="input"
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={nickName}
+                    onChange={(event) => setNickName(event.target.value)}
+                  />
                 </div>
               </FormField>
               <FormField
@@ -40,7 +56,9 @@ const EditProfileDrawer = ({ open, setOpen }: EditProfileDrawerProps) => {
                 </div>
               </FormField>
             </div>
-            <Button className="h-56" size="Large">저장하기</Button>
+            <Button className="h-56" size="Large">
+              저장하기
+            </Button>
           </div>
         </DefaultDrawerLayout>
       )}

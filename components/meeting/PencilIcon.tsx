@@ -1,13 +1,14 @@
-const PencilIcon = () => {
+import { IconProps } from "@/types/IconProps";
+
+const PencilIcon = ({ width, height }: IconProps) => {
   return (
     <svg
-      width="32"
-      height="32"
+      width={width ?? "32"}
+      height={height ?? "32"}
       viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect width="32" height="32" rx="12" fill="white" />
       <mask
         id="mask0_193_12645"
         style={{ maskType: "alpha" }}
