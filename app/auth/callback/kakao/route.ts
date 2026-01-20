@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
         // 토큰 획득 실패
         const errorCode = "token_exchanged_failed";
         return NextResponse.redirect(
-          `${request.nextUrl.origin}/error?code=${errorCode}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/error?code=${errorCode}`,
         );
       }
 
@@ -42,24 +42,28 @@ export async function GET(request: NextRequest) {
 
       // // 약속 페이지로
       if (state) {
-        return NextResponse.redirect(`${request.nextUrl.origin}${state}`);
+        return NextResponse.redirect(
+          `${process.env.NEXT_PUBLIC_BASE_URL}state`,
+        );
       }
-      return NextResponse.redirect(`${request.nextUrl.origin}/setup-meeting`);
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/setup-meeting`,
+      );
     } catch (err) {
       // 에러 처리
       console.log(`에러 캐치:`, err);
-      return NextResponse.redirect(`${request.nextUrl.origin}/error`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/error`);
     }
   }
 
   if (error === "access_denied") {
     // 로그인 취소
-    return NextResponse.redirect(request.nextUrl.origin);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}`);
   }
 
   const errorCode = "oauth_error";
   return NextResponse.redirect(
-    `${request.nextUrl.origin}/error?code=${errorCode}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/error?code=${errorCode}`,
   );
 }
 
