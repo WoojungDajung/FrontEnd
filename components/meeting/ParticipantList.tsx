@@ -1,8 +1,14 @@
 import { Participant, Profile } from "@/types/meeting";
-import { MouseEvent, useState } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import PencilIcon from "./PencilIcon";
-// import DownChevronIcon from "./DownChevronIcon";
-// import UpChevronIcon from "./UpChevronIcon";
+import DownChevronIcon from "./DownChevronIcon";
+import UpChevronIcon from "./UpChevronIcon";
 import EditProfileDrawer from "./EditProfileDrawer";
 import ParticipantBadge from "./ParticipantBadge";
 
@@ -12,7 +18,6 @@ interface ParticipantListProps {
 }
 
 const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
-  // const [folded, setFolded] = useState(false);
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
 
   const me = participants.find((p) => p.id === myProfile?.id);
@@ -29,10 +34,71 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
     // 해당 user 선택
   };
 
+  /* 사용자 목록 2줄까지만 보여주기 */
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [canToggle, setCanToggle] = useState(false);
+  const [containerMaxHeight, setContainerMaxHeight] = useState(0);
+
+  const compute = useCallback(
+    (
+      container: HTMLDivElement,
+      rowLimit: number,
+    ): { canToggle: boolean; containerHeight: number } => {
+      const items = Array.from(container.children) as HTMLElement[];
+      if (items.length === 0) return { canToggle: false, containerHeight: 0 };
+
+      const rowTops: number[] = [];
+      let maxItemHeight = 0;
+
+      for (let i = 0; i < items.length; i++) {
+        const el = items[i];
+        const top = el.offsetTop;
+
+        if (rowTops.length === 0 || top !== rowTops[rowTops.length - 1]) {
+          rowTops.push(top);
+
+          if (rowTops.length > rowLimit) {
+            return {
+              canToggle: true,
+              containerHeight:
+                rowTops[rowLimit - 1] - rowTops[0] + maxItemHeight,
+            };
+          }
+        }
+
+        if (rowTops.length === rowLimit && top === rowTops[rowLimit - 1]) {
+          maxItemHeight = Math.max(maxItemHeight, el.offsetHeight);
+        }
+      }
+
+      // 2줄 이내
+      return { canToggle: false, containerHeight: container.scrollHeight };
+    },
+    [],
+  );
+
+  useLayoutEffect(() => {
+    if (!containerRef.current) return;
+
+    const { canToggle, containerHeight } = compute(containerRef.current, 2);
+    console.log(canToggle, containerHeight);
+    setCanToggle(canToggle);
+    setContainerMaxHeight(containerHeight);
+  }, [participants, containerRef, compute]);
+
   return (
     <>
       <div className="w-full flex flex-col gap-8 items-center">
-        <div className="w-full px-16 flex flex-wrap gap-8 justify-center">
+        <div
+          ref={containerRef}
+          className="w-full px-16 flex flex-wrap gap-8 justify-center"
+          style={
+            expanded
+              ? undefined
+              : { maxHeight: `${containerMaxHeight}px`, overflow: "hidden" }
+          }
+        >
           {me && (
             <ParticipantBadge
               className="bg-primary-25"
@@ -60,7 +126,19 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
             </ParticipantBadge>
           ))}
         </div>
-        {/* {folded ? <DownChevronIcon /> : <UpChevronIcon />} */}
+        {canToggle && (
+          <>
+            {expanded ? (
+              <button onClick={() => setExpanded(false)} className="button">
+                <UpChevronIcon />
+              </button>
+            ) : (
+              <button onClick={() => setExpanded(true)} className="button">
+                <DownChevronIcon />
+              </button>
+            )}
+          </>
+        )}
       </div>
 
       {me && (
