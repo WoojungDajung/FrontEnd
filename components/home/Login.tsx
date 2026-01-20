@@ -2,7 +2,7 @@
 
 import { getAuthorizationUrl } from "@/lib/auth/kakao";
 import Button from "../shared/Button";
-import KakaoIcon from "./KakaoIcon";
+import KakaoIcon from "../shared/KakaoIcon";
 import { useSearchParams } from "next/navigation";
 
 const Login = () => {
@@ -21,7 +21,7 @@ const Login = () => {
         onClick={handleLogin}
       >
         <div className="flex gap-16 w-fit">
-          <KakaoIcon />
+          <KakaoIcon width={20} height={20} />
           <span>3초만에 카카오로 시작하기</span>
         </div>
       </Button>
