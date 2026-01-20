@@ -22,6 +22,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <div id="drawer" />
+          <div id="modal" />
         </div>
         <div id="popup" className="z-100 fixed left-0 top-0" />
       </body>
