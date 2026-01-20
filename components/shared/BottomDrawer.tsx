@@ -1,5 +1,6 @@
 "use client";
 
+import useControllableOpen from "@/hooks/useControllableOpen";
 import { cn } from "@/utils/cn";
 import { lockBodyScroll } from "@/utils/lockBodyScroll";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
@@ -11,27 +12,6 @@ type Props = {
   onOpenChange?: (open: boolean) => void;
   children: (api: { close: () => void }) => React.ReactNode;
 };
-
-function useControllableBool({
-  open,
-  defaultOpen,
-  onOpenChange,
-}: {
-  open?: boolean;
-  defaultOpen: boolean;
-  onOpenChange?: (open: boolean) => void;
-}) {
-  const [internal, setInternal] = useState(defaultOpen);
-  const isControlled = open !== undefined;
-  const value = isControlled ? open! : internal;
-
-  const set = (next: boolean) => {
-    if (!isControlled) setInternal(next);
-    onOpenChange?.(next);
-  };
-
-  return [value, set] as const;
-}
 
 const TRANSITION_MS = 300;
 
@@ -82,7 +62,7 @@ const BottomDrawer = ({
   onOpenChange,
   children,
 }: Props) => {
-  const [open, setOpen] = useControllableBool({
+  const [open, setOpen] = useControllableOpen({
     open: openProp,
     defaultOpen,
     onOpenChange,
