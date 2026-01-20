@@ -9,10 +9,12 @@ import EditMeetingDrawer from "./EditMeetingDrawer";
 import PlusIcon from "./PlusIcon";
 import ParticipantList from "./ParticipantList";
 import { Participant, Profile } from "@/types/meeting";
+import ShareModal from "./ShareModal";
 
 const MeetingInfoSection = () => {
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
   const [meetingDrawerOpen, setMeetingDrawerOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   // 예시 값
   const participants: Participant[] = useMemo(
@@ -77,7 +79,11 @@ const MeetingInfoSection = () => {
             <p className="typo-14-regular text-gray-500">
               약속을 함께할 친구를 불러보세요!
             </p>
-            <Button color="White" className="px-8 py-4 h-32 rounded-[12px]">
+            <Button
+              color="White"
+              className="px-8 py-4 h-32 rounded-[12px]"
+              onClick={() => setShareModalOpen(true)}
+            >
               <PlusIcon />
               <span className="typo-14-regular text-gray-700">공유하기</span>
             </Button>
@@ -116,6 +122,8 @@ const MeetingInfoSection = () => {
         open={meetingDrawerOpen}
         setOpen={setMeetingDrawerOpen}
       />
+      {/* Modal */}
+      <ShareModal open={shareModalOpen} setOpen={setShareModalOpen} />
     </section>
   );
 };
