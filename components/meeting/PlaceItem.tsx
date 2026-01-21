@@ -1,6 +1,8 @@
 import { cn } from "@/utils/cn";
 import RightChevronIcon from "./RightChevronIcon";
 import { Place } from "@/types/meeting";
+import { useState } from "react";
+import PlaceInfoDrawer from "./PlaceInfoDrawer";
 
 interface CommonItemProps {
   place: Place;
@@ -26,7 +28,7 @@ const PlaceItem = ({
     <div
       className={cn(
         "w-310 h-104 rounded-[16px] px-16 pb-16 pt-12 flex flex-col gap-4",
-        className
+        className,
       )}
       onClick={onClick}
     >
@@ -63,15 +65,26 @@ const PlaceItemForView = ({
   votedByMe,
   totalCount,
 }: PlaceItemForViewProps) => {
+  const [placeInfoDrawerOpen, setPlaceInfoDrawerOpen] = useState(false);
+
   return (
-    <PlaceItem
-      place={place}
-      totalCount={totalCount}
-      className={cn(
-        votedByMe ? "bg-primary-25" : "bg-white",
-        "border border-gray-50"
-      )}
-    />
+    <>
+      <PlaceItem
+        place={place}
+        totalCount={totalCount}
+        className={cn(
+          votedByMe ? "bg-primary-25" : "bg-white",
+          "border border-gray-50 cursor-pointer",
+        )}
+        onClick={() => setPlaceInfoDrawerOpen(true)}
+      />
+
+      <PlaceInfoDrawer
+        place={place}
+        open={placeInfoDrawerOpen}
+        setOpen={setPlaceInfoDrawerOpen}
+      />
+    </>
   );
 };
 
@@ -90,7 +103,7 @@ const PlaceItemForVote = ({
     <PlaceItem
       className={cn(
         "border cursor-pointer",
-        voted ? "bg-primary-25 border-primary-300" : "bg-white border-gray-300"
+        voted ? "bg-primary-25 border-primary-300" : "bg-white border-gray-300",
       )}
       onClick={onClick}
       place={place}
