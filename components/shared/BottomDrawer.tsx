@@ -10,6 +10,7 @@ type Props = {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  onVisibleChange?: (visible: boolean) => void;
   children: (api: { close: () => void }) => React.ReactNode;
 };
 
@@ -18,7 +19,7 @@ const TRANSITION_MS = 300;
 function usePresence(open: boolean) {
   const [mounted, setMounted] = useState(open);
   const [state, setState] = useState<"open" | "closed">(
-    open ? "open" : "closed"
+    open ? "open" : "closed",
   );
 
   const openDrawer = useEffectEvent(() => setState("open"));
@@ -60,6 +61,7 @@ const BottomDrawer = ({
   open: openProp,
   defaultOpen = false,
   onOpenChange,
+  onVisibleChange,
   children,
 }: Props) => {
   const [open, setOpen] = useControllableOpen({
@@ -86,6 +88,15 @@ const BottomDrawer = ({
   }, [open]);
 
   const { mounted, state } = usePresence(open);
+
+  const onStateChanged = useEffectEvent((state: "open" | "closed") => {
+    onVisibleChange?.(state === "open");
+  });
+
+  useEffect(() => {
+    onStateChanged(state);
+  }, [state]);
+
   if (!portalContainer || !mounted) return null;
 
   return createPortal(
