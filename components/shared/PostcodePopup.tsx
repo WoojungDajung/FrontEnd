@@ -20,7 +20,7 @@ const PostcodePopup = ({ onComplete, open, setOpen }: PostcodePopupProps) => {
       onComplete?.(data);
       setOpen(false);
     },
-    [onComplete, setOpen]
+    [onComplete, setOpen],
   );
 
   const createPostcodeInstance = useCallback((): Postcode | null => {
@@ -39,7 +39,7 @@ const PostcodePopup = ({ onComplete, open, setOpen }: PostcodePopupProps) => {
   useEffect(() => {
     if (open) {
       if (!postcode.current || !ref.current) return;
-      postcode.current.embed(ref.current);
+      postcode.current.embed(ref.current); // 검색창 임베딩
       lockBodyScroll(true);
     } else {
       lockBodyScroll(false);
@@ -58,15 +58,11 @@ const PostcodePopup = ({ onComplete, open, setOpen }: PostcodePopupProps) => {
         onLoad={onScriptLoaded}
       />
 
-      {typeof document !== undefined &&
+      {typeof document !== "undefined" &&
         document.getElementById("popup") &&
+        open &&
         createPortal(
-          <div
-            className={cn(
-              "w-390 h-dvh absolute left-[50dvw] top-0 -translate-x-1/2",
-              open ? "block" : "hidden"
-            )}
-          >
+          <div className="w-390 h-dvh absolute left-[50dvw] top-0 -translate-x-1/2">
             <div
               className="w-full h-full absolute inset-0 bg-black/60"
               onClick={() => setOpen(false)}
@@ -76,7 +72,7 @@ const PostcodePopup = ({ onComplete, open, setOpen }: PostcodePopupProps) => {
               className="absolute top-1/2 left-1/2 -translate-1/2"
             />
           </div>,
-          document.getElementById("popup")!
+          document.getElementById("popup")!,
         )}
     </>
   );
