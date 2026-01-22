@@ -1,12 +1,20 @@
-const LeftChevronIcon = () => {
+import { IconProps } from "@/types/IconProps";
+
+const LeftChevronIcon = ({ width, height, color }: IconProps) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" fill="none">
+    <svg
+      width={width ?? "20"}
+      height={height ?? "20"}
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
-        stroke="var(--color-gray-400)"
+        d="M13 15L8 10L13 5"
+        stroke={color ?? "#A4A7AE"}
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={1.586}
-        d="m5.792 10.792-5-5 5-5"
+        strokeWidth={1.58333}
       />
     </svg>
   );

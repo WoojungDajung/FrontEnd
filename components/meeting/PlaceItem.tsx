@@ -1,5 +1,5 @@
 import { cn } from "@/utils/cn";
-import RightChevronIcon from "./RightChevronIcon";
+import RightChevronIcon from "../shared/RightChevronIcon";
 import { Place } from "@/types/meeting";
 import { MouseEvent, useState } from "react";
 import PlaceInfoDrawer from "./PlaceInfoDrawer";
@@ -42,7 +42,11 @@ const PlaceItem = ({
               {place.name}
             </div>
             <button className="cursor-pointer" onClick={showPlaceInfoDrawer}>
-              <RightChevronIcon />
+              <RightChevronIcon
+                width={24}
+                height={24}
+                color="var(--color-gray-500)"
+              />
             </button>
           </div>
           <p className="typo-14-regular text-gray-500">{place.address}</p>
