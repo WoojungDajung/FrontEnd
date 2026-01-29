@@ -1,3 +1,5 @@
+"use client";
+
 import CountButton from "./CountButton";
 import PlaceVoteCard from "./PlaceVoteCard";
 
