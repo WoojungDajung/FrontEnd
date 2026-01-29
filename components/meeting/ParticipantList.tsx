@@ -130,11 +130,19 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
           <>
             {expanded ? (
               <button onClick={() => setExpanded(false)} className="button">
-                <UpChevronIcon />
+                <UpChevronIcon
+                  width={20}
+                  height={20}
+                  color="var(--color-gray-400)"
+                />
               </button>
             ) : (
               <button onClick={() => setExpanded(true)} className="button">
-                <DownChevronIcon />
+                <DownChevronIcon
+                  width={20}
+                  height={20}
+                  color="var(--color-gray-400)"
+                />
               </button>
             )}
           </>

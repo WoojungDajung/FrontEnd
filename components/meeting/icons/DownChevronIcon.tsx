@@ -1,8 +1,15 @@
-const DownChevronIcon = () => {
+import { IconProps } from "@/types/IconProps";
+
+const DownChevronIcon = ({ width, height, color }: IconProps) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={width ?? "20"}
+      height={height ?? "20"}
+      fill="none"
+    >
       <path
-        stroke="var(--color-gray-400)"
+        stroke={color ?? "#A4A7AE"}
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={1.583}
