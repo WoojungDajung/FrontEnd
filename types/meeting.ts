@@ -4,3 +4,15 @@ export type Place = {
   address: string;
   count: number;
 };
+
+export type Participant = {
+  id: string;
+  nickName: string;
+  editableYn: string;
+};
+
+export type Profile = {
+  id: string;
+  memberNickName: string;
+  startingPlace?: string;
+};

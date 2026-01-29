@@ -2,10 +2,12 @@
 
 import { cn } from "@/utils/cn";
 import Button from "../shared/Button";
-import PlaceIcon from "./PlaceIcon";
+import PlaceIcon from "./icons/PlaceIcon";
 import { useMemo, useState } from "react";
 import { PlaceItemForView, PlaceItemForVote } from "./PlaceItem";
 import { Place } from "@/types/meeting";
+import PostcodePopup from "../shared/PostcodePopup";
+import { Address } from "@/types/daum";
 
 interface PlaceVoteCardProps {
   disabled?: boolean;
@@ -18,17 +20,22 @@ const PlaceVoteCard = ({ disabled }: PlaceVoteCardProps) => {
     { id: "2", name: "장소명", address: "상세 주소", count: 2 },
     { id: "3", name: "장소명", address: "상세 주소", count: 1 },
   ]);
+  const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
 
   const placeIdVoted = "3";
-  const noPlaceRegistered = false;
 
   const totalCount = useMemo(
     () => places.reduce((acc, cur) => acc + cur.count, 0),
-    [places]
+    [places],
   );
 
   const openSearchAddressPopup = () => {
-    // 주소 검색창 열기
+    setPostcodePopupOpen(true);
+  };
+
+  const addPlace = (address: Address) => {
+    // 장소 등록
+    console.log("장소 등록:", address);
   };
 
   const startVote = () => {
@@ -83,14 +90,16 @@ const PlaceVoteCard = ({ disabled }: PlaceVoteCardProps) => {
         <>
           <div className="w-310 h-104 flex flex-col gap-4 justify-center items-center">
             <PlaceIcon
-              fill={
+              width={24}
+              height={24}
+              color={
                 disabled ? "var(--color-gray-300)" : "var(--color-gray-500)"
               }
             />
             <p
               className={cn(
                 "typo-14-regular",
-                disabled ? "text-gray-300" : "text-gray-500"
+                disabled ? "text-gray-300" : "text-gray-500",
               )}
             >
               장소를 등록해주세요.
@@ -106,6 +115,12 @@ const PlaceVoteCard = ({ disabled }: PlaceVoteCardProps) => {
           </Button>
         </>
       )}
+
+      <PostcodePopup
+        open={postcodePopupOpen}
+        setOpen={setPostcodePopupOpen}
+        onComplete={addPlace}
+      />
     </div>
   );
 };

@@ -1,6 +1,8 @@
 import { cn } from "@/utils/cn";
-import RightChevronIcon from "./RightChevronIcon";
+import RightChevronIcon from "../shared/icons/RightChevronIcon";
 import { Place } from "@/types/meeting";
+import { MouseEvent, useState } from "react";
+import PlaceInfoDrawer from "./PlaceInfoDrawer";
 
 interface CommonItemProps {
   place: Place;
@@ -18,39 +20,54 @@ const PlaceItem = ({
   className,
   onClick,
 }: PlaceItemProps) => {
-  const showPlaceInfoDrawer = () => {
-    // TOOD: 장소 정보 드로워 연결
+  const [placeInfoDrawerOpen, setPlaceInfoDrawerOpen] = useState(false);
+
+  const showPlaceInfoDrawer = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setPlaceInfoDrawerOpen(true);
   };
 
   return (
-    <div
-      className={cn(
-        "w-310 h-104 rounded-[16px] px-16 pb-16 pt-12 flex flex-col gap-4",
-        className
-      )}
-      onClick={onClick}
-    >
-      <div className="w-full">
-        <div className="w-full flex justify-between">
-          <div className="typo-16-regular text-gray-800 text-ellipsis">
-            {place.name}
+    <>
+      <div
+        className={cn(
+          "w-310 h-104 rounded-[16px] px-16 pb-16 pt-12 flex flex-col gap-4",
+          className,
+        )}
+        onClick={onClick}
+      >
+        <div className="w-full">
+          <div className="w-full flex justify-between">
+            <div className="typo-16-regular text-gray-800 text-ellipsis">
+              {place.name}
+            </div>
+            <button className="cursor-pointer" onClick={showPlaceInfoDrawer}>
+              <RightChevronIcon
+                width={24}
+                height={24}
+                color="var(--color-gray-500)"
+              />
+            </button>
           </div>
-          <button className="cursor-pointer" onClick={showPlaceInfoDrawer}>
-            <RightChevronIcon />
-          </button>
+          <p className="typo-14-regular text-gray-500">{place.address}</p>
         </div>
-        <p className="typo-14-regular text-gray-500">{place.address}</p>
-      </div>
-      <div className="flex flex-col gap-4">
-        <p className="typo-12-regular text-gray-500">{`투표 인원 ${place.count}명`}</p>
-        <div className="w-full h-4">
-          <div
-            className="h-full bg-primary-400"
-            style={{ width: `${(place.count / totalCount) * 100}%` }}
-          />
+        <div className="flex flex-col gap-4">
+          <p className="typo-12-regular text-gray-500">{`투표 인원 ${place.count}명`}</p>
+          <div className="w-full h-4">
+            <div
+              className="h-full bg-primary-400"
+              style={{ width: `${(place.count / totalCount) * 100}%` }}
+            />
+          </div>
         </div>
       </div>
-    </div>
+
+      <PlaceInfoDrawer
+        place={place}
+        open={placeInfoDrawerOpen}
+        setOpen={setPlaceInfoDrawerOpen}
+      />
+    </>
   );
 };
 
@@ -69,7 +86,7 @@ const PlaceItemForView = ({
       totalCount={totalCount}
       className={cn(
         votedByMe ? "bg-primary-25" : "bg-white",
-        "border border-gray-50"
+        "border border-gray-50",
       )}
     />
   );
@@ -90,7 +107,7 @@ const PlaceItemForVote = ({
     <PlaceItem
       className={cn(
         "border cursor-pointer",
-        voted ? "bg-primary-25 border-primary-300" : "bg-white border-gray-300"
+        voted ? "bg-primary-25 border-primary-300" : "bg-white border-gray-300",
       )}
       onClick={onClick}
       place={place}

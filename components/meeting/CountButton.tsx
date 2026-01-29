@@ -1,4 +1,6 @@
-import PersonIcon from "./PersonIcon";
+"use client";
+
+import PersonIcon from "./icons/PersonIcon";
 
 interface CountButtonProps {
   currentCount: number;
@@ -12,7 +14,10 @@ const CountButton = ({
   onClick,
 }: CountButtonProps) => {
   return (
-    <button className="px-8 py-4 border border-gray-100 rounded-[12px] flex cursor-pointer bg-white hover:bg-gray-200">
+    <button
+      className="px-8 py-4 border border-gray-100 rounded-[12px] flex cursor-pointer bg-white hover:bg-gray-200"
+      onClick={onClick}
+    >
       <PersonIcon />
       <p className="text-gray-700 typo-14-regular">
         <span className="text-primary-400">{currentCount}</span>/{totalCount}

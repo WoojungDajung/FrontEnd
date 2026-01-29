@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import LeftChevronIcon from "./LeftChevronIcon";
+import LeftChevronIcon from "./icons/LeftChevronIcon";
 
 interface DefaultDrawerLayoutProps {
   title: string;
@@ -21,7 +21,11 @@ const DefaultDrawerLayout = ({
     <div className="w-full pt-8 pb-24 px-24 relative flex flex-col">
       <div className="w-full h-56 grid grid-cols-[1fr_auto_1fr] items-center sticky top-0 left-0">
         <button onClick={close} className="w-fit mr-auto cursor-pointer">
-          <LeftChevronIcon />
+          <LeftChevronIcon
+            width={20}
+            height={20}
+            color="var(--color-gray-400)"
+          />
         </button>
         <p className="typo-18-semibold text-gray-800">{title}</p>
         {secondaryAction && (
@@ -33,9 +37,7 @@ const DefaultDrawerLayout = ({
           </button>
         )}
       </div>
-      <div className="overflow-auto flex-1">
-        {children}
-      </div>
+      <div className="overflow-auto flex-1">{children}</div>
     </div>
   );
 };
