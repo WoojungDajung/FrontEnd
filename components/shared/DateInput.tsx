@@ -46,7 +46,7 @@ const DateInput = ({ value, onValueChange }: DateInputProps) => {
       data-focus={datePickerOpened}
       ref={containerRef}
     >
-      <CalendarIcon />
+      <CalendarIcon width={20} height={20} color="var(--color-gray-500)" />
       <div
         onClick={() => setDatePickerOpened((prev) => !prev)}
         className="w-full typo-16-regular cursor-pointer"
