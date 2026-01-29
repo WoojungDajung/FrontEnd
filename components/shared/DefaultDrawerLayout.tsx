@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import LeftChevronIcon from "./LeftChevronIcon";
+import LeftChevronIcon from "./icons/LeftChevronIcon";
 
 interface DefaultDrawerLayoutProps {
   title: string;
@@ -37,9 +37,7 @@ const DefaultDrawerLayout = ({
           </button>
         )}
       </div>
-      <div className="overflow-auto flex-1">
-        {children}
-      </div>
+      <div className="overflow-auto flex-1">{children}</div>
     </div>
   );
 };

@@ -2,12 +2,12 @@
 
 import { getAuthorizationUrl } from "@/lib/auth/kakao";
 import Button from "../shared/Button";
-import KakaoIcon from "../shared/KakaoIcon";
+import KakaoIcon from "../shared/icons/KakaoIcon";
 import { useSearchParams } from "next/navigation";
 
 const Login = () => {
-  const searchParams = useSearchParams()
-  const next = searchParams.get("next")
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next");
 
   const handleLogin = () => {
     window.location.href = getAuthorizationUrl(next ?? undefined);

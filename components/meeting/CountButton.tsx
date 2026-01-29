@@ -1,4 +1,4 @@
-import PersonIcon from "./PersonIcon";
+import PersonIcon from "./icons/PersonIcon";
 
 interface CountButtonProps {
   currentCount: number;

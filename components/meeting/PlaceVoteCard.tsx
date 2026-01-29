@@ -2,7 +2,7 @@
 
 import { cn } from "@/utils/cn";
 import Button from "../shared/Button";
-import PlaceIcon from "./PlaceIcon";
+import PlaceIcon from "./icons/PlaceIcon";
 import { useMemo, useState } from "react";
 import { PlaceItemForView, PlaceItemForVote } from "./PlaceItem";
 import { Place } from "@/types/meeting";

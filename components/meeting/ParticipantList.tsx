@@ -6,9 +6,9 @@ import {
   useRef,
   useState,
 } from "react";
-import PencilIcon from "./PencilIcon";
-import DownChevronIcon from "./DownChevronIcon";
-import UpChevronIcon from "./UpChevronIcon";
+import PencilIcon from "./icons/PencilIcon";
+import DownChevronIcon from "./icons/DownChevronIcon";
+import UpChevronIcon from "./icons/UpChevronIcon";
 import EditProfileDrawer from "./EditProfileDrawer";
 import ParticipantBadge from "./ParticipantBadge";
 

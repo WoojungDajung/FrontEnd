@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
-import CalendarIcon from "./CalendarIcon";
+import CalendarIcon from "./icons/CalendarIcon";
 import DatePicker from "./DatePicker";
 import { createPortal } from "react-dom";
 
@@ -70,7 +70,7 @@ const DateInput = ({ value, onValueChange }: DateInputProps) => {
           <div ref={datePickerRef} className="absolute">
             <DatePicker selected={value} onSelect={onSelect} />
           </div>,
-          document.getElementById("popup")!
+          document.getElementById("popup")!,
         )}
     </div>
   );

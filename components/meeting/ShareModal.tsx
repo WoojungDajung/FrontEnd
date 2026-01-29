@@ -1,9 +1,9 @@
 import Script from "next/script";
-import CloseIcon from "../shared/CloseIcon";
-import KakaoIcon from "../shared/KakaoIcon";
+import CloseIcon from "../shared/icons/CloseIcon";
+import KakaoIcon from "../shared/icons/KakaoIcon";
 import Modal from "../shared/Modal";
-import CopyIcon from "./CopyIcon";
-import MoreIcon from "./MoreIcon";
+import CopyIcon from "./icons/CopyIcon";
+import MoreIcon from "./icons/MoreIcon";
 
 interface ShareModalProps {
   open?: boolean;

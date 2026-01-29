@@ -1,5 +1,5 @@
 import { cn } from "@/utils/cn";
-import RightChevronIcon from "../shared/RightChevronIcon";
+import RightChevronIcon from "../shared/icons/RightChevronIcon";
 import { Place } from "@/types/meeting";
 import { MouseEvent, useState } from "react";
 import PlaceInfoDrawer from "./PlaceInfoDrawer";

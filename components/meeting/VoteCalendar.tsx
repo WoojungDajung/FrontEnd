@@ -8,8 +8,8 @@ import {
   WEEKDAYS_KO,
 } from "@/utils/calendar";
 import { useCallback, useMemo, useState } from "react";
-import LeftChevronIcon from "../shared/LeftChevronIcon";
-import RightChevronIcon from "../shared/RightChevronIcon";
+import LeftChevronIcon from "../shared/icons/LeftChevronIcon";
+import RightChevronIcon from "../shared/icons/RightChevronIcon";
 import { cn } from "@/utils/cn";
 
 export type VoteState = "selected" | "uncertain" | "unselected";
@@ -17,7 +17,7 @@ export type VoteState = "selected" | "uncertain" | "unselected";
 interface VoteCalendarProps {
   startDate: Date;
   /* 사용자의 투표 상태(선택, 애매). YYMMDD 형식의 문자열로 이루어짐 */
-  value: { selected: Set<string>; uncertain: Set<string> }; 
+  value: { selected: Set<string>; uncertain: Set<string> };
   onChange?: (date: Date, prevState: VoteState, nextState: VoteState) => void;
 }
 

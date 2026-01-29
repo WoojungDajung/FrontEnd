@@ -2,11 +2,11 @@
 
 import { useMemo, useState } from "react";
 import Button from "../shared/Button";
-import PencilIcon from "./PencilIcon";
-import SmilingFaceIcon from "./SmilngFaceIcon";
+import PencilIcon from "./icons/PencilIcon";
+import SmilingFaceIcon from "./icons/SmilngFaceIcon";
 import EditProfileDrawer from "./EditProfileDrawer";
 import EditMeetingDrawer from "./EditMeetingDrawer";
-import PlusIcon from "./PlusIcon";
+import PlusIcon from "./icons/PlusIcon";
 import ParticipantList from "./ParticipantList";
 import { Participant, Profile } from "@/types/meeting";
 import ShareModal from "./ShareModal";

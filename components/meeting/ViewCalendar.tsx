@@ -6,8 +6,8 @@ import {
   WEEKDAYS_KO,
 } from "@/utils/calendar";
 import { useCallback, useMemo, useState } from "react";
-import LeftChevronIcon from "../shared/LeftChevronIcon";
-import RightChevronIcon from "../shared/RightChevronIcon";
+import LeftChevronIcon from "../shared/icons/LeftChevronIcon";
+import RightChevronIcon from "../shared/icons/RightChevronIcon";
 import { cn } from "@/utils/cn";
 
 interface ViewCalendarProps {
