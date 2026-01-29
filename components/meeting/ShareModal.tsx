@@ -4,6 +4,10 @@ import KakaoIcon from "../shared/icons/KakaoIcon";
 import Modal from "../shared/Modal";
 import CopyIcon from "./icons/CopyIcon";
 import MoreIcon from "./icons/MoreIcon";
+import {
+  initiateKakao,
+  shareMeetingOnKakaoTalk,
+} from "@/lib/kakao-share/utils";
 
 interface ShareModalProps {
   open?: boolean;
@@ -22,19 +26,8 @@ const ShareModal = ({ open, setOpen }: ShareModalProps) => {
     navigator.clipboard.writeText(link);
   };
 
-  /* 카카오톡 공유 */
-  const initiateKakao = () => {
-    window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
-  };
-
   const shareOnKakaoTalk = () => {
-    window.Kakao.Share.sendCustom({
-      templateId: 128317,
-      templateArgs: {
-        meeting_id: 1,
-        meeting_name: "스터디밥먹으러",
-      },
-    });
+    shareMeetingOnKakaoTalk("1", "스터디밥먹으러");
   };
 
   return (
