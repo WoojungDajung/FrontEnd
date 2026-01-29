@@ -79,7 +79,11 @@ const ShareModal = ({ open, setOpen }: ShareModalProps) => {
                     className="button w-56 h-56 bg-gray-100 rounded-full"
                     onClick={copyLink}
                   >
-                    <CopyIcon width={24} height={24} />
+                    <CopyIcon
+                      width={40}
+                      height={40}
+                      color="var(--color-gray-500)"
+                    />
                   </button>
                   <p className="typo-12-regular text-gray-500">링크 복사</p>
                 </div>
