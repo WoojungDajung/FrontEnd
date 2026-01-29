@@ -5,10 +5,11 @@ import {
   startOfMonth,
   WEEKDAYS_KO,
 } from "@/utils/calendar";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import LeftChevronIcon from "../shared/icons/LeftChevronIcon";
 import RightChevronIcon from "../shared/icons/RightChevronIcon";
 import { cn } from "@/utils/cn";
+import VoteStatusByDateModal from "./VoteStatusByDateModal";
 
 interface ViewCalendarProps {
   voterNum: number;
@@ -33,33 +34,6 @@ const ViewCalendar = ({ voterNum }: ViewCalendarProps) => {
       count: Math.floor(Math.random() * (voterNum - 0 + 1) + 0),
     }));
   }, [curMonth, voterNum]);
-
-  const getCellStyle = useCallback(
-    (cell: Cell): string => {
-      const isUnavailable = cell.day.getMonth() !== curMonth.getMonth();
-
-      const ratio = (cell.count / voterNum) * 100;
-      if (!isUnavailable && ratio > 0) {
-        if (ratio >= 71) {
-          return "bg-primary-400 text-white";
-        } else if (ratio >= 31) {
-          return "bg-primary-100 text-primary-800";
-        } else {
-          return "bg-primary-25 text-primary-600";
-        }
-      }
-
-      const day = cell.day.getDay();
-      if (day === 0) {
-        return isUnavailable ? "text-error-200" : "text-error-500";
-      } else if (day === 6) {
-        return isUnavailable ? "text-gray-300" : "text-primary-400";
-      } else {
-        return isUnavailable ? "text-gray-300" : "text-gray-800";
-      }
-    },
-    [curMonth, voterNum],
-  );
 
   return (
     <div className="w-342 flex flex-col gap-4">
@@ -112,21 +86,78 @@ const ViewCalendar = ({ voterNum }: ViewCalendarProps) => {
 
       {/* Days */}
       <div className="px-16 grid grid-cols-7 gap-4">
-        {cells.map((cell) => {
-          return (
-            <div
-              key={cell.day.toISOString()}
-              className={cn(
-                "w-40 h-40 typo-14-regular rounded-[8px] flex justify-center items-center",
-                getCellStyle(cell),
-              )}
-            >
-              {cell.day.getDate()}
-            </div>
-          );
-        })}
+        {cells.map((cell) => (
+          <DateCell
+            key={cell.day.toISOString()}
+            isCurMonth={cell.day.getMonth() === curMonth.getMonth()}
+            date={cell.day}
+            ratio={(cell.count / voterNum) * 100}
+          />
+        ))}
       </div>
     </div>
+  );
+};
+
+const DateCell = ({
+  isCurMonth,
+  ratio,
+  date,
+}: {
+  isCurMonth: boolean;
+  ratio: number;
+  date: Date;
+}) => {
+  const [dateStatusModalOpen, setDateStatusModalOpen] = useState(false);
+
+  const clickable = isCurMonth && ratio > 0;
+
+  const onClick = () => {
+    if (!clickable) {
+      return;
+    }
+    setDateStatusModalOpen(true);
+  };
+
+  let cellStyle = "";
+  if (isCurMonth && ratio > 0) {
+    if (ratio >= 71) {
+      cellStyle = "bg-primary-400 text-white";
+    } else if (ratio >= 31) {
+      cellStyle = "bg-primary-100 text-primary-800";
+    } else {
+      cellStyle = "bg-primary-25 text-primary-600";
+    }
+  } else {
+    if (date.getDay() === 0) {
+      cellStyle = isCurMonth ? "text-error-500" : "text-error-200";
+    } else if (date.getDay() === 6) {
+      cellStyle = isCurMonth ? "text-primary-400" : "text-gray-300";
+    } else {
+      cellStyle = isCurMonth ? "text-gray-800" : "text-gray-300";
+    }
+  }
+
+  return (
+    <>
+      <div
+        className={cn(
+          "w-40 h-40 typo-14-regular rounded-[8px] flex justify-center items-center",
+          cellStyle,
+          clickable && "cursor-pointer",
+        )}
+        onClick={onClick}
+      >
+        {date.getDate()}
+      </div>
+
+      {/* 투표 현황 모달 */}
+      <VoteStatusByDateModal
+        date={date}
+        open={dateStatusModalOpen}
+        setOpen={setDateStatusModalOpen}
+      />
+    </>
   );
 };
 
