@@ -90,7 +90,9 @@ const PlaceVoteCard = ({ disabled }: PlaceVoteCardProps) => {
         <>
           <div className="w-310 h-104 flex flex-col gap-4 justify-center items-center">
             <PlaceIcon
-              fill={
+              width={24}
+              height={24}
+              color={
                 disabled ? "var(--color-gray-300)" : "var(--color-gray-500)"
               }
             />
