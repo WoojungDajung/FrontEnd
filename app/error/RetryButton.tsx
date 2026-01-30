@@ -8,6 +8,7 @@ import { useCallback } from "react";
 const RetryButton = () => {
   const searchParams = useSearchParams();
   const errorCode = searchParams.get("code");
+  const next = searchParams.get("next");
 
   const router = useRouter();
 
@@ -16,11 +17,15 @@ const RetryButton = () => {
       errorCode === ERROR_CODE.AUTH_TOKEN_EXCHANGED_FAILED ||
       errorCode === ERROR_CODE.AUTH_UNKNOWN_ERROR
     ) {
+      if (next) {
+        router.push(`/?next=${next}`);
+      } else {
+        router.push(`/`);
+      }
+    } else {
       router.push("/");
     }
-
-    router.push("/");
-  }, [errorCode, router]);
+  }, [errorCode, next, router]);
 
   return (
     <Button size="Medium" color="Primary" onClick={onClickButton}>
