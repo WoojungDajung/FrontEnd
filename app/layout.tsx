@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { pretendard } from "./fonts";
 import Footer from "@/components/shared/Footer";
+import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "만날우정",
@@ -16,15 +17,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={pretendard.variable}>
       <body>
-        <div className="w-390 min-h-dvh mx-auto flex justify-center">
-          <div className="w-342 pt-96 pb-40 flex flex-col gap-40">
-            {children}
-            <Footer />
-          </div>
-          <div id="drawer" />
-          <div id="modal" />
-        </div>
-        <div id="popup" className="z-100 fixed left-0 top-0" />
+        <Providers>
+          <>
+            <div className="w-390 min-h-dvh mx-auto flex justify-center">
+              <div className="w-342 pt-96 pb-40 flex flex-col gap-40">
+                {children}
+                <Footer />
+              </div>
+              <div id="drawer" />
+              <div id="modal" />
+            </div>
+            <div id="popup" className="z-100 fixed left-0 top-0" />
+          </>
+        </Providers>
       </body>
     </html>
   );
