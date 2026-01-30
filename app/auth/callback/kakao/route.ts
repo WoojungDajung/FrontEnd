@@ -40,10 +40,10 @@ export async function GET(request: NextRequest) {
       // 토큰 처리
       saveToken(accessToken, refreshToken);
 
-      // // 약속 페이지로
+      // 기존 페이지로
       if (state) {
         return NextResponse.redirect(
-          `${process.env.NEXT_PUBLIC_BASE_URL}state`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}${state}`,
         );
       }
       return NextResponse.redirect(
