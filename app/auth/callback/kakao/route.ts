@@ -1,3 +1,4 @@
+import { ERROR_CODE } from "@/constants/error-code";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -30,9 +31,8 @@ export async function GET(request: NextRequest) {
 
       if (!res.ok) {
         // 토큰 획득 실패
-        const errorCode = "token_exchanged_failed";
         return NextResponse.redirect(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/error?code=${errorCode}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/error?code=${ERROR_CODE.AUTH_TOKEN_EXCHANGED_FAILED}`,
         );
       }
 
@@ -52,7 +52,9 @@ export async function GET(request: NextRequest) {
     } catch (err) {
       // 에러 처리
       console.log(`에러 캐치:`, err);
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/error`);
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/error?code=${ERROR_CODE.AUTH_UNKNOWN_ERROR}`,
+      );
     }
   }
 
@@ -61,9 +63,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}`);
   }
 
-  const errorCode = "oauth_error";
   return NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/error?code=${errorCode}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/error?code=${ERROR_CODE.AUTH_UNKNOWN_ERROR}`,
   );
 }
 

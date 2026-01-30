@@ -1,5 +1,6 @@
-import Button from "@/components/shared/Button";
 import Image from "next/image";
+import { Suspense } from "react";
+import RetryButton from "./RetryButton";
 
 const Page = () => {
   return (
@@ -22,9 +23,9 @@ const Page = () => {
           </p>
         </div>
       </div>
-      <Button size="Medium" color="Primary">
-        다시 시도하기
-      </Button>
+      <Suspense>
+        <RetryButton />
+      </Suspense>
     </div>
   );
 };
