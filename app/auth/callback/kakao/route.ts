@@ -1,3 +1,4 @@
+import { ERROR_CODE } from "@/constants/error-code";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -30,9 +31,12 @@ export async function GET(request: NextRequest) {
 
       if (!res.ok) {
         // 토큰 획득 실패
-        const errorCode = "token_exchanged_failed";
+        const urlSearchParams = new URLSearchParams({
+          code: ERROR_CODE.AUTH_TOKEN_EXCHANGED_FAILED,
+        });
+        if (state) urlSearchParams.append("next", state);
         return NextResponse.redirect(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/error?code=${errorCode}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/error?${urlSearchParams.toString()}`,
         );
       }
 
@@ -40,30 +44,47 @@ export async function GET(request: NextRequest) {
       // 토큰 처리
       saveToken(accessToken, refreshToken);
 
-      // // 약속 페이지로
+      // 기존 페이지로
       if (state) {
         return NextResponse.redirect(
-          `${process.env.NEXT_PUBLIC_BASE_URL}state`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}${state}`,
+        );
+      } else {
+        return NextResponse.redirect(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/setup-meeting`,
         );
       }
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/setup-meeting`,
-      );
     } catch (err) {
       // 에러 처리
       console.log(`에러 캐치:`, err);
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/error`);
+
+      const urlSearchParams = new URLSearchParams({
+        code: ERROR_CODE.AUTH_UNKNOWN_ERROR,
+      });
+      if (state) urlSearchParams.append("next", state);
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/error?${urlSearchParams.toString()}`,
+      );
     }
   }
 
   if (error === "access_denied") {
     // 로그인 취소
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}`);
+    if (state) {
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL}?next=${state}`,
+      );
+    } else {
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}`);
+    }
   }
 
-  const errorCode = "oauth_error";
+  const urlSearchParams = new URLSearchParams({
+    code: ERROR_CODE.AUTH_UNKNOWN_ERROR,
+  });
+  if (state) urlSearchParams.append("next", state);
   return NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/error?code=${errorCode}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/error?${urlSearchParams.toString()}`,
   );
 }
 
