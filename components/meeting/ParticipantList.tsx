@@ -11,10 +11,11 @@ import DownChevronIcon from "./icons/DownChevronIcon";
 import UpChevronIcon from "./icons/UpChevronIcon";
 import EditProfileDrawer from "./EditProfileDrawer";
 import ParticipantBadge from "./ParticipantBadge";
+import { AppointmentUser } from "@/types/apiResponse";
 
 interface ParticipantListProps {
   myProfile?: Profile;
-  participants: Participant[];
+  participants: AppointmentUser[];
 }
 
 const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
@@ -30,7 +31,7 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
 
   // 선택된 User의 투표 상태를 보여주기 기능 관련 값
   const selectedUserId: string | undefined = undefined;
-  const onClickBadge = (userId: string) => {
+  const onClickBadge = (userId: number) => {
     // 해당 user 선택
   };
 
