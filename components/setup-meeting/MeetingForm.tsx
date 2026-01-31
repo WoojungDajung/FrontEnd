@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useState } from "react";
+import { FormEvent, useState } from "react";
 import Button from "../shared/Button";
 import FormField from "../shared/FormField";
 import DateInput from "../shared/DateInput";
@@ -12,13 +12,6 @@ const MeetingForm = () => {
 
   const [meetingName, setMeetingName] = useState<string>("");
   const [deadline, setDeadline] = useState<Date | undefined>(undefined);
-
-  const isButtonDisabled = useCallback(
-    (meetingName: string, deadline: Date | undefined) => {
-      return meetingName === "" || deadline === undefined;
-    },
-    [],
-  );
 
   const { mutate, isPending } = useCreateMeeting();
 
@@ -77,7 +70,7 @@ const MeetingForm = () => {
           size="Large"
           color="Primary"
           className="w-full"
-          disabled={isButtonDisabled(meetingName, deadline)}
+          disabled={meetingName === "" || deadline === undefined}
         >
           약속 정하러 가기
         </Button>
