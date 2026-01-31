@@ -105,7 +105,11 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
       ) : (
         <div className="flex flex-col gap-4 items-center">
           <p className="typo-14-regular text-primary-400">{`${appointmentData.appointmentUserList.length}명의 친구들이 약속 잡는 중!`}</p>
-          <Button size="Medium" color="Primary">
+          <Button
+            size="Medium"
+            color="Primary"
+            onClick={() => setProfileDrawerOpen(true)}
+          >
             참여하기
           </Button>
         </div>
