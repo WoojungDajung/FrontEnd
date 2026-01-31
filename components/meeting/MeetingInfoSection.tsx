@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Button from "../shared/Button";
 import PencilIcon from "./icons/PencilIcon";
 import SmilingFaceIcon from "./icons/SmilngFaceIcon";
@@ -8,10 +8,10 @@ import EditProfileDrawer from "./EditProfileDrawer";
 import EditMeetingDrawer from "./EditMeetingDrawer";
 import PlusIcon from "./icons/PlusIcon";
 import ParticipantList from "./ParticipantList";
-import { Profile } from "@/types/meeting";
 import ShareModal from "./ShareModal";
 import useAppointmentQuery from "@/hooks/useAppointmentQuery";
 import dayjs from "dayjs";
+import useAppointmentUserProfileQuery from "@/hooks/useAppointmentUserProfileQuery";
 
 interface MeetingInfoSectionProps {
   appointmentId: string;
@@ -22,34 +22,32 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
   const [meetingDrawerOpen, setMeetingDrawerOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
 
-  const { data } = useAppointmentQuery({ appointmentId });
+  const { data: appointmentData } = useAppointmentQuery({ appointmentId });
 
-  const myProfile: Profile | undefined = useMemo(
-    () => ({
-      id: 1,
-      memberNickName: "소연",
-    }),
-    [],
-  );
+  // 사용자의 프로필. 프로필 등록 전엔 null
+  const { data: profileData } = useAppointmentUserProfileQuery({
+    appointmentId,
+  });
 
-  if (data === undefined) {
+  if (appointmentData === undefined || profileData === undefined) {
     return <></>;
   }
 
+  // TODO: 본인이 생성한 약속인지 판별하는 방식 변경 필요 (백엔드 API 수정 후)
   const isMyMeeting =
-    data.appointmentUserList.find((u) => u.id === myProfile.id)?.editableYn ===
-    "Y";
-  const hasRegistered = data.appointment.profileYn === "Y";
-  const dueDateStr = dayjs(data.appointment.appointmentDueDate).format(
-    "YYYY.MM.DD",
-  );
+    appointmentData.appointmentUserList.find((u) => u.id === profileData?.id)
+      ?.editableYn === "Y";
+  const hasRegistered = appointmentData.appointment.profileYn === "Y";
+  const dueDateStr = dayjs(
+    appointmentData.appointment.appointmentDueDate,
+  ).format("YYYY.MM.DD");
 
   return (
     <section className="py-16 flex flex-col gap-24 items-center bg-white border border-gray-100 rounded-[24px]">
       <div className="w-full px-16">
         <div className="flex justify-center relative">
           <p className="typo-20-bold text-gray-800">
-            {data.appointment.appointmentName}
+            {appointmentData.appointment.appointmentName}
           </p>
           {isMyMeeting && (
             <button
@@ -65,14 +63,14 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
             {`투표 마감일 ${dueDateStr}`}
           </p>
           <div className="typo-12-regular bg-primary-25 text-primary-400 rounded-[40px] px-8 py-4">
-            {data.appointment.dday}
+            {appointmentData.appointment.dday}
           </div>
         </div>
       </div>
-      {data.appointmentUserList.length > 0 && (
+      {appointmentData.appointmentUserList.length > 0 && (
         <ParticipantList
-          myProfile={myProfile}
-          participants={data.appointmentUserList}
+          myProfile={profileData ?? undefined}
+          participants={appointmentData.appointmentUserList}
         />
       )}
       {hasRegistered ? (
@@ -106,7 +104,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
         </>
       ) : (
         <div className="flex flex-col gap-4 items-center">
-          <p className="typo-14-regular text-primary-400">{`${data.appointmentUserList.length}명의 친구들이 약속 잡는 중!`}</p>
+          <p className="typo-14-regular text-primary-400">{`${appointmentData.appointmentUserList.length}명의 친구들이 약속 잡는 중!`}</p>
           <Button size="Medium" color="Primary">
             참여하기
           </Button>

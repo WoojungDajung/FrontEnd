@@ -19,3 +19,9 @@ export type TAppointmentResponse = {
   appointment: Appointment;
   appointmentUserList: AppointmentUser[];
 };
+
+export type MemberProfile = {
+  id: number;
+  memberNickName: string;
+  startingPlace?: string;
+};
