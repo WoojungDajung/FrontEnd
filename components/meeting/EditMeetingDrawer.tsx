@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import BottomDrawer from "../shared/BottomDrawer";
 import Button from "../shared/Button";
 import DateInput from "../shared/DateInput";
@@ -24,14 +24,6 @@ const EditMeetingDrawer = ({
 }: EditMeetingDrawerProps) => {
   const [name, setName] = useState<string>(initialName);
   const [dueDate, setDueDate] = useState<Date | undefined>(initialDueDate);
-
-  useEffect(() => {
-    setName(initialName);
-  }, [initialName]);
-
-  useEffect(() => {
-    setDueDate(initialDueDate);
-  }, [initialDueDate]);
 
   const queryClient = useQueryClient();
   const { mutate } = useEditAppointment({ appointmentId });

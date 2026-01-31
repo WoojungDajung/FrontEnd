@@ -115,11 +115,12 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
 
       {/* Drawer */}
       <EditProfileDrawer
-        initialProfile={profileData ?? undefined}
+        initialProfile={profileData}
         open={profileDrawerOpen}
         setOpen={setProfileDrawerOpen}
       />
       <EditMeetingDrawer
+        key={`${appointmentData.appointment.appointmentName}-${appointmentData.appointment.appointmentDueDate}`}
         appointmentId={appointmentId}
         initialName={appointmentData.appointment.appointmentName}
         initialDueDate={dayjs(
