@@ -117,6 +117,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
 
       {/* Drawer */}
       <EditProfileDrawer
+        initialProfile={profileData ?? undefined}
         open={profileDrawerOpen}
         setOpen={setProfileDrawerOpen}
       />

@@ -3,10 +3,10 @@ import BottomDrawer from "../shared/BottomDrawer";
 import Button from "../shared/Button";
 import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
 import FormField from "../shared/FormField";
-import { Profile } from "@/types/meeting";
+import { MemberProfile } from "@/types/apiResponse";
 
 interface EditProfileDrawerProps {
-  initialProfile?: Profile;
+  initialProfile?: MemberProfile;
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
@@ -18,12 +18,26 @@ const EditProfileDrawer = ({
 }: EditProfileDrawerProps) => {
   const [nickName, setNickName] = useState(initialProfile?.memberNickName);
 
+  const alreadyJoined = initialProfile !== undefined;
+
+  const onClickButton = () => {
+    if (alreadyJoined) {
+      // 프로필 수정
+    } else {
+      // 약속 방 참여(join)
+    }
+  };
+
   return (
     <BottomDrawer open={open} onOpenChange={setOpen}>
       {({ close }) => (
         <DefaultDrawerLayout
           title="내 정보"
-          secondaryAction={{ label: "약속 나가기", onClick: () => {} }}
+          secondaryAction={
+            alreadyJoined
+              ? { label: "약속 나가기", onClick: () => {} }
+              : undefined
+          }
           close={close}
         >
           <div className="flex flex-col gap-40">
@@ -56,7 +70,12 @@ const EditProfileDrawer = ({
                 </div>
               </FormField>
             </div>
-            <Button className="h-56" size="Large">
+            <Button
+              className="h-56"
+              size="Large"
+              onClick={onClickButton}
+              disabled={nickName === "" || nickName === undefined}
+            >
               저장하기
             </Button>
           </div>
