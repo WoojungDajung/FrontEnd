@@ -33,10 +33,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
     return <></>;
   }
 
-  // TODO: 본인이 생성한 약속인지 판별하는 방식 변경 필요 (백엔드 API 수정 후)
-  const isMyMeeting =
-    appointmentData.appointmentUserList.find((u) => u.id === profileData?.id)
-      ?.editableYn === "Y";
+  const isMyAppointment = appointmentData.appointment.appointmentUserId === profileData?.id
   const hasRegistered = appointmentData.appointment.profileYn === "Y";
   const dueDateStr = dayjs(
     appointmentData.appointment.appointmentDueDate,
@@ -49,7 +46,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
           <p className="typo-20-bold text-gray-800">
             {appointmentData.appointment.appointmentName}
           </p>
-          {isMyMeeting && (
+          {isMyAppointment && (
             <button
               className="absolute top-0 right-0 border border-gray-100 bg-white w-32 h-32 rounded-[12px] cursor-pointer"
               onClick={() => setMeetingDrawerOpen(true)}
@@ -69,7 +66,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
       </div>
       {appointmentData.appointmentUserList.length > 0 && (
         <ParticipantList
-          myProfile={profileData ?? undefined}
+          myProfile={profileData}
           participants={appointmentData.appointmentUserList}
         />
       )}
@@ -89,7 +86,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
             </Button>
           </div>
         </>
-      ) : isMyMeeting ? (
+      ) : isMyAppointment ? (
         <>
           <div className="flex justify-center">
             <SmilingFaceIcon />

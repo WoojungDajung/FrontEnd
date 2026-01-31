@@ -7,6 +7,7 @@ export type Appointment = {
   confirmYn: Yn;
   profileYn: Yn;
   dday: string;
+  appointmentUserId: number;
 };
 
 export type AppointmentUser = {
@@ -22,6 +23,6 @@ export type TAppointmentResponse = {
 
 export type MemberProfile = {
   id: number;
-  memberNickName: string;
-  startingPlace?: string;
+  memberNickName: string | null;
+  startingPlace: string | null;
 };

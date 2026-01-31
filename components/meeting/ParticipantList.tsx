@@ -1,4 +1,3 @@
-import { Participant, Profile } from "@/types/meeting";
 import {
   MouseEvent,
   useCallback,
@@ -11,10 +10,10 @@ import DownChevronIcon from "./icons/DownChevronIcon";
 import UpChevronIcon from "./icons/UpChevronIcon";
 import EditProfileDrawer from "./EditProfileDrawer";
 import ParticipantBadge from "./ParticipantBadge";
-import { AppointmentUser } from "@/types/apiResponse";
+import { AppointmentUser, MemberProfile } from "@/types/apiResponse";
 
 interface ParticipantListProps {
-  myProfile?: Profile;
+  myProfile: MemberProfile | null;
   participants: AppointmentUser[];
 }
 
@@ -150,7 +149,7 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
         )}
       </div>
 
-      {me && (
+      {me && myProfile && (
         <EditProfileDrawer
           initialProfile={myProfile}
           open={profileDrawerOpen}
