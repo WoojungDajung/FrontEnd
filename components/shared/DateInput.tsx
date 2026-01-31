@@ -16,9 +16,11 @@ function formatDate(date: Date): string {
 interface DateInputProps {
   value?: Date | undefined;
   onValueChange?: (value: Date | undefined) => void;
+  id?: string;
+  name?: string;
 }
 
-const DateInput = ({ value, onValueChange }: DateInputProps) => {
+const DateInput = ({ value, onValueChange, id, name }: DateInputProps) => {
   const [datePickerOpened, setDatePickerOpened] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -59,8 +61,8 @@ const DateInput = ({ value, onValueChange }: DateInputProps) => {
       </div>
       <input
         type="hidden"
-        id="deadline"
-        name="deadline"
+        id={id}
+        name={name}
         value={value ? formatDate(value) : ""}
         required
       />

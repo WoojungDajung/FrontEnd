@@ -33,7 +33,8 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
     return <></>;
   }
 
-  const isMyAppointment = appointmentData.appointment.appointmentUserId === profileData?.id
+  const isMyAppointment =
+    appointmentData.appointment.appointmentUserId === profileData?.id;
   const hasRegistered = appointmentData.appointment.profileYn === "Y";
   const dueDateStr = dayjs(
     appointmentData.appointment.appointmentDueDate,
@@ -119,8 +120,11 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
         setOpen={setProfileDrawerOpen}
       />
       <EditMeetingDrawer
-        initialMeetingName="Text"
-        initialDeadline={new Date()}
+        appointmentId={appointmentId}
+        initialName={appointmentData.appointment.appointmentName}
+        initialDueDate={dayjs(
+          appointmentData.appointment.appointmentDueDate,
+        ).toDate()}
         open={meetingDrawerOpen}
         setOpen={setMeetingDrawerOpen}
       />
