@@ -25,6 +25,9 @@ const useRegisterLocation = (appointmentId: string) => {
       await queryClient.invalidateQueries({
         queryKey: ["appointment-locations", appointmentId],
       });
+      await queryClient.invalidateQueries({
+        queryKey: ["my-vote-appointment-location", appointmentId],
+      });
     },
   });
 };

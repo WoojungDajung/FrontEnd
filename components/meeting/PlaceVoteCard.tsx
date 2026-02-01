@@ -3,12 +3,13 @@
 import { cn } from "@/utils/cn";
 import Button from "../shared/Button";
 import PlaceIcon from "./icons/PlaceIcon";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { PlaceItemForView, PlaceItemForVote } from "./PlaceItem";
 import PostcodePopup from "../shared/PostcodePopup";
 import { Address } from "@/types/daum";
 import { Location } from "@/types/apiResponse";
 import useRegisterLocation from "@/hooks/useRegisterLocation";
+import useMyVoteLocationQuery from "@/hooks/useMyVoteLocationQuery";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
@@ -27,7 +28,14 @@ const PlaceVoteCard = ({
 
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
 
-  const placeIdVoted = 3;
+  /* 나의 투표 */
+  const { data: myVotes } = useMyVoteLocationQuery(appointmentId);
+
+  const isMyVoteLocation = useCallback(
+    (locationId: number) =>
+      myVotes?.find((vote) => vote.id === locationId) !== undefined,
+    [myVotes],
+  );
 
   const openSearchAddressPopup = () => {
     setPostcodePopupOpen(true);
@@ -63,7 +71,7 @@ const PlaceVoteCard = ({
                     place={place}
                     appointmentId={appointmentId}
                     totalCount={totalCount}
-                    votedByMe={place.id === placeIdVoted}
+                    votedByMe={isMyVoteLocation(place.id)}
                   />
                 ))}
               </div>
@@ -89,7 +97,7 @@ const PlaceVoteCard = ({
           ) : (
             <VotePlace
               places={locations}
-              placeIdVoted={placeIdVoted}
+              myVoteLocationIds={myVotes?.map((vote) => vote.id) ?? []}
               totalCount={totalCount}
               appointmentId={appointmentId}
               onCompleteVote={() => setMode("VIEW")}
@@ -135,26 +143,33 @@ const PlaceVoteCard = ({
   );
 };
 
-const VotePlace = ({
-  places,
-  placeIdVoted,
-  totalCount,
-  appointmentId,
-  onCompleteVote,
-}: {
+interface VotePlaceProps {
   places: Location[];
-  placeIdVoted?: number;
+  myVoteLocationIds: number[];
   totalCount: number;
   appointmentId: string;
   onCompleteVote: () => void;
-}) => {
-  const [selected, setSelected] = useState<number | null>(placeIdVoted ?? null);
+}
 
-  const onVoteItem = (placeId: number) => {
-    if (placeId === selected) {
-      setSelected(null);
+const VotePlace = ({
+  places,
+  myVoteLocationIds,
+  totalCount,
+  appointmentId,
+  onCompleteVote,
+}: VotePlaceProps) => {
+  const [selected, setSelected] = useState<number[]>(myVoteLocationIds);
+
+  const onClickItem = (placeId: number) => {
+    const idx = selected.findIndex((id) => id === placeId);
+    if (idx === -1) {
+      // 투표
+      setSelected([...selected, placeId]);
     } else {
-      setSelected(placeId);
+      // 투표 취소
+      const newSelected = [...selected];
+      newSelected.splice(idx, 1);
+      setSelected(newSelected);
     }
   };
 
@@ -162,6 +177,8 @@ const VotePlace = ({
     // TODO: 투표 반영
     onCompleteVote();
   };
+
+  const isVoted = (locationId: number) => selected.includes(locationId);
 
   return (
     <>
@@ -171,8 +188,8 @@ const VotePlace = ({
             key={place.id}
             place={place}
             appointmentId={appointmentId}
-            onClick={() => onVoteItem(place.id)}
-            voted={place.id === selected}
+            onClick={() => onClickItem(place.id)}
+            voted={isVoted(place.id)}
             totalCount={totalCount}
           />
         ))}

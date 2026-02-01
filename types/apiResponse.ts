@@ -64,3 +64,12 @@ export type TLocationResponse = {
   longitude: string;
   selectedList: string[];
 };
+
+export type TMyVoteLocationResponse = {
+  id: number,
+  name: string,
+          {
+            "id": 8,
+            "name": "대전광역시청"
+        }
+}
