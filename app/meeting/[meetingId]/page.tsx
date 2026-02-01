@@ -23,7 +23,7 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
         {isSettled && <MeetingSettledSection />}
         <div className="flex flex-col gap-16">
           <MeetingInfoSection appointmentId={meetingId} />
-          <DateVoteSection />
+          <DateVoteSection appointmentId={meetingId} />
           <PlaceVoteSection />
         </div>
       </main>
