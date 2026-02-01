@@ -8,17 +8,21 @@ import { PlaceItemForView, PlaceItemForVote } from "./PlaceItem";
 import { Place } from "@/types/meeting";
 import PostcodePopup from "../shared/PostcodePopup";
 import { Address } from "@/types/daum";
+import { getAddressLngLat } from "@/api/kakao-local";
+import { useMutation } from "@tanstack/react-query";
+import { registerLocation } from "@/api/location";
 
 interface PlaceVoteCardProps {
+  appointmentId: string;
   disabled?: boolean;
 }
 
-const PlaceVoteCard = ({ disabled }: PlaceVoteCardProps) => {
+const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
   const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
   const [places, setPlaces] = useState<Place[]>([
-    { id: "1", name: "장소명", address: "상세 주소", count: 3 },
-    { id: "2", name: "장소명", address: "상세 주소", count: 2 },
-    { id: "3", name: "장소명", address: "상세 주소", count: 1 },
+    // { id: "1", name: "장소명", address: "상세 주소", count: 3 },
+    // { id: "2", name: "장소명", address: "상세 주소", count: 2 },
+    // { id: "3", name: "장소명", address: "상세 주소", count: 1 },
   ]);
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
 
@@ -33,13 +37,43 @@ const PlaceVoteCard = ({ disabled }: PlaceVoteCardProps) => {
     setPostcodePopupOpen(true);
   };
 
-  const addPlace = (address: Address) => {
-    // 장소 등록
-    console.log("장소 등록:", address);
-  };
-
   const startVote = () => {
     setMode("VOTE");
+  };
+
+  /* 장소 등록 */
+  // TODO: isPending 시 로딩 표시
+  const { mutate, isPending } = useMutation({
+    mutationFn: async ({
+      appointmentId,
+      address,
+    }: {
+      appointmentId: string;
+      address: Address;
+    }) => {
+      const placeName =
+        address.buildingName !== "" ? address.buildingName : address.address;
+      // 주소 좌표(경도,위도) 변환
+      const { longitude, latitude } = await getAddressLngLat(address.address);
+      // 장소 등록
+      await registerLocation(
+        appointmentId,
+        placeName,
+        address.address,
+        latitude,
+        longitude,
+      );
+    },
+    onError: () => {
+      alert("장소 등록에 실패했습니다. 잠시 후 다시 시도해주세요.");
+    },
+    onSuccess: () => {
+      // TODO: 장소 목록 조회 쿼리 무효화
+    },
+  });
+
+  const addPlace = async (address: Address) => {
+    mutate({ appointmentId, address });
   };
 
   return (
