@@ -14,12 +14,14 @@ import { AppointmentUser, MemberProfile } from "@/types/apiResponse";
 
 interface ParticipantListProps {
   appointmentId: string;
+  appointmentHostId: number;
   myProfile: MemberProfile | null;
   participants: AppointmentUser[];
 }
 
 const ParticipantList = ({
   appointmentId,
+  appointmentHostId,
   myProfile,
   participants,
 }: ParticipantListProps) => {
@@ -157,6 +159,7 @@ const ParticipantList = ({
         <EditProfileDrawer
           key={`${myProfile.id}-${myProfile.memberNickName}-${myProfile.startingPlace}`}
           appointmentId={appointmentId}
+          appointmentHostId={appointmentHostId}
           initialProfile={myProfile}
           open={profileDrawerOpen}
           setOpen={setProfileDrawerOpen}

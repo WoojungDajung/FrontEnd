@@ -48,10 +48,12 @@ export async function editAppointment(
 }
 
 /* 약속 방 참여 */
-export async function joinAppointment(appointmentId: string): Promise<TAppointmentResponse> {
+export async function joinAppointment(
+  appointmentId: string,
+): Promise<TAppointmentResponse> {
   const res = await fetch(`/auth-api/appointment/join/${appointmentId}`, {
-    method: "POST"
-  })
+    method: "POST",
+  });
 
   const resBody = await res.json();
   console.log(resBody);
@@ -60,9 +62,35 @@ export async function joinAppointment(appointmentId: string): Promise<TAppointme
     if (res.status === 404) {
       // 해당 방이 존재하지 않음
     }
-        const { status_code, message } = resBody;
+    const { status_code, message } = resBody;
     throw new Error(`${status_code}: ${message}`);
   }
 
-  return resBody.data as TAppointmentResponse
+  return resBody.data as TAppointmentResponse;
+}
+
+/* 약속 나가기 */
+export async function leaveAppointment(appointmentId: string) {
+  const res = await fetch(
+    `/auth-api/appointment/participant/${appointmentId}`,
+    {
+      method: "DELETE",
+    },
+  );
+
+  const resBody = await res.json();
+  console.log(resBody);
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      // 호스트는 나갈 수 없음
+    }
+    if (res.status === 404) {
+      // 참여 중인 유저가 아니거나 방이 없음
+    }
+    const { status_code, message } = resBody;
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return;
 }

@@ -10,6 +10,8 @@ import { getAddressLngLat } from "@/api/kakao-local";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { joinAppointment } from "@/api/appointment";
 import { registerMemberProfile } from "@/api/member";
+import useLeaveAppointment from "@/hooks/useLeaveAppointment";
+import { useRouter } from "next/navigation";
 
 type Place = {
   address: string;
@@ -20,6 +22,7 @@ type Place = {
 
 interface EditProfileDrawerProps {
   appointmentId: string;
+  appointmentHostId: number;
   initialProfile: MemberProfile | null;
   open?: boolean;
   setOpen?: (open: boolean) => void;
@@ -27,6 +30,7 @@ interface EditProfileDrawerProps {
 
 const EditProfileDrawer = ({
   appointmentId,
+  appointmentHostId,
   initialProfile,
   open,
   setOpen,
@@ -48,7 +52,10 @@ const EditProfileDrawer = ({
   const alreadyJoined = initialProfile !== null;
 
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const router = useRouter();
+
+  /* 저장하기 */
+  const { mutate: mutateSubmit } = useMutation({
     mutationFn: async ({
       alreadyJoined,
       nickName,
@@ -82,7 +89,7 @@ const EditProfileDrawer = ({
     e.preventDefault();
     if (isDisabled()) return;
 
-    mutate(
+    mutateSubmit(
       {
         alreadyJoined,
         nickName,
@@ -137,14 +144,30 @@ const EditProfileDrawer = ({
       ? startingPlace
       : startingPlace?.startingPlace;
 
+  /* 약속 나가기 */
+  const canLeave = alreadyJoined && initialProfile.id !== appointmentHostId;
+
+  const { mutate: mutateLeave } = useLeaveAppointment(appointmentId);
+
+  const leaveAppointment = () => {
+    mutateLeave(undefined, {
+      onSuccess: () => {
+        router.push("/setup-meeting");
+      },
+      onError: () => {
+        alert("약속 나가기에 실패했습니다. 잠시후 다시 시도해주세요.");
+      },
+    });
+  };
+
   return (
     <BottomDrawer open={open} onOpenChange={setOpen}>
       {({ close }) => (
         <DefaultDrawerLayout
           title="내 정보"
           secondaryAction={
-            alreadyJoined
-              ? { label: "약속 나가기", onClick: () => {} }
+            canLeave
+              ? { label: "약속 나가기", onClick: leaveAppointment }
               : undefined
           }
           close={close}
