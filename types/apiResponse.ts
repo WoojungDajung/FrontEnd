@@ -21,8 +21,17 @@ export type TAppointmentResponse = {
   appointmentUserList: AppointmentUser[];
 };
 
+// 방을 생성한 사용자는 처음엔 id만 부여됨
 export type MemberProfile = {
   id: number;
   memberNickName: string | null;
   startingPlace: string | null;
+};
+
+export type TRegisterMemberProfileResponse = {
+  nickName: string;
+  address: string;
+  startingPlace: string;
+  longitude: string;
+  latitude: string;
 };

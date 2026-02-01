@@ -1,32 +1,141 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import BottomDrawer from "../shared/BottomDrawer";
 import Button from "../shared/Button";
 import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
 import FormField from "../shared/FormField";
 import { MemberProfile } from "@/types/apiResponse";
+import PostcodePopup from "../shared/PostcodePopup";
+import { Address } from "@/types/daum";
+import { getAddressLngLat } from "@/api/kakao-local";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { joinAppointment } from "@/api/appointment";
+import { registerMemberProfile } from "@/api/member";
+
+type Place = {
+  address: string;
+  startingPlace: string;
+  latitude: string;
+  longitude: string;
+};
 
 interface EditProfileDrawerProps {
-  initialProfile?: MemberProfile;
+  appointmentId: string;
+  initialProfile: MemberProfile | null;
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
 
 const EditProfileDrawer = ({
+  appointmentId,
   initialProfile,
   open,
   setOpen,
 }: EditProfileDrawerProps) => {
-  const [nickName, setNickName] = useState(initialProfile?.memberNickName);
+  const [nickName, setNickName] = useState(
+    initialProfile?.memberNickName ?? "",
+  );
+  /* 출발 장소
+  기존에 출발 장소를 등록한 경우, string (/member/{roomHash}가 장소명만 제공)
+  지금 수정한 경우, Place (Postcode Popup에서 고른 주소를 경도/위도 포함한 타입으로 변환) 
+  */
+  const [startingPlace, setStartingPlace] = useState<string | Place | null>(
+    () => {
+      if (!initialProfile || initialProfile.startingPlace === "") return null;
+      return initialProfile.startingPlace;
+    },
+  );
 
-  const alreadyJoined = initialProfile !== undefined;
+  const alreadyJoined = initialProfile !== null;
 
-  const onClickButton = () => {
-    if (alreadyJoined) {
-      // 프로필 수정
-    } else {
-      // 약속 방 참여(join)
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async ({
+      alreadyJoined,
+      nickName,
+      place,
+    }: {
+      alreadyJoined: boolean;
+      nickName: string;
+      place?: Place;
+    }) => {
+      if (!alreadyJoined) {
+        await joinAppointment(appointmentId);
+      }
+      await registerMemberProfile(appointmentId, nickName, place);
+    },
+  });
+
+  const isDisbled = () => {
+    if (nickName === "") return true;
+    if (
+      nickName === initialProfile?.memberNickName &&
+      startingPlace === initialProfile.startingPlace
+    )
+      return true;
+    return false;
+  };
+
+  const onSubmit = async (
+    e: FormEvent<HTMLFormElement>,
+    closeModal: () => void,
+  ) => {
+    e.preventDefault();
+    isDisbled();
+
+    mutate(
+      {
+        alreadyJoined,
+        nickName,
+        place:
+          startingPlace !== null && typeof startingPlace !== "string"
+            ? startingPlace
+            : undefined,
+      },
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({
+            queryKey: ["appointment-user-profile", appointmentId],
+          });
+          await queryClient.invalidateQueries({
+            queryKey: ["appointment", appointmentId],
+          });
+          closeModal();
+        },
+        onError: () => {
+          alert("프로필 수정에 실패하였습니다. 잠시후 다시 시도해주세요.");
+        },
+      },
+    );
+  };
+
+  /* 출발 장소 주소 입력 */
+  const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
+
+  const openSearchAddressPopup = () => {
+    setPostcodePopupOpen(true);
+  };
+
+  const onCompleteAddressPopup = async (address: Address) => {
+    try {
+      const { longitude, latitude } = await getAddressLngLat(address.address);
+      const placeName =
+        address.buildingName !== "" ? address.buildingName : address.address;
+      const place: Place = {
+        address: address.address,
+        startingPlace: placeName,
+        longitude,
+        latitude,
+      };
+      setStartingPlace(place);
+    } catch (error) {
+      alert("주소 변환 실패");
     }
   };
+
+  const startingPlaceStr =
+    typeof startingPlace === "string"
+      ? startingPlace
+      : startingPlace?.startingPlace;
 
   return (
     <BottomDrawer open={open} onOpenChange={setOpen}>
@@ -40,12 +149,15 @@ const EditProfileDrawer = ({
           }
           close={close}
         >
-          <div className="flex flex-col gap-40">
+          <form
+            className="flex flex-col gap-40"
+            onSubmit={(e) => onSubmit(e, close)}
+          >
             <div className="mt-16 flex flex-col gap-16">
               <FormField label="이름" required inputId="name">
                 <div className="input-container">
                   <input
-                    className="input"
+                    className="input typo-16-regular"
                     id="name"
                     name="name"
                     type="text"
@@ -59,26 +171,38 @@ const EditProfileDrawer = ({
                 inputId="departure-location"
                 description="장소 투표 결과가 같을 경우, 모두의 출발지에서 가까운 중간 지점을 추천해 드려요."
               >
-                <div className="input-container">
-                  {/* TODO: 장소 선택 인풋 변경 */}
+                <div
+                  className="input-container cursor-pointer"
+                  onClick={openSearchAddressPopup}
+                >
+                  {startingPlace ? (
+                    <div className="input typo-16-regular">
+                      {startingPlaceStr}
+                    </div>
+                  ) : (
+                    /* typo-16-regular 글자 높이만큼 빈 */
+                    <div className="h-26 w-full" />
+                  )}
                   <input
-                    className="input"
+                    type="hidden"
                     id="departure-location"
                     name="departure-location"
-                    type="text"
+                    value={startingPlaceStr ?? ""}
                   />
                 </div>
               </FormField>
             </div>
-            <Button
-              className="h-56"
-              size="Large"
-              onClick={onClickButton}
-              disabled={nickName === "" || nickName === undefined}
-            >
+            <Button className="h-56" size="Large" disabled={isDisbled()}>
               저장하기
             </Button>
-          </div>
+          </form>
+
+          {/* 주소 입력 팝업 */}
+          <PostcodePopup
+            open={postcodePopupOpen}
+            setOpen={setPostcodePopupOpen}
+            onComplete={onCompleteAddressPopup}
+          />
         </DefaultDrawerLayout>
       )}
     </BottomDrawer>

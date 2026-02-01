@@ -46,3 +46,23 @@ export async function editAppointment(
 
   return resBody.data as TAppointmentResponse;
 }
+
+/* 약속 방 참여 */
+export async function joinAppointment(appointmentId: string): Promise<TAppointmentResponse> {
+  const res = await fetch(`/auth-api/appointment/join/${appointmentId}`, {
+    method: "POST"
+  })
+
+  const resBody = await res.json();
+  console.log(resBody);
+
+  if (!res.ok) {
+    if (res.status === 404) {
+      // 해당 방이 존재하지 않음
+    }
+        const { status_code, message } = resBody;
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return resBody.data as TAppointmentResponse
+}

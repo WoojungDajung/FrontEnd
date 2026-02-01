@@ -67,6 +67,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
       </div>
       {appointmentData.appointmentUserList.length > 0 && (
         <ParticipantList
+          appointmentId={appointmentId}
           myProfile={profileData}
           participants={appointmentData.appointmentUserList}
         />
@@ -115,6 +116,8 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
 
       {/* Drawer */}
       <EditProfileDrawer
+        key={`${profileData?.id}-${profileData?.memberNickName}-${profileData?.startingPlace}`}
+        appointmentId={appointmentId}
         initialProfile={profileData}
         open={profileDrawerOpen}
         setOpen={setProfileDrawerOpen}

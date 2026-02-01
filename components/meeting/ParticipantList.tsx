@@ -13,11 +13,16 @@ import ParticipantBadge from "./ParticipantBadge";
 import { AppointmentUser, MemberProfile } from "@/types/apiResponse";
 
 interface ParticipantListProps {
+  appointmentId: string;
   myProfile: MemberProfile | null;
   participants: AppointmentUser[];
 }
 
-const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
+const ParticipantList = ({
+  appointmentId,
+  myProfile,
+  participants,
+}: ParticipantListProps) => {
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
 
   const me = participants.find((p) => p.id === myProfile?.id);
@@ -82,7 +87,6 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
     if (!containerRef.current) return;
 
     const { canToggle, containerHeight } = compute(containerRef.current, 2);
-    console.log(canToggle, containerHeight);
     setCanToggle(canToggle);
     setContainerMaxHeight(containerHeight);
   }, [participants, containerRef, compute]);
@@ -151,6 +155,8 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
 
       {me && myProfile && (
         <EditProfileDrawer
+          key={`${myProfile.id}-${myProfile.memberNickName}-${myProfile.startingPlace}`}
+          appointmentId={appointmentId}
           initialProfile={myProfile}
           open={profileDrawerOpen}
           setOpen={setProfileDrawerOpen}
