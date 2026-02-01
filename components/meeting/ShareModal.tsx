@@ -10,13 +10,19 @@ import {
 } from "@/lib/kakao-share/utils";
 
 interface ShareModalProps {
+  appointmentId: string;
+  appointmentName: string;
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
 
-const ShareModal = ({ open, setOpen }: ShareModalProps) => {
-  //TODO: 유효 링크로 변경
-  const link = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/1`;
+const ShareModal = ({
+  appointmentId,
+  appointmentName,
+  open,
+  setOpen,
+}: ShareModalProps) => {
+  const link = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${appointmentId}`;
 
   const showMoreShare = () => {
     navigator.share({ url: link });
@@ -27,7 +33,7 @@ const ShareModal = ({ open, setOpen }: ShareModalProps) => {
   };
 
   const shareOnKakaoTalk = () => {
-    shareMeetingOnKakaoTalk("1", "스터디밥먹으러");
+    shareMeetingOnKakaoTalk(appointmentId, appointmentName);
   };
 
   return (

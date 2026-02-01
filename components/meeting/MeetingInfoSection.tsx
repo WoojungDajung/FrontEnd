@@ -133,7 +133,12 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
         setOpen={setMeetingDrawerOpen}
       />
       {/* Modal */}
-      <ShareModal open={shareModalOpen} setOpen={setShareModalOpen} />
+      <ShareModal
+        appointmentId={appointmentId}
+        appointmentName={appointmentData.appointment.appointmentName}
+        open={shareModalOpen}
+        setOpen={setShareModalOpen}
+      />
     </section>
   );
 };
