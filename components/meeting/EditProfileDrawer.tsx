@@ -65,7 +65,7 @@ const EditProfileDrawer = ({
     },
   });
 
-  const isDisbled = () => {
+  const isDisabled = () => {
     if (nickName === "") return true;
     if (
       nickName === initialProfile?.memberNickName &&
@@ -80,7 +80,7 @@ const EditProfileDrawer = ({
     closeModal: () => void,
   ) => {
     e.preventDefault();
-    isDisbled();
+    if (isDisabled()) return;
 
     mutate(
       {
@@ -192,7 +192,7 @@ const EditProfileDrawer = ({
                 </div>
               </FormField>
             </div>
-            <Button className="h-56" size="Large" disabled={isDisbled()}>
+            <Button className="h-56" size="Large" disabled={isDisabled()}>
               저장하기
             </Button>
           </form>
