@@ -1,12 +1,12 @@
-import { Place } from "@/types/meeting";
 import BottomDrawer from "../shared/BottomDrawer";
 import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
 import { useCallback, useRef } from "react";
 import Script from "next/script";
 import Link from "next/link";
+import { Location } from "@/types/apiResponse";
 
 interface PlaceInfoDrawerProps {
-  place: Place;
+  place: Location;
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }

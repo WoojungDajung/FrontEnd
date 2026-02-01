@@ -1,11 +1,11 @@
 import { cn } from "@/utils/cn";
 import RightChevronIcon from "../shared/icons/RightChevronIcon";
-import { Place } from "@/types/meeting";
 import { MouseEvent, useState } from "react";
 import PlaceInfoDrawer from "./PlaceInfoDrawer";
+import { Location } from "@/types/apiResponse";
 
 interface CommonItemProps {
-  place: Place;
+  place: Location;
   totalCount: number;
 }
 
@@ -26,6 +26,8 @@ const PlaceItem = ({
     e.stopPropagation();
     setPlaceInfoDrawerOpen(true);
   };
+
+  const voteCount = Number(place.voteCount)
 
   return (
     <>
@@ -52,11 +54,11 @@ const PlaceItem = ({
           <p className="typo-14-regular text-gray-500">{place.address}</p>
         </div>
         <div className="flex flex-col gap-4">
-          <p className="typo-12-regular text-gray-500">{`투표 인원 ${place.count}명`}</p>
+          <p className="typo-12-regular text-gray-500">{`투표 인원 ${voteCount}명`}</p>
           <div className="w-full h-4">
             <div
               className="h-full bg-primary-400"
-              style={{ width: `${(place.count / totalCount) * 100}%` }}
+              style={{ width: `${(voteCount / totalCount) * 100}%` }}
             />
           </div>
         </div>

@@ -42,3 +42,16 @@ export type TDateVoteResponse = {
   unVotedList: string[];
   unVotedListCount: number;
 };
+
+export type Location = {
+  id: number;
+  name: string;
+  address: string;
+  voteCount: string;
+  percentage: string;
+};
+
+export type TLocationResponse = {
+  locationList: Location[];
+  memberVoteRatio: string; // ex: "1/5"
+};

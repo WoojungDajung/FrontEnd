@@ -5,7 +5,7 @@ import PersonIcon from "./icons/PersonIcon";
 interface CountButtonProps {
   currentCount: number;
   totalCount: number;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const CountButton = ({

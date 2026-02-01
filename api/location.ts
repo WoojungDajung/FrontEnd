@@ -1,3 +1,31 @@
+import { TLocationResponse } from "@/types/apiResponse";
+
+/* 장소 목록 조회 */
+export async function getLocations(appointmentId: string) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/${appointmentId}`;
+  const res = await fetch(url, {
+    method: "GET",
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+
+  if (!res.ok) {
+    if (res.status === 400) {
+      // 유저가 존재하지 않습니다.
+    }
+    if (res.status === 404) {
+      // 방 참여자가 아닙니다.
+    }
+
+    const { status_code, message } = resBody;
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return resBody.data as TLocationResponse;
+}
+
+/* 장소 등록 */
 export async function registerLocation(
   appointmentId: string,
   placeName: string,

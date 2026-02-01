@@ -3,35 +3,33 @@
 import { cn } from "@/utils/cn";
 import Button from "../shared/Button";
 import PlaceIcon from "./icons/PlaceIcon";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { PlaceItemForView, PlaceItemForVote } from "./PlaceItem";
-import { Place } from "@/types/meeting";
 import PostcodePopup from "../shared/PostcodePopup";
 import { Address } from "@/types/daum";
 import { getAddressLngLat } from "@/api/kakao-local";
 import { useMutation } from "@tanstack/react-query";
 import { registerLocation } from "@/api/location";
+import { Location } from "@/types/apiResponse";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
+  locations: Location[];
+  totalCount: number; // 총 인원 수
   disabled?: boolean;
 }
 
-const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
+const PlaceVoteCard = ({
+  appointmentId,
+  locations,
+  totalCount,
+  disabled,
+}: PlaceVoteCardProps) => {
   const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
-  const [places, setPlaces] = useState<Place[]>([
-    // { id: "1", name: "장소명", address: "상세 주소", count: 3 },
-    // { id: "2", name: "장소명", address: "상세 주소", count: 2 },
-    // { id: "3", name: "장소명", address: "상세 주소", count: 1 },
-  ]);
+
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
 
-  const placeIdVoted = "3";
-
-  const totalCount = useMemo(
-    () => places.reduce((acc, cur) => acc + cur.count, 0),
-    [places],
-  );
+  const placeIdVoted = 3;
 
   const openSearchAddressPopup = () => {
     setPostcodePopupOpen(true);
@@ -78,16 +76,16 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
 
   return (
     <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col items-center gap-16 items-center py-16">
-      {places.length > 0 ? (
+      {locations.length > 0 ? (
         <>
           {mode === "VIEW" ? (
             <>
               <div className="flex flex-col gap-16">
-                {places.map((place) => (
+                {locations.map((place) => (
                   <PlaceItemForView
                     key={place.id}
                     place={place}
-                    totalCount={6}
+                    totalCount={totalCount}
                     votedByMe={place.id === placeIdVoted}
                   />
                 ))}
@@ -113,7 +111,7 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
             </>
           ) : (
             <VotePlace
-              places={places}
+              places={locations}
               placeIdVoted={placeIdVoted}
               totalCount={totalCount}
               onCompleteVote={() => setMode("VIEW")}
@@ -165,14 +163,14 @@ const VotePlace = ({
   totalCount,
   onCompleteVote,
 }: {
-  places: Place[];
-  placeIdVoted?: string;
+  places: Location[];
+  placeIdVoted?: number;
   totalCount: number;
   onCompleteVote: () => void;
 }) => {
-  const [selected, setSelected] = useState<string | null>(placeIdVoted ?? null);
+  const [selected, setSelected] = useState<number | null>(placeIdVoted ?? null);
 
-  const onVoteItem = (placeId: string) => {
+  const onVoteItem = (placeId: number) => {
     if (placeId === selected) {
       setSelected(null);
     } else {
