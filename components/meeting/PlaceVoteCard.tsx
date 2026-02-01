@@ -85,6 +85,7 @@ const PlaceVoteCard = ({
                   <PlaceItemForView
                     key={place.id}
                     place={place}
+                    appointmentId={appointmentId}
                     totalCount={totalCount}
                     votedByMe={place.id === placeIdVoted}
                   />
@@ -114,6 +115,7 @@ const PlaceVoteCard = ({
               places={locations}
               placeIdVoted={placeIdVoted}
               totalCount={totalCount}
+              appointmentId={appointmentId}
               onCompleteVote={() => setMode("VIEW")}
             />
           )}
@@ -161,11 +163,13 @@ const VotePlace = ({
   places,
   placeIdVoted,
   totalCount,
+  appointmentId,
   onCompleteVote,
 }: {
   places: Location[];
   placeIdVoted?: number;
   totalCount: number;
+  appointmentId: string;
   onCompleteVote: () => void;
 }) => {
   const [selected, setSelected] = useState<number | null>(placeIdVoted ?? null);
@@ -190,6 +194,7 @@ const VotePlace = ({
           <PlaceItemForVote
             key={place.id}
             place={place}
+            appointmentId={appointmentId}
             onClick={() => onVoteItem(place.id)}
             voted={place.id === selected}
             totalCount={totalCount}

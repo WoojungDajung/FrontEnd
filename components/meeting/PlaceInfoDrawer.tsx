@@ -1,40 +1,60 @@
 import BottomDrawer from "../shared/BottomDrawer";
 import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import Link from "next/link";
-import { Location } from "@/types/apiResponse";
+import useLocationInfoQuery from "@/hooks/useLocationInfoQuery";
 
 interface PlaceInfoDrawerProps {
-  place: Location;
+  placeId: number;
+  appointmentId: string;
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
 
-const PlaceInfoDrawer = ({ place, open, setOpen }: PlaceInfoDrawerProps) => {
+const PlaceInfoDrawer = ({
+  placeId,
+  appointmentId,
+  open,
+  setOpen,
+}: PlaceInfoDrawerProps) => {
+  // 실제 드로워가 화면 상에 오픈되었는지
+  const [isDrawerOpened, setIsDrawerOpened] = useState(false);
+
+  const { data } = useLocationInfoQuery({
+    appointmentId,
+    placeId,
+    enabled: isDrawerOpened,
+  });
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   const deletePlace = () => {
     // 장소 삭제
   };
 
+  // 지도 표시
+  useEffect(() => {
+    if (!isDrawerOpened) return;
+    if (!mapContainerRef.current) return;
+    if (data === undefined) return;
+
+    const lat = Number(data.latitude);
+    const lng = Number(data.longitude);
+
+    const position = new window.kakao.maps.LatLng(lat, lng);
+    const map = new window.kakao.maps.Map(mapContainerRef.current, {
+      center: position,
+      level: 3,
+    });
+    const marker = new window.kakao.maps.Marker({
+      position,
+    });
+    marker.setMap(map);
+  }, [isDrawerOpened, data]);
+
   const onDrawerOpen = useCallback((visible: boolean) => {
-    if (visible) {
-      if (!mapContainerRef.current) return;
-      // TODO: 실제 장소 좌표 값으로 교체
-      const position = new window.kakao.maps.LatLng(
-        36.350754308409904,
-        127.38650139748687,
-      );
-      const map = new window.kakao.maps.Map(mapContainerRef.current, {
-        center: position,
-        level: 3,
-      });
-      const marker = new window.kakao.maps.Marker({
-        position,
-      });
-      marker.setMap(map);
-    }
+    setIsDrawerOpened(visible);
   }, []);
 
   const onLoadScript = () => {
@@ -44,7 +64,11 @@ const PlaceInfoDrawer = ({ place, open, setOpen }: PlaceInfoDrawerProps) => {
 
   // 예시 값
   const canDelete = true;
-  const voters = ["Name", "Name", "Name", "Name"];
+
+  // TODO: 로딩/에러 처리
+  if (data === undefined) {
+    return <></>;
+  }
 
   return (
     <>
@@ -72,15 +96,14 @@ const PlaceInfoDrawer = ({ place, open, setOpen }: PlaceInfoDrawerProps) => {
             <div className="flex flex-col gap-16">
               <div className="flex flex-col gap-16 w-full">
                 <div>
-                  <p className="typo-16-regular text-gray-800">{place.name}</p>
+                  <p className="typo-16-regular text-gray-800">{data.name}</p>
                   <p className="typo-14-regular text-gray-500">
-                    {place.address}
+                    {data.address}
                   </p>
                 </div>
                 <div className="flex flex-col gap-8">
                   <Link
-                    // TODO: 실제 장소 좌표 값으로 변경
-                    href={`https://map.kakao.com/link/map/${36.350754308409904},${127.38650139748687}`}
+                    href={`https://map.kakao.com/link/map/${Number(data.latitude)},${Number(data.longitude)}`}
                     target="_blank"
                   >
                     <div
@@ -98,7 +121,7 @@ const PlaceInfoDrawer = ({ place, open, setOpen }: PlaceInfoDrawerProps) => {
                   이 장소를 선택한 친구들
                 </p>
                 <div className="flex flex-wrap gap-8">
-                  {voters.map((voter, idx) => (
+                  {data.selectedList.map((voter, idx) => (
                     <div
                       key={`voter-${idx}`}
                       className="px-12 py-8 bg-gray-100 text-gray-800 typo-14-regular rounded-[100px]"

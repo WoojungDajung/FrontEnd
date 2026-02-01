@@ -7,6 +7,7 @@ import { Location } from "@/types/apiResponse";
 interface CommonItemProps {
   place: Location;
   totalCount: number;
+  appointmentId: string;
 }
 
 interface PlaceItemProps extends CommonItemProps {
@@ -17,6 +18,7 @@ interface PlaceItemProps extends CommonItemProps {
 const PlaceItem = ({
   place,
   totalCount,
+  appointmentId,
   className,
   onClick,
 }: PlaceItemProps) => {
@@ -27,7 +29,7 @@ const PlaceItem = ({
     setPlaceInfoDrawerOpen(true);
   };
 
-  const voteCount = Number(place.voteCount)
+  const voteCount = Number(place.voteCount);
 
   return (
     <>
@@ -65,7 +67,8 @@ const PlaceItem = ({
       </div>
 
       <PlaceInfoDrawer
-        place={place}
+        placeId={place.id}
+        appointmentId={appointmentId}
         open={placeInfoDrawerOpen}
         setOpen={setPlaceInfoDrawerOpen}
       />
@@ -79,6 +82,7 @@ interface PlaceItemForViewProps extends CommonItemProps {
 
 const PlaceItemForView = ({
   place,
+  appointmentId,
   votedByMe,
   totalCount,
 }: PlaceItemForViewProps) => {
@@ -86,6 +90,7 @@ const PlaceItemForView = ({
     <PlaceItem
       place={place}
       totalCount={totalCount}
+      appointmentId={appointmentId}
       className={cn(
         votedByMe ? "bg-primary-25" : "bg-white",
         "border border-gray-50",

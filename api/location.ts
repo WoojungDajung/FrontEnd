@@ -1,4 +1,4 @@
-import { TLocationResponse } from "@/types/apiResponse";
+import { TLocationListResponse, TLocationResponse } from "@/types/apiResponse";
 
 /* 장소 목록 조회 */
 export async function getLocations(appointmentId: string) {
@@ -22,7 +22,7 @@ export async function getLocations(appointmentId: string) {
     throw new Error(`${status_code}: ${message}`);
   }
 
-  return resBody.data as TLocationResponse;
+  return resBody.data as TLocationListResponse;
 }
 
 /* 장소 등록 */
@@ -56,4 +56,25 @@ export async function registerLocation(
   }
 
   return;
+}
+
+/* 특정 장소 조회 */
+export async function getLocation(appointmentId: string, placeId: number) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/specify/${appointmentId}/${placeId}`;
+  const res = await fetch(url, {
+    method: "GET",
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+
+  if (!res.ok) {
+    if (res.status === 404) {
+      // 방이 존재하지 않습니다.
+    }
+    const { status_code, message } = resBody;
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return resBody.data as TLocationResponse;
 }

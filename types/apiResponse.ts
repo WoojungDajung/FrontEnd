@@ -51,7 +51,16 @@ export type Location = {
   percentage: string;
 };
 
-export type TLocationResponse = {
+export type TLocationListResponse = {
   locationList: Location[];
   memberVoteRatio: string; // ex: "1/5"
+};
+
+export type TLocationResponse = {
+  id: number;
+  name: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+  selectedList: string[];
 };
