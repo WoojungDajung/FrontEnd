@@ -127,3 +127,36 @@ export async function getMyVoteLocation(appointmentId: string) {
 
   return resBody.data as TMyVoteLocationResponse[];
 }
+
+/* 장소 투표 */
+export async function voteLocation(
+  appointmentId: string,
+  placeIdList: number[],
+) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/vote/${appointmentId}`;
+  const res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({
+      placeList: placeIdList,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+
+  if (!res.ok) {
+    if (res.status === 402) {
+      // 프로필 미설정(닉네임/출발지)
+    }
+    if (res.status === 404) {
+      // 방 참여자가 아닙니다.
+    }
+    const { status_code, message } = resBody;
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return;
+}

@@ -10,6 +10,7 @@ import { Address } from "@/types/daum";
 import { Location } from "@/types/apiResponse";
 import useRegisterLocation from "@/hooks/useRegisterLocation";
 import useMyVoteLocationQuery from "@/hooks/useMyVoteLocationQuery";
+import useVoteLocation from "@/hooks/useVoteLocation";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
@@ -173,9 +174,20 @@ const VotePlace = ({
     }
   };
 
+  /* 투표 반영 */
+  const { mutate } = useVoteLocation(appointmentId);
   const saveVote = () => {
-    // TODO: 투표 반영
-    onCompleteVote();
+    mutate(
+      { placeIdList: selected },
+      {
+        onError: () => {
+          alert("투표 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
+        },
+        onSettled: () => {
+          onCompleteVote();
+        },
+      },
+    );
   };
 
   const isVoted = (locationId: number) => selected.includes(locationId);
