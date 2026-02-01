@@ -7,10 +7,8 @@ import { useState } from "react";
 import { PlaceItemForView, PlaceItemForVote } from "./PlaceItem";
 import PostcodePopup from "../shared/PostcodePopup";
 import { Address } from "@/types/daum";
-import { getAddressLngLat } from "@/api/kakao-local";
-import { useMutation } from "@tanstack/react-query";
-import { registerLocation } from "@/api/location";
 import { Location } from "@/types/apiResponse";
+import useRegisterLocation from "@/hooks/useRegisterLocation";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
@@ -40,38 +38,16 @@ const PlaceVoteCard = ({
   };
 
   /* 장소 등록 */
-  // TODO: isPending 시 로딩 표시
-  const { mutate, isPending } = useMutation({
-    mutationFn: async ({
-      appointmentId,
-      address,
-    }: {
-      appointmentId: string;
-      address: Address;
-    }) => {
-      const placeName =
-        address.buildingName !== "" ? address.buildingName : address.address;
-      // 주소 좌표(경도,위도) 변환
-      const { longitude, latitude } = await getAddressLngLat(address.address);
-      // 장소 등록
-      await registerLocation(
-        appointmentId,
-        placeName,
-        address.address,
-        latitude,
-        longitude,
-      );
-    },
-    onError: () => {
-      alert("장소 등록에 실패했습니다. 잠시 후 다시 시도해주세요.");
-    },
-    onSuccess: () => {
-      // TODO: 장소 목록 조회 쿼리 무효화
-    },
-  });
-
+  const { mutate } = useRegisterLocation(appointmentId);
   const addPlace = async (address: Address) => {
-    mutate({ appointmentId, address });
+    mutate(
+      { address },
+      {
+        onError: () => {
+          alert("장소 등록에 실패했습니다. 잠시 후 다시 시도해주세요.");
+        },
+      },
+    );
   };
 
   return (
