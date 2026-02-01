@@ -78,3 +78,24 @@ export async function getLocation(appointmentId: string, placeId: number) {
 
   return resBody.data as TLocationResponse;
 }
+
+/* 장소 삭제 */
+export async function deleteLocation(appointmentId: string, placeId: number) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/${appointmentId}/${placeId}`;
+  const res = await fetch(url, {
+    method: "DELETE",
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+
+  if (!res.ok) {
+    if (res.status === 404) {
+      // 방이 존재하지 않습니다.
+    }
+    const { status_code, message } = resBody;
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return;
+}

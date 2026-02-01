@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import Link from "next/link";
 import useLocationInfoQuery from "@/hooks/useLocationInfoQuery";
+import useDeleteLocation from "@/hooks/useDeleteLocation";
 
 interface PlaceInfoDrawerProps {
   placeId: number;
@@ -29,8 +30,13 @@ const PlaceInfoDrawer = ({
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
-  const deletePlace = () => {
-    // 장소 삭제
+  /* 장소 삭제 */
+  const { mutateAsync } = useDeleteLocation(appointmentId, placeId);
+  const deletePlace = async (closeModal: () => void) => {
+    if (confirm("정말 삭제하시겠습니까?")) {
+      await mutateAsync();
+      closeModal();
+    }
   };
 
   // 지도 표시
@@ -62,9 +68,6 @@ const PlaceInfoDrawer = ({
     window.kakao.maps.load();
   };
 
-  // 예시 값
-  const canDelete = true;
-
   // TODO: 로딩/에러 처리
   if (data === undefined) {
     return <></>;
@@ -86,11 +89,10 @@ const PlaceInfoDrawer = ({
         {({ close }) => (
           <DefaultDrawerLayout
             title="장소 정보"
-            secondaryAction={
-              canDelete
-                ? { label: "삭제하기", onClick: deletePlace }
-                : undefined
-            }
+            secondaryAction={{
+              label: "삭제하기",
+              onClick: () => deletePlace(close),
+            }}
             close={close}
           >
             <div className="flex flex-col gap-16">
