@@ -71,6 +71,11 @@ export function addDays(date: Date, value: number) {
   return dayjs(date).add(value, "day").toDate();
 }
 
+/**
+ * 
+ * @param date 
+ * @returns YYYY-MM-DD 형식의 문자열
+ */
 export function dateToString(date: Date) {
-  return dayjs(date).format("YYMMDD");
+  return dayjs(date).format("YYYY-MM-DD");
 }

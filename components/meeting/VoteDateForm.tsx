@@ -4,15 +4,17 @@ import { useMemo, useState } from "react";
 import Button from "../shared/Button";
 import VoteCalendar, { VoteState } from "./VoteCalendar";
 import { addDays, dateToString } from "@/utils/calendar";
+import useVoteDate from "@/hooks/useVoteDate";
 
 interface VoteDateFormProps {
   onSubmit: () => void;
+  appointmentId: string;
 }
 
-const VoteDateForm = ({ onSubmit }: VoteDateFormProps) => {
+const VoteDateForm = ({ onSubmit, appointmentId }: VoteDateFormProps) => {
   // TODO: 초기값은 이전 사용자 투표 현황으로 교체 필요
   const [status, setStatus] = useState<{
-    selected: Set<string>; // YYMMDD 형식의 문자열
+    selected: Set<string>; // YYYY-MM-DD 형식의 문자열
     uncertain: Set<string>;
   }>({
     selected: new Set(),
@@ -20,11 +22,6 @@ const VoteDateForm = ({ onSubmit }: VoteDateFormProps) => {
   });
 
   const tomorrow = useMemo(() => addDays(new Date(), 1), []);
-
-  const submit = () => {
-    // TODO: 투표 반영
-    onSubmit();
-  };
 
   const onChange = (date: Date, prevState: VoteState, nextState: VoteState) => {
     const value = dateToString(date);
@@ -48,6 +45,34 @@ const VoteDateForm = ({ onSubmit }: VoteDateFormProps) => {
       selected: newSelected,
       uncertain: newUncertain,
     });
+  };
+
+  /* 투표 제출 */
+  const { mutate } = useVoteDate(appointmentId);
+
+  const submit = () => {
+    if (confirm("투표를 저장하시겠습니까?")) {
+      const votes: { date: string; type: "CERTAIN" | "UNCERTAIN" }[] = [];
+
+      for (const date of status.selected) {
+        votes.push({ date, type: "CERTAIN" });
+      }
+      for (const date of status.uncertain) {
+        votes.push({ date, type: "UNCERTAIN" });
+      }
+
+      mutate(
+        { votes },
+        {
+          onSuccess: () => {
+            onSubmit();
+          },
+          onError: () => {
+            alert("투표 제출에 실패했습니다. 잠시 후 다시 시도해주세요.");
+          },
+        },
+      );
+    }
   };
 
   return (

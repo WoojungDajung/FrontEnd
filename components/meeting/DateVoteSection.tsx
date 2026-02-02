@@ -48,7 +48,10 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
             </Button>
           </>
         ) : (
-          <VoteDateForm onSubmit={() => setMode("VIEW")} />
+          <VoteDateForm
+            appointmentId={appointmentId}
+            onSubmit={() => setMode("VIEW")}
+          />
         )}
       </div>
 
