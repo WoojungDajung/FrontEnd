@@ -3,17 +3,30 @@ import DateVoteSection from "@/components/meeting/DateVoteSection";
 import MeetingInfoSection from "@/components/meeting/MeetingInfoSection";
 import MeetingSettledSection from "@/components/meeting/MeetingSettledSection";
 import PlaceVoteSection from "@/components/meeting/PlaceVoteSection";
+import { ERROR_MESSAGE } from "@/constants/error-message";
 import { getQueryClient } from "@/lib/react-query/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { notFound, redirect } from "next/navigation";
 
 const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
   const { meetingId } = await params;
 
   const queryClient = getQueryClient();
-  const appointmentInfo = await queryClient.fetchQuery({
-    queryKey: ["appointment", meetingId],
-    queryFn: ({ queryKey }) => getAppointment(queryKey[1]),
-  });
+
+  let appointmentInfo;
+
+  try {
+    appointmentInfo = await queryClient.fetchQuery({
+      queryKey: ["appointment", meetingId],
+      queryFn: ({ queryKey }) => getAppointment(queryKey[1]),
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if ((error.message === ERROR_MESSAGE.APPOINTMENT_NOT_EXIST)) {
+      notFound();
+    }
+    redirect("/error");
+  }
 
   const isSettled = appointmentInfo.appointment.confirmYn === "Y";
 
@@ -24,7 +37,10 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
         <div className="flex flex-col gap-16">
           <MeetingInfoSection appointmentId={meetingId} />
           <DateVoteSection appointmentId={meetingId} canVote={!isSettled} />
-          <PlaceVoteSection appointmentId={meetingId} canRegisterOrVote={!isSettled} />
+          <PlaceVoteSection
+            appointmentId={meetingId}
+            canRegisterOrVote={!isSettled}
+          />
         </div>
       </main>
     </HydrationBoundary>
