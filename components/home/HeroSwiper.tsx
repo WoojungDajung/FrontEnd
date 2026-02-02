@@ -23,6 +23,7 @@ const HeroSwiper = () => {
               alt="온보딩 이미지"
               width={296}
               height={236}
+              preload
             />
           </div>
         </SwiperSlide>
