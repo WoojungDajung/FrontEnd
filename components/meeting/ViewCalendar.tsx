@@ -2,38 +2,34 @@
 import {
   addMonths,
   getDayCells,
+  matchCell,
   startOfMonth,
   WEEKDAYS_KO,
 } from "@/utils/calendar";
-import { useMemo, useState } from "react";
+import { CSSProperties, useMemo, useState } from "react";
 import LeftChevronIcon from "../shared/icons/LeftChevronIcon";
 import RightChevronIcon from "../shared/icons/RightChevronIcon";
 import { cn } from "@/utils/cn";
 import VoteStatusByDateModal from "./VoteStatusByDateModal";
+import useDateVoteStatusByMonthByQuery from "@/hooks/useDateVoteStatusByMonthQuery";
 
 interface ViewCalendarProps {
-  voterNum: number;
+  voterNum: number; // 총 투표자 수
+  appointmentId: string;
 }
 
-type Cell = {
-  day: Date;
-  count: number;
-};
-
-const ViewCalendar = ({ voterNum }: ViewCalendarProps) => {
+const ViewCalendar = ({ voterNum, appointmentId }: ViewCalendarProps) => {
   const [curMonth, setCurMonth] = useState(() => startOfMonth(new Date()));
   const minMonth = useMemo(() => startOfMonth(new Date()), []);
 
   const canPrev = curMonth > minMonth;
 
-  // TODO: curMonth의 투표 현황 가져오기
-  const cells: Cell[] = useMemo(() => {
-    return getDayCells(curMonth).map((c) => ({
-      day: c,
-      // eslint-disable-next-line react-hooks/purity
-      count: Math.floor(Math.random() * (voterNum - 0 + 1) + 0),
-    }));
-  }, [curMonth, voterNum]);
+  const { data } = useDateVoteStatusByMonthByQuery(appointmentId, curMonth);
+
+  const days = useMemo(() => {
+    const cells = getDayCells(curMonth);
+    return matchCell(cells, data?.dateList ?? []);
+  }, [data, curMonth]);
 
   return (
     <div className="w-342 flex flex-col gap-4">
@@ -86,12 +82,12 @@ const ViewCalendar = ({ voterNum }: ViewCalendarProps) => {
 
       {/* Days */}
       <div className="px-16 grid grid-cols-7 gap-4">
-        {cells.map((cell) => (
+        {days.map((day) => (
           <DateCell
-            key={cell.day.toISOString()}
-            isCurMonth={cell.day.getMonth() === curMonth.getMonth()}
-            date={cell.day}
-            ratio={(cell.count / voterNum) * 100}
+            key={day.date.toISOString()}
+            isCurMonth={day.date.getMonth() === curMonth.getMonth()}
+            date={day.date}
+            color={day.color}
           />
         ))}
       </div>
@@ -99,18 +95,16 @@ const ViewCalendar = ({ voterNum }: ViewCalendarProps) => {
   );
 };
 
-const DateCell = ({
-  isCurMonth,
-  ratio,
-  date,
-}: {
+interface DateCellProps {
   isCurMonth: boolean;
-  ratio: number;
   date: Date;
-}) => {
+  color: string | undefined;
+}
+
+const DateCell = ({ isCurMonth, date, color }: DateCellProps) => {
   const [dateStatusModalOpen, setDateStatusModalOpen] = useState(false);
 
-  const clickable = isCurMonth && ratio > 0;
+  const clickable = isCurMonth && color !== undefined;
 
   const onClick = () => {
     if (!clickable) {
@@ -120,14 +114,18 @@ const DateCell = ({
   };
 
   let cellStyle = "";
-  if (isCurMonth && ratio > 0) {
-    if (ratio >= 71) {
-      cellStyle = "bg-primary-400 text-white";
-    } else if (ratio >= 31) {
-      cellStyle = "bg-primary-100 text-primary-800";
-    } else {
-      cellStyle = "bg-primary-25 text-primary-600";
-    }
+  let cellCSSStyle: CSSProperties = {};
+  // if (isCurMonth && ratio > 0) {
+  //   if (ratio >= 71) {
+  //     cellStyle = "bg-primary-400 text-white";
+  //   } else if (ratio >= 31) {
+  //     cellStyle = "bg-primary-100 text-primary-800";
+  //   } else {
+  //     cellStyle = "bg-primary-25 text-primary-600";
+  //   }
+  // } else {
+  if (isCurMonth && color !== undefined) {
+    cellCSSStyle = { ...cellCSSStyle, backgroundColor: color };
   } else {
     if (date.getDay() === 0) {
       cellStyle = isCurMonth ? "text-error-500" : "text-error-200";
@@ -147,6 +145,7 @@ const DateCell = ({
           clickable && "cursor-pointer",
         )}
         onClick={onClick}
+        style={cellCSSStyle}
       >
         {date.getDate()}
       </div>

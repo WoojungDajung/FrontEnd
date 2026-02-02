@@ -1,3 +1,4 @@
+import { VoteDate } from "@/types/apiResponse";
 import dayjs from "dayjs";
 
 export const WEEKDAYS_KO = ["일", "월", "화", "수", "목", "금", "토"] as const;
@@ -11,7 +12,30 @@ export function endOfMonth(date: Date) {
   return dayjs(date).date(lastDate).toDate();
 }
 
-export function getDayCells(month: Date) {
+export function matchCell(
+  cells: Date[],
+  voteDays: VoteDate[],
+): {
+  date: Date;
+  color: string | undefined; // 표가 없으면 color는 undefined
+}[] {
+  const dateColorMap = new Map<string, string>();
+  for (const day of voteDays) {
+    const { ymd, color } = day;
+    dateColorMap.set(ymd, color);
+  }
+
+  return cells.map((cell) => {
+    const ymd = dayjs(cell).format("YYYY-MM-DD");
+
+    return {
+      date: cell,
+      color: dateColorMap.get(ymd),
+    };
+  });
+}
+
+export function getDayCells(month: Date): Date[] {
   const first = startOfMonth(month);
   const last = endOfMonth(month);
 

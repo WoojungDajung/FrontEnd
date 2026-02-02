@@ -43,6 +43,16 @@ export type TDateVoteResponse = {
   unVotedListCount: number;
 };
 
+export type VoteDate = {
+  ymd: string; // YYYY-MM-DD
+  color: string; // ex: "#0EBC7F"
+};
+
+export type TDateVoteByMonthResponse = {
+  dateList: VoteDate[];
+  memberVoteRatio: string; // ex: "1/5"
+};
+
 export type Location = {
   id: number;
   name: string;
@@ -66,6 +76,6 @@ export type TLocationResponse = {
 };
 
 export type TMyVoteLocationResponse = {
-  id: number,
-  name: string,
-}
+  id: number;
+  name: string;
+};
