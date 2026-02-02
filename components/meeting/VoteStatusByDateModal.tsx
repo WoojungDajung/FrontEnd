@@ -1,3 +1,4 @@
+import useDateVoteStatusByYMD from "@/hooks/useDateVoteStatusByYMD";
 import CloseIcon from "../shared/icons/CloseIcon";
 import Modal from "../shared/Modal";
 import CheckIcon from "./icons/CheckIcon";
@@ -7,16 +8,18 @@ interface VoteStatusByDateModalProps {
   date: Date;
   open?: boolean;
   setOpen?: (open: boolean) => void;
+  appointmentId: string;
 }
 
 const VoteStatusByDateModal = ({
   date,
   open,
   setOpen,
+  appointmentId,
 }: VoteStatusByDateModalProps) => {
-  // TODO: open=true일 때 데이터 fetch
-  const certainMembers = ["우정"];
-  const uncertainMembers = ["우정", "우정"];
+  const { data } = useDateVoteStatusByYMD(appointmentId, date);
+
+  if (data === undefined) return <></>;
 
   return (
     <Modal
@@ -43,15 +46,17 @@ const VoteStatusByDateModal = ({
                     color="var(--color-primary-400)"
                   />
                 </div>
-                <p className="typo-14-regular text-gray-800">{`가능해요 (${certainMembers.length}명)`}</p>
+                <p className="typo-14-regular text-gray-800">{`가능해요 (${data.possibleCount}명)`}</p>
               </div>
               <div className="flex gap-4">
-                {certainMembers.map((member) => (
+                {data.possibleUserList.map((user) => (
                   <div
-                    key={member}
+                    key={user.id}
                     className="px-8 py-4 rounded-[100px] bg-primary-25"
                   >
-                    <p className="text-primary-500 typo-12-regular">{member}</p>
+                    <p className="text-primary-500 typo-12-regular">
+                      {user.nickName}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -66,15 +71,17 @@ const VoteStatusByDateModal = ({
                     color="var(--color-gray-400)"
                   />
                 </div>
-                <p className="typo-14-regular text-gray-800">{`애매해요 (${uncertainMembers.length}명)`}</p>
+                <p className="typo-14-regular text-gray-800">{`애매해요 (${data.ambCount}명)`}</p>
               </div>
               <div className="flex gap-4">
-                {uncertainMembers.map((member) => (
+                {data.ambUserList.map((user) => (
                   <div
-                    key={member}
+                    key={user.id}
                     className="px-8 py-4 rounded-[100px] bg-gray-100"
                   >
-                    <p className="text-gray-500 typo-12-regular">{member}</p>
+                    <p className="text-gray-500 typo-12-regular">
+                      {user.nickName}
+                    </p>
                   </div>
                 ))}
               </div>

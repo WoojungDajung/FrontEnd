@@ -53,6 +53,13 @@ export type TDateVoteByMonthResponse = {
   memberVoteRatio: string; // ex: "1/5"
 };
 
+export type TDateVoteByYMDResponse = {
+  possibleCount: number;
+  possibleUserList: { id: number; nickName: string }[];
+  ambCount: number;
+  ambUserList: { id: number; nickName: string }[];
+};
+
 export type Location = {
   id: number;
   name: string;

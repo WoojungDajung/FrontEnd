@@ -87,6 +87,7 @@ const ViewCalendar = ({ appointmentId }: ViewCalendarProps) => {
             isCurMonth={day.date.getMonth() === curMonth.getMonth()}
             date={day.date}
             percentage={day.percentage}
+            appointmentId={appointmentId}
           />
         ))}
       </div>
@@ -98,9 +99,15 @@ interface DateCellProps {
   isCurMonth: boolean;
   date: Date;
   percentage: number;
+  appointmentId: string;
 }
 
-const DateCell = ({ isCurMonth, date, percentage }: DateCellProps) => {
+const DateCell = ({
+  isCurMonth,
+  date,
+  percentage,
+  appointmentId,
+}: DateCellProps) => {
   const [dateStatusModalOpen, setDateStatusModalOpen] = useState(false);
 
   const clickable = isCurMonth && percentage > 0;
@@ -149,6 +156,7 @@ const DateCell = ({ isCurMonth, date, percentage }: DateCellProps) => {
         date={date}
         open={dateStatusModalOpen}
         setOpen={setDateStatusModalOpen}
+        appointmentId={appointmentId}
       />
     </>
   );
