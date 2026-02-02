@@ -66,7 +66,7 @@ async function handler(
   }
 
   // 토큰 만료 시
-  if (res.status === 401) {
+  if (res.status === 401 || data.status_code === 401) {
     const refreshToken = await getRefreshToken();
     // 리프레시 토큰 없음 -> 다시 로그인 필요
     if (!refreshToken) {

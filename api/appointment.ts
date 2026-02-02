@@ -43,9 +43,12 @@ export async function editAppointment(
   });
 
   const resBody = await res.json();
+  const { status_code, message } = resBody;
 
-  if (!res.ok) {
-    const { status_code, message } = resBody;
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 404) {
+      // 방이 존재하지 않거나 참여자가 아님
+    }
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -62,12 +65,12 @@ export async function joinAppointment(
 
   const resBody = await res.json();
   console.log(resBody);
+  const { status_code, message } = resBody;
 
-  if (!res.ok) {
-    if (res.status === 404) {
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 404) {
       // 해당 방이 존재하지 않음
     }
-    const { status_code, message } = resBody;
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -85,15 +88,15 @@ export async function leaveAppointment(appointmentId: string) {
 
   const resBody = await res.json();
   console.log(resBody);
+  const { status_code, message } = resBody;
 
-  if (!res.ok) {
-    if (res.status === 401) {
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 401) {
       // 호스트는 나갈 수 없음
     }
-    if (res.status === 404) {
+    if (status_code === 404) {
       // 참여 중인 유저가 아니거나 방이 없음
     }
-    const { status_code, message } = resBody;
     throw new Error(`${status_code}: ${message}`);
   }
 

@@ -13,16 +13,16 @@ export async function getLocations(appointmentId: string) {
 
   const resBody = await res.json();
   console.log(resBody);
+  const { status_code, message } = resBody;
 
-  if (!res.ok) {
-    if (res.status === 400) {
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 400) {
       // 유저가 존재하지 않습니다.
     }
-    if (res.status === 404) {
+    if (status_code === 404) {
       // 방 참여자가 아닙니다.
     }
 
-    const { status_code, message } = resBody;
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -53,9 +53,15 @@ export async function registerLocation(
 
   const resBody = await res.json();
   console.log(resBody);
+  const { status_code, message } = resBody;
 
-  if (!res.ok) {
-    const { status_code, message } = resBody;
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 402) {
+      // 프로필 미설정(닉네임/출발지)
+    }
+    if (status_code === 409) {
+      // 장소 중복
+    }
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -71,12 +77,12 @@ export async function getLocation(appointmentId: string, placeId: number) {
 
   const resBody = await res.json();
   console.log(resBody);
+  const { status_code, message } = resBody;
 
-  if (!res.ok) {
-    if (res.status === 404) {
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 404) {
       // 방이 존재하지 않습니다.
     }
-    const { status_code, message } = resBody;
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -92,12 +98,15 @@ export async function deleteLocation(appointmentId: string, placeId: number) {
 
   const resBody = await res.json();
   console.log(resBody);
+  const { status_code, message } = resBody;
 
-  if (!res.ok) {
-    if (res.status === 404) {
-      // 방이 존재하지 않습니다.
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 402) {
+      // 프로필 미설정(닉네임/출발지)
     }
-    const { status_code, message } = resBody;
+    if (status_code === 404) {
+      // 방 참여자가 아닙니다.
+    }
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -113,15 +122,15 @@ export async function getMyVoteLocation(appointmentId: string) {
 
   const resBody = await res.json();
   console.log(resBody);
+  const { status_code, message } = resBody;
 
-  if (!res.ok) {
-    if (res.status === 402) {
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 402) {
       // 프로필 미설정(닉네임/출발지)
     }
-    if (res.status === 404) {
+    if (status_code === 404) {
       // 방 참여자가 아닙니다.
     }
-    const { status_code, message } = resBody;
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -146,15 +155,15 @@ export async function voteLocation(
 
   const resBody = await res.json();
   console.log(resBody);
+  const { status_code, message } = resBody;
 
-  if (!res.ok) {
-    if (res.status === 402) {
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 402) {
       // 프로필 미설정(닉네임/출발지)
     }
-    if (res.status === 404) {
+    if (status_code === 404) {
       // 방 참여자가 아닙니다.
     }
-    const { status_code, message } = resBody;
     throw new Error(`${status_code}: ${message}`);
   }
 

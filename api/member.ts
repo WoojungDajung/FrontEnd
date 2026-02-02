@@ -13,14 +13,19 @@ export async function getMemberProfile(
 
   const resBody = await res.json();
   console.log(resBody);
+  const { status_code, message } = resBody;
 
-  // 해당 방에 유저 참여 정보가 없음 (=아직 프로필 등록 안한 사용자)
-  if (res.status === 400) {
-    return null;
-  }
-
-  if (!res.ok) {
-    const { status_code, message } = resBody;
+  if (!res.ok || status_code !== 200) {
+    // 해당 방에 유저 참여 정보가 없음 (=아직 프로필 등록 안한 사용자)
+    if (status_code === 400) {
+      return null;
+    }
+    if (status_code === 401 || res.status === 401) {
+      // 토큰 만료
+    }
+    if (status_code === 404) {
+      // 방이 존재하지 않음
+    }
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -38,13 +43,13 @@ export async function registerMemberProfile(
     longitude: string;
   },
 ): Promise<TRegisterMemberProfileResponse> {
-  const body:TRegisterMemberProfileResponse ={
+  const body: TRegisterMemberProfileResponse = {
     nickName,
     address: place?.address ?? "",
     startingPlace: place?.startingPlace ?? "",
     latitude: place?.latitude ?? "",
-    longitude: place?.longitude ?? ""
-  }
+    longitude: place?.longitude ?? "",
+  };
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/member/${appointmentId}`,
@@ -59,15 +64,15 @@ export async function registerMemberProfile(
 
   const resBody = await res.json();
   console.log(resBody);
+  const { status_code, message } = resBody;
 
-  if (!res.ok) {
-    if (res.status === 401) {
+  if (!res.ok || status_code !== 200) {
+    if (res.status === 401 || status_code === 401) {
       // 토큰 만료 또는 유효하지 않은 요청 데이터
     }
-    if (res.status === 404) {
+    if (status_code === 404) {
       //방 정보를 찾을 수 없거나 참여자가 아님
     }
-    const { status_code, message } = resBody;
     throw new Error(`${status_code}: ${message}`);
   }
 
