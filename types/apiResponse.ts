@@ -45,7 +45,7 @@ export type TDateVoteResponse = {
 
 export type VoteDate = {
   ymd: string; // YYYY-MM-DD
-  color: string; // ex: "#0EBC7F"
+  percentage: string; // ex: "50"
 };
 
 export type TDateVoteByMonthResponse = {

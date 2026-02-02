@@ -6,7 +6,7 @@ import {
   startOfMonth,
   WEEKDAYS_KO,
 } from "@/utils/calendar";
-import { CSSProperties, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import LeftChevronIcon from "../shared/icons/LeftChevronIcon";
 import RightChevronIcon from "../shared/icons/RightChevronIcon";
 import { cn } from "@/utils/cn";
@@ -14,11 +14,10 @@ import VoteStatusByDateModal from "./VoteStatusByDateModal";
 import useDateVoteStatusByMonthByQuery from "@/hooks/useDateVoteStatusByMonthQuery";
 
 interface ViewCalendarProps {
-  voterNum: number; // 총 투표자 수
   appointmentId: string;
 }
 
-const ViewCalendar = ({ voterNum, appointmentId }: ViewCalendarProps) => {
+const ViewCalendar = ({ appointmentId }: ViewCalendarProps) => {
   const [curMonth, setCurMonth] = useState(() => startOfMonth(new Date()));
   const minMonth = useMemo(() => startOfMonth(new Date()), []);
 
@@ -87,7 +86,7 @@ const ViewCalendar = ({ voterNum, appointmentId }: ViewCalendarProps) => {
             key={day.date.toISOString()}
             isCurMonth={day.date.getMonth() === curMonth.getMonth()}
             date={day.date}
-            color={day.color}
+            percentage={day.percentage}
           />
         ))}
       </div>
@@ -98,13 +97,13 @@ const ViewCalendar = ({ voterNum, appointmentId }: ViewCalendarProps) => {
 interface DateCellProps {
   isCurMonth: boolean;
   date: Date;
-  color: string | undefined;
+  percentage: number;
 }
 
-const DateCell = ({ isCurMonth, date, color }: DateCellProps) => {
+const DateCell = ({ isCurMonth, date, percentage }: DateCellProps) => {
   const [dateStatusModalOpen, setDateStatusModalOpen] = useState(false);
 
-  const clickable = isCurMonth && color !== undefined;
+  const clickable = isCurMonth && percentage > 0;
 
   const onClick = () => {
     if (!clickable) {
@@ -114,18 +113,14 @@ const DateCell = ({ isCurMonth, date, color }: DateCellProps) => {
   };
 
   let cellStyle = "";
-  let cellCSSStyle: CSSProperties = {};
-  // if (isCurMonth && ratio > 0) {
-  //   if (ratio >= 71) {
-  //     cellStyle = "bg-primary-400 text-white";
-  //   } else if (ratio >= 31) {
-  //     cellStyle = "bg-primary-100 text-primary-800";
-  //   } else {
-  //     cellStyle = "bg-primary-25 text-primary-600";
-  //   }
-  // } else {
-  if (isCurMonth && color !== undefined) {
-    cellCSSStyle = { ...cellCSSStyle, backgroundColor: color };
+  if (isCurMonth && percentage > 0) {
+    if (percentage >= 71) {
+      cellStyle = "bg-primary-400 text-white";
+    } else if (percentage >= 31) {
+      cellStyle = "bg-primary-100 text-primary-800";
+    } else {
+      cellStyle = "bg-primary-25 text-primary-600";
+    }
   } else {
     if (date.getDay() === 0) {
       cellStyle = isCurMonth ? "text-error-500" : "text-error-200";
@@ -145,7 +140,6 @@ const DateCell = ({ isCurMonth, date, color }: DateCellProps) => {
           clickable && "cursor-pointer",
         )}
         onClick={onClick}
-        style={cellCSSStyle}
       >
         {date.getDate()}
       </div>

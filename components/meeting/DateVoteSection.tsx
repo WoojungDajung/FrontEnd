@@ -34,10 +34,7 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
       <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col gap-16 items-center pt-8 pb-16">
         {mode === "VIEW" ? (
           <>
-            <ViewCalendar
-              voterNum={data.votedListCount}
-              appointmentId={appointmentId}
-            />
+            <ViewCalendar appointmentId={appointmentId} />
             <Button
               size="Medium"
               color="Primary"

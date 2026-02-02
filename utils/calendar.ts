@@ -17,12 +17,12 @@ export function matchCell(
   voteDays: VoteDate[],
 ): {
   date: Date;
-  color: string | undefined; // 표가 없으면 color는 undefined
+  percentage: number; // 표가 없으면 color는 undefined
 }[] {
-  const dateColorMap = new Map<string, string>();
+  const datePercentageMap = new Map<string, number>();
   for (const day of voteDays) {
-    const { ymd, color } = day;
-    dateColorMap.set(ymd, color);
+    const { ymd, percentage } = day;
+    datePercentageMap.set(ymd, Number(percentage));
   }
 
   return cells.map((cell) => {
@@ -30,7 +30,7 @@ export function matchCell(
 
     return {
       date: cell,
-      color: dateColorMap.get(ymd),
+      percentage: datePercentageMap.get(ymd) ?? 0,
     };
   });
 }
@@ -72,8 +72,8 @@ export function addDays(date: Date, value: number) {
 }
 
 /**
- * 
- * @param date 
+ *
+ * @param date
  * @returns YYYY-MM-DD 형식의 문자열
  */
 export function dateToString(date: Date) {
