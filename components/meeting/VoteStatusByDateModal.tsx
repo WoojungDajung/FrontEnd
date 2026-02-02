@@ -17,7 +17,7 @@ const VoteStatusByDateModal = ({
   setOpen,
   appointmentId,
 }: VoteStatusByDateModalProps) => {
-  const { data } = useDateVoteStatusByYMD(appointmentId, date);
+  const { data } = useDateVoteStatusByYMD(appointmentId, date, open ?? false);
 
   if (data === undefined) return <></>;
 
