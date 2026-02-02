@@ -17,7 +17,7 @@ const useVoteDate = (appointmentId: string) => {
 
       const months = new Set<string>();
       for (const vote of votes) {
-        months.add(vote.date.slice("YYYY-MM".length));
+        months.add(vote.date.slice(0, "YYYY-MM".length));
       }
       for (const month of months) {
         await queryClient.invalidateQueries({
