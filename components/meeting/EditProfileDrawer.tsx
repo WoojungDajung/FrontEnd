@@ -54,24 +54,6 @@ const EditProfileDrawer = ({
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  /* 저장하기 */
-  const { mutate: mutateSubmit } = useMutation({
-    mutationFn: async ({
-      alreadyJoined,
-      nickName,
-      place,
-    }: {
-      alreadyJoined: boolean;
-      nickName: string;
-      place?: Place;
-    }) => {
-      if (!alreadyJoined) {
-        await joinAppointment(appointmentId);
-      }
-      await registerMemberProfile(appointmentId, nickName, place);
-    },
-  });
-
   const isDisabled = () => {
     if (nickName === "") return true;
     if (
@@ -82,6 +64,24 @@ const EditProfileDrawer = ({
     return false;
   };
 
+  /* 저장하기 */
+  const { mutate: mutateSubmit } = useMutation({
+    mutationFn: async ({
+      alreadyJoined,
+      nickName,
+      place,
+    }: {
+      alreadyJoined: boolean;
+      nickName: string;
+      place?: Place | null;
+    }) => {
+      if (!alreadyJoined) {
+        await joinAppointment(appointmentId);
+      }
+      await registerMemberProfile(appointmentId, nickName, place);
+    },
+  });
+
   const onSubmit = async (
     e: FormEvent<HTMLFormElement>,
     closeModal: () => void,
@@ -89,15 +89,11 @@ const EditProfileDrawer = ({
     e.preventDefault();
     if (isDisabled()) return;
 
+    // 출발 장소
+    const place = typeof startingPlace === "string" ? undefined : startingPlace;
+
     mutateSubmit(
-      {
-        alreadyJoined,
-        nickName,
-        place:
-          startingPlace !== null && typeof startingPlace !== "string"
-            ? startingPlace
-            : undefined,
-      },
+      { alreadyJoined, nickName, place },
       {
         onSuccess: async () => {
           await queryClient.invalidateQueries({
@@ -106,6 +102,7 @@ const EditProfileDrawer = ({
           await queryClient.invalidateQueries({
             queryKey: ["appointment", appointmentId],
           });
+          
           closeModal();
         },
         onError: () => {

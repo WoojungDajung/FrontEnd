@@ -32,7 +32,10 @@ export async function getMemberProfile(
   return resBody.data as MemberProfile;
 }
 
-/* 멤버 정보 등록 및 수정 */
+/**
+ * 멤버 정보 등록 및 수정
+ * @param {string} place - 출발 장소. undefined이면 nickName만 수정. null이면 출발 장소 없음.
+ */
 export async function registerMemberProfile(
   appointmentId: string,
   nickName: string,
@@ -41,15 +44,18 @@ export async function registerMemberProfile(
     startingPlace: string;
     latitude: string;
     longitude: string;
-  },
+  } | null,
 ): Promise<TRegisterMemberProfileResponse> {
-  const body: TRegisterMemberProfileResponse = {
-    nickName,
-    address: place?.address ?? "",
-    startingPlace: place?.startingPlace ?? "",
-    latitude: place?.latitude ?? "",
-    longitude: place?.longitude ?? "",
-  };
+  const body =
+    place === undefined
+      ? { nickName }
+      : {
+          nickName,
+          address: place?.address ?? "",
+          startingPlace: place?.startingPlace ?? "",
+          latitude: place?.latitude ?? "",
+          longitude: place?.longitude ?? "",
+        };
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/member/${appointmentId}`,
