@@ -11,31 +11,64 @@ import LeftChevronIcon from "../shared/icons/LeftChevronIcon";
 import RightChevronIcon from "../shared/icons/RightChevronIcon";
 import { cn } from "@/utils/cn";
 import VoteStatusByDateModal from "./VoteStatusByDateModal";
-import useDateVoteStatusByMonthByQuery from "@/hooks/useDateVoteStatusByMonthQuery";
+import useDateVoteStatusByMonthQuery, {
+  getDateVoteStatusByMonthQueryOptions,
+} from "@/hooks/useDateVoteStatusByMonthQuery";
+import { useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import { getVoteStatusByMonth } from "@/api/date";
+
+function formatDate(date: Date) {
+  return dayjs(date).format("YYYY-MM");
+}
 
 interface ViewCalendarProps {
   appointmentId: string;
 }
 
 const ViewCalendar = ({ appointmentId }: ViewCalendarProps) => {
+  const queryClient = useQueryClient();
+
   const [curMonth, setCurMonth] = useState(() => startOfMonth(new Date()));
   const minMonth = useMemo(() => startOfMonth(new Date()), []);
 
   const canPrev = curMonth > minMonth;
 
-  const { data } = useDateVoteStatusByMonthByQuery(appointmentId, curMonth);
+  const { data } = useDateVoteStatusByMonthQuery(appointmentId, curMonth);
 
   const days = useMemo(() => {
     const cells = getDayCells(curMonth);
     return matchCell(cells, data?.dateList ?? []);
   }, [data, curMonth]);
 
+  const onClickPrevButton = () => {
+    setCurMonth((m) => addMonths(m, -1));
+    // 이전 달 데이터 prefetch
+    queryClient.prefetchQuery(
+      getDateVoteStatusByMonthQueryOptions(
+        appointmentId,
+        addMonths(curMonth, -1),
+      ),
+    );
+  };
+
+  const onClickNextButton = () => {
+    setCurMonth((m) => addMonths(m, 1));
+    // 다음 달 데이터 prefetch
+    queryClient.prefetchQuery(
+      getDateVoteStatusByMonthQueryOptions(
+        appointmentId,
+        addMonths(curMonth, +1),
+      ),
+    );
+  };
+
   return (
     <div className="w-342 flex flex-col gap-4">
       {/* Header */}
       <div className="w-full py-12 flex gap-8 justify-center items-center">
         <button
-          onClick={() => setCurMonth((m) => addMonths(m, -1))}
+          onClick={onClickPrevButton}
           disabled={!canPrev}
           className="button"
         >
@@ -48,10 +81,7 @@ const ViewCalendar = ({ appointmentId }: ViewCalendarProps) => {
 
         <p className="w-224 typo-16-regular text-gray-800 block text-center">{`${curMonth.getFullYear()}년 ${curMonth.getMonth() + 1}월`}</p>
 
-        <button
-          onClick={() => setCurMonth((m) => addMonths(m, 1))}
-          className="button"
-        >
+        <button onClick={onClickNextButton} className="button">
           <RightChevronIcon
             width={20}
             height={20}

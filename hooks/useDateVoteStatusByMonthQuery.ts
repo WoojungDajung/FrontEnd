@@ -1,19 +1,29 @@
 import { getVoteStatusByMonth } from "@/api/date";
-import { useQuery } from "@tanstack/react-query";
+import { TDateVoteByMonthResponse } from "@/types/apiResponse";
+import {  useQuery, UseQueryOptions } from "@tanstack/react-query";
 import dayjs from "dayjs";
 
 function formatDate(date: Date) {
   return dayjs(date).format("YYYY-MM");
 }
 
-const useDateVoteStatusByMonthByQuery = (
+export function getDateVoteStatusByMonthQueryOptions(
   appointmentId: string,
   month: Date,
-) => {
-  return useQuery({
+): UseQueryOptions<
+  TDateVoteByMonthResponse,
+  Error,
+  TDateVoteByMonthResponse,
+  string[]
+> {
+  return {
     queryKey: ["date-vote-status-by-month", appointmentId, formatDate(month)],
     queryFn: ({ queryKey }) => getVoteStatusByMonth(queryKey[1], queryKey[2]),
-  });
+  };
+}
+
+const useDateVoteStatusByMonthQuery = (appointmentId: string, month: Date) => {
+  return useQuery(getDateVoteStatusByMonthQueryOptions(appointmentId, month));
 };
 
-export default useDateVoteStatusByMonthByQuery;
+export default useDateVoteStatusByMonthQuery;
