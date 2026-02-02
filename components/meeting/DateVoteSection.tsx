@@ -10,9 +10,10 @@ import useDateVoteQuery from "@/hooks/useDateVoteQuery";
 
 interface dateVoteSectionProps {
   appointmentId: string;
+  canVote: boolean;
 }
 
-const DateVoteSection = ({ appointmentId }: dateVoteSectionProps) => {
+const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
   const [mode, setMode] = useState<"VIEW" | "VOTE">("VIEW");
   const [voteStatusModalOpen, setVoteStatusModalOpen] = useState(false);
 
@@ -38,6 +39,7 @@ const DateVoteSection = ({ appointmentId }: dateVoteSectionProps) => {
               size="Medium"
               color="Primary"
               onClick={() => setMode("VOTE")}
+              disabled={!canVote}
             >
               선택하기
             </Button>

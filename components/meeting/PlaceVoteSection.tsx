@@ -8,9 +8,13 @@ import { useMemo } from "react";
 
 interface PlaceVoteSectionProps {
   appointmentId: string;
+  canRegisterOrVote: boolean;
 }
 
-const PlaceVoteSection = ({ appointmentId }: PlaceVoteSectionProps) => {
+const PlaceVoteSection = ({
+  appointmentId,
+  canRegisterOrVote,
+}: PlaceVoteSectionProps) => {
   // 사용자의 프로필. 프로필 등록 전엔 null (룸 생성자는 프로필은 존재함. nickName, startingPlace가 null)
   const { data: profileData } = useAppointmentUserProfileQuery({
     appointmentId,
@@ -46,7 +50,7 @@ const PlaceVoteSection = ({ appointmentId }: PlaceVoteSectionProps) => {
         appointmentId={appointmentId}
         locations={locationData.locationList}
         totalCount={totalCount}
-        disabled={!isRegistered}
+        disabled={!isRegistered || !canRegisterOrVote}
       />
     </section>
   );
