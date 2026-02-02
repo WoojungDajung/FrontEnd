@@ -23,7 +23,12 @@ const RetryButton = () => {
         router.push(`/`);
       }
     } else {
-      router.push("/");
+      // 그외의 에러는 next가 있으면 버튼 눌렀을 때 해당 주소로 이동하도록
+      if (next) {
+        router.push(next);
+      } else {
+        router.push("/");
+      }
     }
   }, [errorCode, next, router]);
 
