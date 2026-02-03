@@ -1,23 +1,21 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
-  // TODO: 로그인 안하면 접근 X
-  if (!isAuthenticated()) {
+  // 비로그인 상태 -> 접근 X
+  const athenticated = await isAuthenticated(request);
+  if (!athenticated) {
+    // 로그인 페이지로 이동
     return NextResponse.redirect(new URL("/", request.url));
   }
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/meeting/:path*",
+  matcher: ["/setup-meeting", "/meeting/:path*"],
 };
 
-async function isAuthenticated(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access-token");
-  if (!accessToken) {
-    return false;
-  }
-  return true;
+async function isAuthenticated(request: NextRequest): Promise<boolean> {
+  const accessToken = request.cookies.get("access-token")?.value;
+  return Boolean(accessToken);
 }
