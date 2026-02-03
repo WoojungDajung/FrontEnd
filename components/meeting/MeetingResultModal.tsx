@@ -14,15 +14,22 @@ import MoreIcon from "./icons/MoreIcon";
 import Script from "next/script";
 import {
   initiateKakao,
+  MESSAGE_TEMPLATE_ID,
   shareMeetingOnKakaoTalk,
 } from "@/lib/kakao-share/utils";
+import { Appointment } from "@/types/apiResponse";
 
 interface MeetingResultModalProps {
   open?: boolean;
   setOpen?: (open: boolean) => void;
+  appointment: Appointment;
 }
 
-const MeetingResultModal = ({ open, setOpen }: MeetingResultModalProps) => {
+const MeetingResultModal = ({
+  open,
+  setOpen,
+  appointment,
+}: MeetingResultModalProps) => {
   // TODO: 결과 API 연결
   const date: Date = useMemo(() => new Date(), []);
   const place = useMemo(() => {
@@ -38,8 +45,7 @@ const MeetingResultModal = ({ open, setOpen }: MeetingResultModalProps) => {
   const [showPlaceReason, setShowPlaceReason] = useState(false);
 
   /* 결과 공유 */
-  //TODO: 유효 링크로 변경
-  const link = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/1`;
+  const link = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${appointment.appointmentId}`;
 
   const showMoreShare = () => {
     navigator.share({ url: link });
@@ -50,7 +56,11 @@ const MeetingResultModal = ({ open, setOpen }: MeetingResultModalProps) => {
   };
 
   const shareOnKakaoTalk = () => {
-    shareMeetingOnKakaoTalk("1", "스터디밥먹으러");
+    shareMeetingOnKakaoTalk(
+      appointment.appointmentId,
+      appointment.appointmentName,
+      MESSAGE_TEMPLATE_ID.SHARE_RESULT,
+    );
   };
 
   return (

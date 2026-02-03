@@ -22,7 +22,7 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    if ((error.message === ERROR_MESSAGE.APPOINTMENT_NOT_EXIST)) {
+    if (error.message === ERROR_MESSAGE.APPOINTMENT_NOT_EXIST) {
       notFound();
     }
     redirect("/error");
@@ -33,7 +33,9 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <main className="flex flex-col gap-24">
-        {isSettled && <MeetingSettledSection />}
+        {isSettled && (
+          <MeetingSettledSection appointment={appointmentInfo.appointment} />
+        )}
         <div className="flex flex-col gap-16">
           <MeetingInfoSection appointmentId={meetingId} />
           <DateVoteSection appointmentId={meetingId} canVote={!isSettled} />
