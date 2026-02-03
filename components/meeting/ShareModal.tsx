@@ -6,6 +6,7 @@ import CopyIcon from "./icons/CopyIcon";
 import MoreIcon from "./icons/MoreIcon";
 import {
   initiateKakao,
+  MESSAGE_TEMPLATE_ID,
   shareMeetingOnKakaoTalk,
 } from "@/lib/kakao-share/utils";
 
@@ -33,7 +34,11 @@ const ShareModal = ({
   };
 
   const shareOnKakaoTalk = () => {
-    shareMeetingOnKakaoTalk(appointmentId, appointmentName);
+    shareMeetingOnKakaoTalk(
+      appointmentId,
+      appointmentName,
+      MESSAGE_TEMPLATE_ID.INVITE,
+    );
   };
 
   return (
