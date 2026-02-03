@@ -15,12 +15,6 @@ import useDateVoteStatusByMonthQuery, {
   getDateVoteStatusByMonthQueryOptions,
 } from "@/hooks/useDateVoteStatusByMonthQuery";
 import { useQueryClient } from "@tanstack/react-query";
-import dayjs from "dayjs";
-import { getVoteStatusByMonth } from "@/api/date";
-
-function formatDate(date: Date) {
-  return dayjs(date).format("YYYY-MM");
-}
 
 interface ViewCalendarProps {
   appointmentId: string;
