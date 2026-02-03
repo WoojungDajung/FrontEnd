@@ -41,21 +41,3 @@ export async function getRefreshToken(): Promise<string | null> {
   const refreshToken = cookieStore.get("refresh-token");
   return refreshToken?.value ?? null;
 }
-
-// 토큰 재발급
-export async function reissueToken(
-  refreshToken: string,
-): Promise<string | null> {
-  const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/reissue?refreshToken=${refreshToken}`;
-  const res = await fetch(url, {
-    method: "POST",
-  });
-
-  if (!res.ok) {
-    console.log(await res.json());
-    return null;
-  }
-
-  const accessToken = (await res.json()) as string;
-  return accessToken;
-}

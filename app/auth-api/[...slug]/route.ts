@@ -1,8 +1,8 @@
+import { reissueToken } from "@/api/auth";
 import {
   deleteToken,
   getAccessToken,
   getRefreshToken,
-  reissueToken,
   saveToken,
 } from "@/lib/auth/token";
 import { NextResponse } from "next/server";
@@ -81,8 +81,8 @@ async function handler(
     }
 
     // 리프레시 토큰으로 액세스 토큰 재발급
-    const newToken = await reissueToken(refreshToken);
-    if (newToken) {
+    try {
+      const newToken = await reissueToken(accessToken, refreshToken);
       await saveToken(newToken);
       // 재요청
       res = await fetch(url, {
@@ -90,7 +90,7 @@ async function handler(
         headers: buildHeaders(request, newToken),
         body,
       });
-    } else {
+    } catch (error) {
       // 토큰 재발급 실패 -> 다시 로그인 필요
       deleteToken(); // 로그아웃 처리
       return NextResponse.json(
