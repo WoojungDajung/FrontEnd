@@ -4,6 +4,7 @@ import {
   addMonths,
   dateToString,
   getDayCells,
+  isBeforeDay,
   startOfMonth,
   WEEKDAYS_KO,
 } from "@/utils/calendar";
@@ -62,6 +63,12 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
     [onChange],
   );
 
+  const isDisabledCell = useCallback((date: Date) => {
+    return (
+      date.getMonth() !== curMonth.getMonth() || isBeforeDay(date, startDate)
+    );
+  }, [curMonth,startDate]);
+
   const getCellStyle = useCallback(
     (cell: Cell): string => {
       if (cell.state === "selected") {
@@ -71,7 +78,7 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
       }
       // cell.state === "unselected"
       const style: string[] = [];
-      const isUnavailable = cell.day.getMonth() !== curMonth.getMonth();
+      const isUnavailable = isDisabledCell(cell.day);
       if (!isUnavailable) {
         style.push("border-[0.6px] border-gray-200");
       }
@@ -86,7 +93,7 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
       }
       return style.join(" ");
     },
-    [curMonth],
+    [isDisabledCell],
   );
 
   return (
@@ -148,7 +155,7 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
                 "button w-40 h-40 typo-14-regular rounded-[8px] flex justify-center items-center",
                 getCellStyle(cell),
               )}
-              disabled={cell.day.getMonth() !== curMonth.getMonth()}
+              disabled={isDisabledCell(cell.day)}
               onClick={() => onClickCell(cell)}
             >
               {cell.day.getDate()}

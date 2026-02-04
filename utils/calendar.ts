@@ -91,3 +91,7 @@ export function isAfterOrSameMonth(a: Date, b: Date) {
 export function isBeforeOrSameMonth(a: Date, b: Date) {
   return dayjs(a).startOf("month").isSameOrBefore(dayjs(b).startOf("month"));
 }
+
+export function isBeforeDay(a: Date, b: Date) {
+  return dayjs(a).startOf("day").isBefore(dayjs(b).startOf("day"));
+}
