@@ -37,10 +37,20 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
       </div>
       <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col gap-16 items-center pt-8 pb-16">
         {selectedParticipantId !== null ? (
-          <ViewUserVoteCalendar
-            appointmentId={appointmentId}
-            userId={selectedParticipantId}
-          />
+          <>
+            <ViewUserVoteCalendar
+              appointmentId={appointmentId}
+              userId={selectedParticipantId}
+            />
+            <Button
+              size="Medium"
+              color="Primary"
+              onClick={() => setMode("VOTE")}
+              disabled={!canVote}
+            >
+              선택하기
+            </Button>
+          </>
         ) : mode === "VIEW" ? (
           <>
             <ViewTotalVoteCalendar appointmentId={appointmentId} />
