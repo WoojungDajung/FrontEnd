@@ -18,7 +18,7 @@ const ParticipantBadge = ({
     <div
       className={cn(
         "px-12 py-8 rounded-[100px] flex gap-4 items-center cursor-pointer",
-        selected && "border border-primary-400",
+        selected && "shadow-[inset_0_0_0_1px_var(--color-primary-400)]",
         className,
       )}
       onClick={onClick}
