@@ -9,6 +9,7 @@ import useDateVoteQuery from "@/hooks/useDateVoteQuery";
 import ViewTotalVoteCalendar from "./ViewTotalVoteCalendar";
 import { useAppointmentPage } from "@/context/AppointmentContext";
 import ViewUserVoteCalendar from "./ViewUserVoteCalendar";
+import useAppointmentUserProfileQuery from "@/hooks/useAppointmentUserProfileQuery";
 
 interface dateVoteSectionProps {
   appointmentId: string;
@@ -21,7 +22,25 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
 
   const { selectedParticipantId } = useAppointmentPage();
 
+  // 사용자의 프로필. 프로필 등록 전엔 null (룸 생성자는 프로필은 존재함. nickName, startingPlace가 null)
+  const { data: profileData } = useAppointmentUserProfileQuery({
+    appointmentId,
+  });
+
   const { data } = useDateVoteQuery({ appointmentId });
+
+  const isRegistered =
+    profileData !== undefined &&
+    profileData !== null &&
+    profileData?.memberNickName !== null;
+
+  const isVotable = canVote && isRegistered;
+
+  const onClickVoteButton = () => {
+    if (!isVotable) return;
+
+    setMode("VOTE");
+  };
 
   if (data === undefined) return <></>;
 
@@ -45,8 +64,8 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
             <Button
               size="Medium"
               color="Primary"
-              onClick={() => setMode("VOTE")}
-              disabled={!canVote}
+              onClick={onClickVoteButton}
+              disabled={!isVotable}
             >
               선택하기
             </Button>
@@ -57,17 +76,20 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
             <Button
               size="Medium"
               color="Primary"
-              onClick={() => setMode("VOTE")}
-              disabled={!canVote}
+              onClick={onClickVoteButton}
+              disabled={!isVotable}
             >
               선택하기
             </Button>
           </>
         ) : (
-          <VoteDateForm
-            appointmentId={appointmentId}
-            onSubmit={() => setMode("VIEW")}
-          />
+          profileData && (
+            <VoteDateForm
+              appointmentId={appointmentId}
+              onSubmit={() => setMode("VIEW")}
+              userId={profileData.id}
+            />
+          )
         )}
       </div>
 

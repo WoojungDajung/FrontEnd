@@ -1,27 +1,54 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "../shared/Button";
 import VoteCalendar, { VoteState } from "./VoteCalendar";
 import { addDays, dateToString } from "@/utils/calendar";
 import useVoteDate from "@/hooks/useVoteDate";
+import useDateVoteStatusByUserQuery from "@/hooks/useDateVoteStatusByUserQuery";
+import LoadingSpinner from "../shared/LoadingSpinner";
+
+type VoteStatus = {
+  selected: Set<string>; // YYYY-MM-DD 형식의 문자열
+  uncertain: Set<string>;
+};
 
 interface VoteDateFormProps {
   onSubmit: () => void;
   appointmentId: string;
+  userId: number;
 }
 
-const VoteDateForm = ({ onSubmit, appointmentId }: VoteDateFormProps) => {
-  // TODO: 초기값은 이전 사용자 투표 현황으로 교체 필요
-  const [status, setStatus] = useState<{
-    selected: Set<string>; // YYYY-MM-DD 형식의 문자열
-    uncertain: Set<string>;
-  }>({
+const VoteDateForm = ({
+  onSubmit,
+  appointmentId,
+  userId,
+}: VoteDateFormProps) => {
+  const [status, setStatus] = useState<VoteStatus>({
     selected: new Set(),
     uncertain: new Set(),
   });
 
-  const tomorrow = useMemo(() => addDays(new Date(), 1), []);
+  const { data, isFetching } = useDateVoteStatusByUserQuery(
+    appointmentId,
+    userId,
+    { refetchOnMount: "always" },
+  );
+
+  /* 기존 투표 데이터로 초기화  */
+  const isInitiatedRef = useRef(false);
+
+  useEffect(() => {
+    if (!data) return;
+    if (isInitiatedRef.current) return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setStatus({
+      selected: new Set(data.possibleList),
+      uncertain: new Set(data.ambList),
+    });
+    isInitiatedRef.current = true;
+  }, [data]);
 
   const onChange = (date: Date, prevState: VoteState, nextState: VoteState) => {
     const value = dateToString(date);
@@ -75,9 +102,18 @@ const VoteDateForm = ({ onSubmit, appointmentId }: VoteDateFormProps) => {
     }
   };
 
+  const tomorrow = useMemo(() => addDays(new Date(), 1), []);
+
   return (
     <>
-      <VoteCalendar startDate={tomorrow} value={status} onChange={onChange} />
+      <div className="relative">
+        <VoteCalendar startDate={tomorrow} value={status} onChange={onChange} />
+        {isFetching && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-white/25 flex justify-center items-center">
+            <LoadingSpinner size={25} open={true} />
+          </div>
+        )}
+      </div>
       <div className="w-full flex flex-col gap-4 px-16">
         <div className="flex flex-row gap-16">
           <div className="flex flex-row gap-4 items-center">
