@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import CountButton from "./CountButton";
-import ViewCalendar from "./ViewCalendar";
 import Button from "../shared/Button";
 import VoteDateForm from "./VoteDateForm";
 import VoteStatusModal from "./VoteStatusModal";
 import useDateVoteQuery from "@/hooks/useDateVoteQuery";
+import ViewTotalVoteCalendar from "./ViewTotalVoteCalendar";
+import { useAppointmentPage } from "@/context/AppointmentContext";
+import ViewUserVoteCalendar from "./ViewUserVoteCalendar";
 
 interface dateVoteSectionProps {
   appointmentId: string;
@@ -16,6 +18,8 @@ interface dateVoteSectionProps {
 const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
   const [mode, setMode] = useState<"VIEW" | "VOTE">("VIEW");
   const [voteStatusModalOpen, setVoteStatusModalOpen] = useState(false);
+
+  const { selectedParticipantId } = useAppointmentPage();
 
   const { data } = useDateVoteQuery({ appointmentId });
 
@@ -32,9 +36,14 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
         />
       </div>
       <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col gap-16 items-center pt-8 pb-16">
-        {mode === "VIEW" ? (
+        {selectedParticipantId !== null ? (
+          <ViewUserVoteCalendar
+            appointmentId={appointmentId}
+            userId={selectedParticipantId}
+          />
+        ) : mode === "VIEW" ? (
           <>
-            <ViewCalendar appointmentId={appointmentId} />
+            <ViewTotalVoteCalendar appointmentId={appointmentId} />
             <Button
               size="Medium"
               color="Primary"

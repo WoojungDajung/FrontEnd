@@ -1,5 +1,6 @@
 import {
   TDateVoteByMonthResponse,
+  TDateVoteByUserResponse,
   TDateVoteByYMDResponse,
   TDateVoteResponse,
 } from "@/types/apiResponse";
@@ -95,4 +96,27 @@ export async function voteDate(
   }
 
   return resBody.data;
+}
+
+export async function getVoteStatusByUser(
+  appointmentId: string,
+  userId: number,
+) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/date/${appointmentId}/${userId}`;
+  const res = await fetch(url, {
+    method: "GET",
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 404) {
+      // 방 또는 참여정보를 찾을 수 없음
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return resBody.data as TDateVoteByUserResponse;
 }

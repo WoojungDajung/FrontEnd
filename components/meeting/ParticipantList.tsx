@@ -11,6 +11,7 @@ import UpChevronIcon from "./icons/UpChevronIcon";
 import EditProfileDrawer from "./EditProfileDrawer";
 import ParticipantBadge from "./ParticipantBadge";
 import { AppointmentUser, MemberProfile } from "@/types/apiResponse";
+import { useAppointmentPage } from "@/context/AppointmentContext";
 
 interface ParticipantListProps {
   appointmentId: string;
@@ -35,10 +36,15 @@ const ParticipantList = ({
     setProfileDrawerOpen(true);
   };
 
-  // 선택된 User의 투표 상태를 보여주기 기능 관련 값
-  const selectedUserId: string | undefined = undefined;
+  /* 선택된 User의 투표 상태를 보여주기 기능 */
+  const { selectedParticipantId, selectParticipant } = useAppointmentPage();
+
   const onClickBadge = (userId: number) => {
-    // 해당 user 선택
+    if (userId === selectedParticipantId) {
+      selectParticipant(null);
+    } else {
+      selectParticipant(userId);
+    }
   };
 
   /* 사용자 목록 2줄까지만 보여주기 */
@@ -109,7 +115,7 @@ const ParticipantList = ({
             <ParticipantBadge
               className="bg-primary-25"
               onClick={() => onClickBadge(me.id)}
-              selected={me.id === selectedUserId}
+              selected={me.id === selectedParticipantId}
             >
               <span className="typo-14-regular text-gray-800">
                 {me.nickName}
@@ -124,7 +130,7 @@ const ParticipantList = ({
               key={participant.id}
               className="bg-gray-100"
               onClick={() => onClickBadge(participant.id)}
-              selected={participant.id === selectedUserId}
+              selected={participant.id === selectedParticipantId}
             >
               <span className="typo-14-regular text-gray-800">
                 {participant.nickName}

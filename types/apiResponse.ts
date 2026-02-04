@@ -60,6 +60,11 @@ export type TDateVoteByYMDResponse = {
   ambUserList: { id: number; nickName: string }[];
 };
 
+export type TDateVoteByUserResponse = {
+  possibleList: string[]; // ex: ["2026-02-09", "2026-02-20"];
+  ambList: string[];
+};
+
 export type Location = {
   id: number;
   name: string;

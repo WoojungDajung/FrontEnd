@@ -1,5 +1,9 @@
 import { VoteDate } from "@/types/apiResponse";
 import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 export const WEEKDAYS_KO = ["일", "월", "화", "수", "목", "금", "토"] as const;
 
@@ -78,4 +82,12 @@ export function addDays(date: Date, value: number) {
  */
 export function dateToString(date: Date) {
   return dayjs(date).format("YYYY-MM-DD");
+}
+
+export function isAfterOrSameMonth(a: Date, b: Date) {
+  return dayjs(a).startOf("month").isSameOrAfter(dayjs(b).startOf("month"));
+}
+
+export function isBeforeOrSameMonth(a: Date, b: Date) {
+  return dayjs(a).startOf("month").isSameOrBefore(dayjs(b).startOf("month"));
 }

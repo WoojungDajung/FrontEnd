@@ -4,6 +4,7 @@ import MeetingInfoSection from "@/components/meeting/MeetingInfoSection";
 import MeetingSettledSection from "@/components/meeting/MeetingSettledSection";
 import PlaceVoteSection from "@/components/meeting/PlaceVoteSection";
 import { ERROR_MESSAGE } from "@/constants/error-message";
+import { AppointmentPageProvider } from "@/context/AppointmentContext";
 import { getQueryClient } from "@/lib/react-query/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { notFound, redirect } from "next/navigation";
@@ -36,14 +37,16 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
         {isSettled && (
           <MeetingSettledSection appointment={appointmentInfo.appointment} />
         )}
-        <div className="flex flex-col gap-16">
-          <MeetingInfoSection appointmentId={meetingId} />
-          <DateVoteSection appointmentId={meetingId} canVote={!isSettled} />
-          <PlaceVoteSection
-            appointmentId={meetingId}
-            canRegisterOrVote={!isSettled}
-          />
-        </div>
+        <AppointmentPageProvider>
+          <div className="flex flex-col gap-16">
+            <MeetingInfoSection appointmentId={meetingId} />
+            <DateVoteSection appointmentId={meetingId} canVote={!isSettled} />
+            <PlaceVoteSection
+              appointmentId={meetingId}
+              canRegisterOrVote={!isSettled}
+            />
+          </div>
+        </AppointmentPageProvider>
       </main>
     </HydrationBoundary>
   );
