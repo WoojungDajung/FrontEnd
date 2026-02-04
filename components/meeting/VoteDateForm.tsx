@@ -9,7 +9,7 @@ import useDateVoteStatusByUserQuery from "@/hooks/useDateVoteStatusByUserQuery";
 import LoadingSpinner from "../shared/LoadingSpinner";
 
 type VoteStatus = {
-  selected: Set<string>; // YYYY-MM-DD 형식의 문자열
+  possible: Set<string>; // YYYY-MM-DD 형식의 문자열
   uncertain: Set<string>;
 };
 
@@ -25,7 +25,7 @@ const VoteDateForm = ({
   userId,
 }: VoteDateFormProps) => {
   const [status, setStatus] = useState<VoteStatus>({
-    selected: new Set(),
+    possible: new Set(),
     uncertain: new Set(),
   });
 
@@ -44,7 +44,7 @@ const VoteDateForm = ({
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setStatus({
-      selected: new Set(data.possibleList),
+      possible: new Set(data.possibleList),
       uncertain: new Set(data.ambList),
     });
     isInitiatedRef.current = true;
@@ -52,24 +52,24 @@ const VoteDateForm = ({
 
   const onChange = (date: Date, prevState: VoteState, nextState: VoteState) => {
     const value = dateToString(date);
-    const newSelected = new Set(status.selected);
+    const newSelected = new Set(status.possible);
     const newUncertain = new Set(status.uncertain);
 
     // 기존 상태 제거
-    if (prevState === "selected") {
+    if (prevState === "possible") {
       newSelected.delete(value);
     } else if (prevState === "uncertain") {
       newUncertain.delete(value);
     }
     // 투표 상태 반영
-    if (nextState === "selected") {
+    if (nextState === "possible") {
       newSelected.add(value);
     } else if (nextState === "uncertain") {
       newUncertain.add(value);
     }
 
     setStatus({
-      selected: newSelected,
+      possible: newSelected,
       uncertain: newUncertain,
     });
   };
@@ -81,7 +81,7 @@ const VoteDateForm = ({
     if (confirm("투표를 저장하시겠습니까?")) {
       const votes: { date: string; type: "CERTAIN" | "UNCERTAIN" }[] = [];
 
-      for (const date of status.selected) {
+      for (const date of status.possible) {
         votes.push({ date, type: "CERTAIN" });
       }
       for (const date of status.uncertain) {

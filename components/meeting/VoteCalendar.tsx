@@ -13,12 +13,12 @@ import LeftChevronIcon from "../shared/icons/LeftChevronIcon";
 import RightChevronIcon from "../shared/icons/RightChevronIcon";
 import { cn } from "@/utils/cn";
 
-export type VoteState = "selected" | "uncertain" | "unselected";
+export type VoteState = "possible" | "uncertain" | "impossible";
 
 interface VoteCalendarProps {
   startDate: Date;
   /* 사용자의 투표 상태(선택, 애매). YYMMDD 형식의 문자열로 이루어짐 */
-  value: { selected: Set<string>; uncertain: Set<string> };
+  value: { possible: Set<string>; uncertain: Set<string> };
   onChange?: (date: Date, prevState: VoteState, nextState: VoteState) => void;
 }
 
@@ -36,11 +36,11 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
   const cells: Cell[] = useMemo(() => {
     return getDayCells(curMonth).map((c) => {
       const dateStr = dateToString(c);
-      const state = value.selected.has(dateStr)
-        ? "selected"
+      const state = value.possible.has(dateStr)
+        ? "possible"
         : value.uncertain.has(dateStr)
           ? "uncertain"
-          : "unselected";
+          : "impossible";
 
       return {
         day: c,
@@ -53,11 +53,11 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
     (cell: Cell) => {
       const curState = cell.state;
       const nextState =
-        curState === "unselected"
-          ? "selected"
-          : curState === "selected"
+        curState === "impossible"
+          ? "possible"
+          : curState === "possible"
             ? "uncertain"
-            : "unselected";
+            : "impossible";
       onChange?.(cell.day, curState, nextState);
     },
     [onChange],
@@ -71,12 +71,12 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
 
   const getCellStyle = useCallback(
     (cell: Cell): string => {
-      if (cell.state === "selected") {
+      if (cell.state === "possible") {
         return "bg-primary-400 text-white";
       } else if (cell.state === "uncertain") {
         return "bg-gray-300 text-gray-800";
       }
-      // cell.state === "unselected"
+      // cell.state === "impossible"
       const style: string[] = [];
       const isUnavailable = isDisabledCell(cell.day);
       if (!isUnavailable) {
