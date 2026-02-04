@@ -133,7 +133,7 @@ const VoteDateForm = ({
           날짜를 여러 번 터치해서 상태를 바꿀 수 있어요.
         </p>
       </div>
-      <Button size="Medium" color="Primary" onClick={submit}>
+      <Button size="Medium" color="Primary" onClick={submit} disabled={isFetching}>
         저장하기
       </Button>
     </>
