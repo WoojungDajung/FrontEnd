@@ -70,12 +70,17 @@ export async function voteDate(
   appointmentId: string,
   votes: {
     date: string; // YYYY-MM-DD 형식의 문자열
-    type: "CERTAIN" | "UNCERTAIN";
+    type: "POSSIBLE" | "IMPOSSIBLE" | "UNCERTAIN";
   }[],
 ) {
+  const availability = {
+    IMPOSSIBLE: 0,
+    POSSIBLE: 1,
+    UNCERTAIN: 2,
+  };
+
   const dateList = votes.map((vote) => {
-    const availability = vote.type === "CERTAIN" ? 1 : 2;
-    return { ymd: vote.date, availability };
+    return { ymd: vote.date, availability: availability[vote.type] };
   });
 
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/date/vote/${appointmentId}`;

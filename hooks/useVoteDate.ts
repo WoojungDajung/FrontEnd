@@ -1,14 +1,14 @@
 import { voteDate } from "@/api/date";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const useVoteDate = (appointmentId: string) => {
+const useVoteDate = (appointmentId: string, userId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
       votes,
     }: {
-      votes: { date: string; type: "CERTAIN" | "UNCERTAIN" }[];
+      votes: { date: string; type: "POSSIBLE" | "IMPOSSIBLE" | "UNCERTAIN" }[];
     }) => voteDate(appointmentId, votes),
     onSuccess: async (_, { votes }) => {
       await queryClient.invalidateQueries({
@@ -24,6 +24,9 @@ const useVoteDate = (appointmentId: string) => {
           queryKey: ["date-vote-status-by-month", appointmentId, month],
         });
       }
+      await queryClient.invalidateQueries({
+        queryKey: ["date-vote-status-by-user", appointmentId, userId],
+      });
     },
   });
 };
