@@ -11,6 +11,7 @@ import { Location } from "@/types/apiResponse";
 import useRegisterLocation from "@/hooks/useRegisterLocation";
 import useMyVoteLocationQuery from "@/hooks/useMyVoteLocationQuery";
 import useVoteLocation from "@/hooks/useVoteLocation";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
@@ -47,7 +48,8 @@ const PlaceVoteCard = ({
   };
 
   /* 장소 등록 */
-  const { mutate } = useRegisterLocation(appointmentId);
+  const { mutate, isPending, isSuccess, reset } =
+    useRegisterLocation(appointmentId);
   const addPlace = async (address: Address) => {
     mutate(
       { address },
@@ -60,7 +62,7 @@ const PlaceVoteCard = ({
   };
 
   return (
-    <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col items-center gap-16 items-center py-16">
+    <div className="relative bg-white border border-gray-100 rounded-[24px] flex flex-col items-center gap-16 items-center py-16">
       {locations.length > 0 ? (
         <>
           {mode === "VIEW" ? (
@@ -140,6 +142,17 @@ const PlaceVoteCard = ({
         setOpen={setPostcodePopupOpen}
         onComplete={addPlace}
       />
+
+      {(isPending || isSuccess) && (
+        <div className="absolute inset-0 grid place-items-center bg-white/40">
+          <LoadingSpinner
+            size={25}
+            open={isPending || isSuccess}
+            success={isSuccess}
+            onClose={() => reset()}
+          />
+        </div>
+      )}
     </div>
   );
 };
