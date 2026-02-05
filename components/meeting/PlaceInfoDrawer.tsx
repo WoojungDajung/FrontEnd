@@ -5,6 +5,7 @@ import Script from "next/script";
 import Link from "next/link";
 import useLocationInfoQuery from "@/hooks/useLocationInfoQuery";
 import useDeleteLocation from "@/hooks/useDeleteLocation";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 interface PlaceInfoDrawerProps {
   placeId: number;
@@ -68,11 +69,6 @@ const PlaceInfoDrawer = ({
     window.kakao.maps.load();
   };
 
-  // TODO: 로딩/에러 처리
-  if (data === undefined) {
-    return <></>;
-  }
-
   return (
     <>
       <Script
@@ -95,7 +91,7 @@ const PlaceInfoDrawer = ({
             }}
             close={close}
           >
-            <div className="flex flex-col gap-16">
+            {data ? <div className="flex flex-col gap-16">
               <div className="flex flex-col gap-16 w-full">
                 <div>
                   <p className="typo-16-regular text-gray-800">{data.name}</p>
@@ -133,7 +129,9 @@ const PlaceInfoDrawer = ({
                   ))}
                 </div>
               </div>
-            </div>
+            </div> : (
+              <div className="w-full h-full grid place-items-center"><LoadingSpinner size={35} open={true} /></div>
+            )}
           </DefaultDrawerLayout>
         )}
       </BottomDrawer>

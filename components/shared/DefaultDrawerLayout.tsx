@@ -18,7 +18,7 @@ const DefaultDrawerLayout = ({
   children,
 }: DefaultDrawerLayoutProps) => {
   return (
-    <div className="w-full pt-8 pb-24 px-24 relative flex flex-col">
+    <div className="w-full h-full pt-8 pb-24 px-24 relative flex flex-col">
       <div className="w-full h-56 grid grid-cols-[1fr_auto_1fr] items-center sticky top-0 left-0">
         <button onClick={close} className="w-fit mr-auto cursor-pointer">
           <LeftChevronIcon
