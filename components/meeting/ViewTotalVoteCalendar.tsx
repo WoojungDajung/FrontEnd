@@ -7,6 +7,7 @@ import useDateVoteStatusByMonthQuery, {
   getDateVoteStatusByMonthQueryOptions,
 } from "@/hooks/useDateVoteStatusByMonthQuery";
 import { useQueryClient } from "@tanstack/react-query";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 interface ViewTotalVoteCalendarProps {
   appointmentId: string;
@@ -20,7 +21,10 @@ const ViewTotalVoteCalendar = ({
   const today = useMemo(() => new Date(), []);
   const [month, setMonth] = useState<Date>(() => startOfMonth(new Date()));
 
-  const { data } = useDateVoteStatusByMonthQuery(appointmentId, month);
+  const { data, isFetching } = useDateVoteStatusByMonthQuery(
+    appointmentId,
+    month,
+  );
 
   const voteRatioMap = useMemo(() => {
     const voteRatio = new Map<string, number>();
@@ -46,17 +50,24 @@ const ViewTotalVoteCalendar = ({
   };
 
   return (
-    <ViewCalendarShell
-      initialMonth={today}
-      onMonthChange={onMonthChange}
-      renderCell={(meta) => (
-        <DateCell
-          {...meta}
-          votePercentage={voteRatioMap.get(dateToString(meta.date)) ?? 0}
-          appointmentId={appointmentId}
-        />
+    <div className="relative">
+      <ViewCalendarShell
+        initialMonth={today}
+        onMonthChange={onMonthChange}
+        renderCell={(meta) => (
+          <DateCell
+            {...meta}
+            votePercentage={voteRatioMap.get(dateToString(meta.date)) ?? 0}
+            appointmentId={appointmentId}
+          />
+        )}
+      />
+      {isFetching && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-white/25 flex justify-center items-center">
+          <LoadingSpinner size={25} open={true} />
+        </div>
       )}
-    />
+    </div>
   );
 };
 
