@@ -67,7 +67,10 @@ const PlaceInfoDrawerContent = ({
     placeId,
   });
 
-  const { mutate } = useDeleteLocation(appointmentId, placeId);
+  const { mutate, isPending, isSuccess, reset } = useDeleteLocation(
+    appointmentId,
+    placeId,
+  );
 
   const deletePlace = async () => {
     if (confirm("정말 삭제하시겠습니까?")) {
@@ -111,7 +114,7 @@ const PlaceInfoDrawerContent = ({
       }}
     >
       {data ? (
-        <div className="flex flex-col gap-16">
+        <div className="relative flex flex-col gap-16">
           <div className="flex flex-col gap-16 w-full">
             <div>
               <p className="typo-16-regular text-gray-800">{data.name}</p>
@@ -147,6 +150,17 @@ const PlaceInfoDrawerContent = ({
               ))}
             </div>
           </div>
+
+          {(isPending || isSuccess) && (
+            <div className="absolute z-1 w-full h-full grid place-items-center bg-white/50">
+              <LoadingSpinner
+                size={35}
+                open={isPending || isSuccess}
+                success={isSuccess}
+                onClose={() => reset()}
+              />
+            </div>
+          )}
         </div>
       ) : (
         <div className="w-full h-full grid place-items-center">
