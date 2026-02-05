@@ -3,40 +3,58 @@
 import { cn } from "@/utils/cn";
 import Button from "../shared/Button";
 import PlaceIcon from "./icons/PlaceIcon";
-import { useCallback, useState } from "react";
-import { PlaceItemForView, PlaceItemForVote } from "./PlaceItem";
+import { useCallback, useMemo, useState } from "react";
+import { PlaceItemForView } from "./PlaceItem";
 import PostcodePopup from "../shared/PostcodePopup";
 import { Address } from "@/types/daum";
 import { Location } from "@/types/apiResponse";
 import useRegisterLocation from "@/hooks/useRegisterLocation";
 import useMyVoteLocationQuery from "@/hooks/useMyVoteLocationQuery";
-import useVoteLocation from "@/hooks/useVoteLocation";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import PlaceInfoDrawer from "./PlaceInfoDrawer";
+import useLocationsQuery from "@/hooks/useLocationsQuery";
+import VotePlaceForm from "./VotePlaceForm";
+import useAppointmentUserProfileQuery from "@/hooks/useAppointmentUserProfileQuery";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
-  locations: Location[];
-  totalCount: number; // 총 인원 수
   disabled?: boolean;
 }
 
-const PlaceVoteCard = ({
-  appointmentId,
-  locations,
-  totalCount,
-  disabled,
-}: PlaceVoteCardProps) => {
+const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
   const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
 
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
 
+  // 사용자의 프로필 (프로필 입력 전엔 nickName, startingPlace가 null, id는 부여됨)
+  const { data: profileData } = useAppointmentUserProfileQuery({
+    appointmentId,
+  });
+
+  const isRegistered =
+    profileData !== undefined &&
+    profileData !== null &&
+    profileData?.memberNickName !== null;
+
+  const canVote = isRegistered && !disabled;
+  const canAddPlace = isRegistered && !disabled;
+
+  // 장소 목록 및 투표 현황
+  const { data, isFetching } = useLocationsQuery({
+    appointmentId,
+  });
+
+  const totalCount = useMemo(() => {
+    if (data === undefined) return 0;
+    const [_, tc] = data.memberVoteRatio.split("/");
+    return Number(tc);
+  }, [data]);
+
   /* 나의 투표 */
   const { data: myVotes } = useMyVoteLocationQuery(appointmentId);
 
-  const isMyVoteLocation = useCallback(
-    (locationId: number) =>
-      myVotes?.find((vote) => vote.id === locationId) !== undefined,
+  const myVotedPlaceIdList = useMemo(
+    () => myVotes?.map((vote) => vote.id) ?? [],
     [myVotes],
   );
 
@@ -64,77 +82,83 @@ const PlaceVoteCard = ({
 
   return (
     <div className="relative bg-white border border-gray-100 rounded-[24px] flex flex-col items-center gap-16 items-center py-16">
-      {locations.length > 0 ? (
-        <>
-          {mode === "VIEW" ? (
-            <>
-              <div className="flex flex-col gap-16">
-                {locations.map((place) => (
-                  <PlaceItemForView
-                    key={place.id}
-                    place={place}
-                    totalCount={totalCount}
-                    votedByMe={isMyVoteLocation(place.id)}
-                  />
-                ))}
-              </div>
-              <div className="w-full px-16 flex justify-between">
-                <Button
-                  size="Small"
-                  color="White"
-                  onClick={openSearchAddressPopup}
-                  disabled={disabled}
-                >
-                  장소 등록하기
-                </Button>
-                <Button
-                  size="Small"
-                  color="Primary"
-                  onClick={startVote}
-                  disabled={disabled}
-                >
-                  투표하기
-                </Button>
-              </div>
-            </>
-          ) : (
-            <VotePlace
-              places={locations}
-              myVoteLocationIds={myVotes?.map((vote) => vote.id) ?? []}
-              totalCount={totalCount}
-              appointmentId={appointmentId}
-              onCompleteVote={() => setMode("VIEW")}
-            />
-          )}
-        </>
-      ) : (
-        <>
-          <div className="w-310 h-104 flex flex-col gap-4 justify-center items-center">
-            <PlaceIcon
-              width={24}
-              height={24}
-              color={
-                disabled ? "var(--color-gray-300)" : "var(--color-gray-500)"
-              }
-            />
-            <p
-              className={cn(
-                "typo-14-regular",
-                disabled ? "text-gray-300" : "text-gray-500",
-              )}
+      {data ? (
+        /* 장소 데이터가 있는 경우 */
+        data.locationList.length > 0 ? (
+          <>
+            {mode === "VIEW" ? (
+              <>
+                <ViewPlaceList
+                  locationList={data.locationList}
+                  totalCount={totalCount}
+                  myVotedPlaceIdList={myVotedPlaceIdList}
+                />
+                <div className="w-full px-16 flex justify-between">
+                  <Button
+                    size="Small"
+                    color="White"
+                    onClick={openSearchAddressPopup}
+                    disabled={!canAddPlace}
+                  >
+                    장소 등록하기
+                  </Button>
+                  <Button
+                    size="Small"
+                    color="Primary"
+                    onClick={startVote}
+                    disabled={!canVote}
+                  >
+                    투표하기
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <VotePlaceForm
+                places={data.locationList}
+                myVoteLocationIds={myVotes?.map((vote) => vote.id) ?? []}
+                totalCount={totalCount}
+                appointmentId={appointmentId}
+                onCompleteVote={() => setMode("VIEW")}
+              />
+            )}
+          </>
+        ) : (
+          /* 등록된 장소가 하나도 없을 때 */
+          <>
+            <div className="w-310 h-104 flex flex-col gap-4 justify-center items-center">
+              <PlaceIcon
+                width={24}
+                height={24}
+                color={
+                  canAddPlace
+                    ? "var(--color-gray-500)"
+                    : "var(--color-gray-300)"
+                }
+              />
+              <p
+                className={cn(
+                  "typo-14-regular",
+                  canAddPlace ? "text-gray-500" : "text-gray-300",
+                )}
+              >
+                장소를 등록해주세요.
+              </p>
+            </div>
+            <Button
+              size="Medium"
+              color="White"
+              disabled={!canAddPlace}
+              onClick={openSearchAddressPopup}
             >
-              장소를 등록해주세요.
-            </p>
-          </div>
-          <Button
-            size="Medium"
-            color="White"
-            disabled={disabled}
-            onClick={openSearchAddressPopup}
-          >
-            장소 등록하기
-          </Button>
-        </>
+              장소 등록하기
+            </Button>
+          </>
+        )
+      ) : (
+        /* data === undefined (데이터 로딩 중 or 에러) */
+        <div className="w-full h-200 grid place-items-center">
+          <LoadingSpinner size={25} open={true} />
+        </div>
       )}
 
       <PostcodePopup
@@ -159,77 +183,33 @@ const PlaceVoteCard = ({
   );
 };
 
-interface VotePlaceProps {
-  places: Location[];
-  myVoteLocationIds: number[];
+interface ViewPlaceListProps {
+  locationList: Location[];
   totalCount: number;
-  appointmentId: string;
-  onCompleteVote: () => void;
+  myVotedPlaceIdList: number[];
 }
 
-const VotePlace = ({
-  places,
-  myVoteLocationIds,
+const ViewPlaceList = ({
+  locationList,
   totalCount,
-  appointmentId,
-  onCompleteVote,
-}: VotePlaceProps) => {
-  const [selected, setSelected] = useState<number[]>(myVoteLocationIds);
-
-  const onClickItem = (placeId: number) => {
-    const idx = selected.findIndex((id) => id === placeId);
-    if (idx === -1) {
-      // 투표
-      setSelected([...selected, placeId]);
-    } else {
-      // 투표 취소
-      const newSelected = [...selected];
-      newSelected.splice(idx, 1);
-      setSelected(newSelected);
-    }
-  };
-
-  /* 투표 반영 */
-  const { mutate } = useVoteLocation(appointmentId);
-  const saveVote = () => {
-    mutate(
-      { placeIdList: selected },
-      {
-        onError: () => {
-          alert("투표 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
-        },
-        onSettled: () => {
-          onCompleteVote();
-        },
-      },
-    );
-  };
-
-  const isVoted = (locationId: number) => selected.includes(locationId);
-
+  myVotedPlaceIdList,
+}: ViewPlaceListProps) => {
+  const isMyVoteLocation = useCallback(
+    (locationId: number) =>
+      myVotedPlaceIdList.find((voteId) => voteId === locationId) !== undefined,
+    [myVotedPlaceIdList],
+  );
   return (
-    <>
-      <div className="flex flex-col gap-16">
-        {places.map((place) => (
-          <PlaceItemForVote
-            key={place.id}
-            place={place}
-            onClick={() => onClickItem(place.id)}
-            voted={isVoted(place.id)}
-            totalCount={totalCount}
-          />
-        ))}
-      </div>
-
-      <div className="w-full px-16 flex justify-between">
-        <Button size="Small" color="White" disabled>
-          장소 등록하기
-        </Button>
-        <Button size="Small" color="Primary" onClick={saveVote}>
-          저장하기
-        </Button>
-      </div>
-    </>
+    <div className="flex flex-col gap-16">
+      {locationList.map((place) => (
+        <PlaceItemForView
+          key={place.id}
+          place={place}
+          totalCount={totalCount}
+          votedByMe={isMyVoteLocation(place.id)}
+        />
+      ))}
+    </div>
   );
 };
 
