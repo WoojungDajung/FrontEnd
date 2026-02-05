@@ -29,7 +29,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
     appointmentId,
   });
 
-  if (appointmentData === undefined || profileData === undefined) {
+  if (appointmentData === undefined) {
     return <></>;
   }
 
@@ -116,14 +116,14 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
       )}
 
       {/* Drawer */}
-      <EditProfileDrawer
+      {profileData && <EditProfileDrawer
         key={`${profileData?.id}-${profileData?.memberNickName}-${profileData?.startingPlace}`}
         appointmentId={appointmentId}
         appointmentHostId={appointmentData.appointment.appointmentUserId}
         initialProfile={profileData}
         open={profileDrawerOpen}
         setOpen={setProfileDrawerOpen}
-      />
+      />}
       <EditMeetingDrawer
         key={`${appointmentData.appointment.appointmentName}-${appointmentData.appointment.appointmentDueDate}`}
         appointmentId={appointmentId}

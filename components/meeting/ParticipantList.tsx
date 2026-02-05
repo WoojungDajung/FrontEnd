@@ -16,7 +16,7 @@ import { useAppointmentPage } from "@/context/AppointmentContext";
 interface ParticipantListProps {
   appointmentId: string;
   appointmentHostId: number;
-  myProfile: MemberProfile | null;
+  myProfile: MemberProfile | null | undefined;
   participants: AppointmentUser[];
 }
 
