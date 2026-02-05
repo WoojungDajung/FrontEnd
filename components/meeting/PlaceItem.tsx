@@ -1,13 +1,12 @@
 import { cn } from "@/utils/cn";
 import RightChevronIcon from "../shared/icons/RightChevronIcon";
-import { MouseEvent, useState } from "react";
-import PlaceInfoDrawer from "./PlaceInfoDrawer";
+import { MouseEvent } from "react";
 import { Location } from "@/types/apiResponse";
+import { useAppointmentPage } from "@/context/AppointmentContext";
 
 interface CommonItemProps {
   place: Location;
   totalCount: number;
-  appointmentId: string;
 }
 
 interface PlaceItemProps extends CommonItemProps {
@@ -18,15 +17,14 @@ interface PlaceItemProps extends CommonItemProps {
 const PlaceItem = ({
   place,
   totalCount,
-  appointmentId,
   className,
   onClick,
 }: PlaceItemProps) => {
-  const [placeInfoDrawerOpen, setPlaceInfoDrawerOpen] = useState(false);
+  const { selectPlace } = useAppointmentPage();
 
   const showPlaceInfoDrawer = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    setPlaceInfoDrawerOpen(true);
+    selectPlace(place.id);
   };
 
   const voteCount = Number(place.voteCount);
@@ -65,13 +63,6 @@ const PlaceItem = ({
           </div>
         </div>
       </div>
-
-      <PlaceInfoDrawer
-        placeId={place.id}
-        appointmentId={appointmentId}
-        open={placeInfoDrawerOpen}
-        setOpen={setPlaceInfoDrawerOpen}
-      />
     </>
   );
 };
@@ -82,7 +73,6 @@ interface PlaceItemForViewProps extends CommonItemProps {
 
 const PlaceItemForView = ({
   place,
-  appointmentId,
   votedByMe,
   totalCount,
 }: PlaceItemForViewProps) => {
@@ -90,7 +80,6 @@ const PlaceItemForView = ({
     <PlaceItem
       place={place}
       totalCount={totalCount}
-      appointmentId={appointmentId}
       className={cn(
         votedByMe ? "bg-primary-25" : "bg-white",
         "border border-gray-50",

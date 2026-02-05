@@ -12,6 +12,7 @@ import useRegisterLocation from "@/hooks/useRegisterLocation";
 import useMyVoteLocationQuery from "@/hooks/useMyVoteLocationQuery";
 import useVoteLocation from "@/hooks/useVoteLocation";
 import LoadingSpinner from "../shared/LoadingSpinner";
+import PlaceInfoDrawer from "./PlaceInfoDrawer";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
@@ -72,7 +73,6 @@ const PlaceVoteCard = ({
                   <PlaceItemForView
                     key={place.id}
                     place={place}
-                    appointmentId={appointmentId}
                     totalCount={totalCount}
                     votedByMe={isMyVoteLocation(place.id)}
                   />
@@ -153,6 +153,8 @@ const PlaceVoteCard = ({
           />
         </div>
       )}
+
+      <PlaceInfoDrawer appointmentId={appointmentId} />
     </div>
   );
 };
@@ -212,7 +214,6 @@ const VotePlace = ({
           <PlaceItemForVote
             key={place.id}
             place={place}
-            appointmentId={appointmentId}
             onClick={() => onClickItem(place.id)}
             voted={isVoted(place.id)}
             totalCount={totalCount}
