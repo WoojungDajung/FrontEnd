@@ -3,20 +3,22 @@
     background-position: 0 0;
   }
   to {
-    background-position: -504px 0; /* 504 = 63 * 8 */
+    background-position: calc(-1 * var(--size) * var(--frames)) 0;
   }
 }
 
 .spinner8 {
-  width: 63px;
-  height: 63px;
+  --frames: 8;
+
+  width: var(--size);
+  height: var(--size);
 
   background-image: url("/images/loading/spinner_sprite.svg");
   background-repeat: no-repeat;
 
-  background-size: 504px 63px;  /* 504 = 63 * 8 */
+  background-size: calc(var(--size) * var(--frames)) var(--size);
 
-  animation: spinner-frames-x 0.8s steps(8) infinite;
+  animation: spinner-frames-x 0.8s steps(var(--frames)) infinite;
 }
 
 @keyframes success-fade-out {

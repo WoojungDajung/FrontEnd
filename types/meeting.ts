@@ -12,7 +12,7 @@ export type Participant = {
 };
 
 export type Profile = {
-  id: string;
+  id: number;
   memberNickName: string;
   startingPlace?: string;
 };

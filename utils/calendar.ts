@@ -1,4 +1,9 @@
+import { VoteDate } from "@/types/apiResponse";
 import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 export const WEEKDAYS_KO = ["일", "월", "화", "수", "목", "금", "토"] as const;
 
@@ -11,7 +16,30 @@ export function endOfMonth(date: Date) {
   return dayjs(date).date(lastDate).toDate();
 }
 
-export function getDayCells(month: Date) {
+export function matchCell(
+  cells: Date[],
+  voteDays: VoteDate[],
+): {
+  date: Date;
+  percentage: number; // 표가 없으면 color는 undefined
+}[] {
+  const datePercentageMap = new Map<string, number>();
+  for (const day of voteDays) {
+    const { ymd, percentage } = day;
+    datePercentageMap.set(ymd, Number(percentage));
+  }
+
+  return cells.map((cell) => {
+    const ymd = dayjs(cell).format("YYYY-MM-DD");
+
+    return {
+      date: cell,
+      percentage: datePercentageMap.get(ymd) ?? 0,
+    };
+  });
+}
+
+export function getDayCells(month: Date): Date[] {
   const first = startOfMonth(month);
   const last = endOfMonth(month);
 
@@ -47,6 +75,23 @@ export function addDays(date: Date, value: number) {
   return dayjs(date).add(value, "day").toDate();
 }
 
+/**
+ *
+ * @param date
+ * @returns YYYY-MM-DD 형식의 문자열
+ */
 export function dateToString(date: Date) {
-  return dayjs(date).format("YYMMDD");
+  return dayjs(date).format("YYYY-MM-DD");
+}
+
+export function isAfterOrSameMonth(a: Date, b: Date) {
+  return dayjs(a).startOf("month").isSameOrAfter(dayjs(b).startOf("month"));
+}
+
+export function isBeforeOrSameMonth(a: Date, b: Date) {
+  return dayjs(a).startOf("month").isSameOrBefore(dayjs(b).startOf("month"));
+}
+
+export function isBeforeDay(a: Date, b: Date) {
+  return dayjs(a).startOf("day").isBefore(dayjs(b).startOf("day"));
 }

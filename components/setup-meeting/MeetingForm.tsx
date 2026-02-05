@@ -1,23 +1,37 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { FormEvent, useState } from "react";
 import Button from "../shared/Button";
 import FormField from "../shared/FormField";
 import DateInput from "../shared/DateInput";
+import useCreateMeeting from "@/hooks/useCreateMeeting";
+import { useRouter } from "next/navigation";
 
 const MeetingForm = () => {
+  const router = useRouter();
+
   const [meetingName, setMeetingName] = useState<string>("");
   const [deadline, setDeadline] = useState<Date | undefined>(undefined);
 
-  const isButtonDisabled = useCallback(
-    (meetingName: string, deadline: Date | undefined) => {
-      return meetingName === "" || deadline === undefined;
-    },
-    []
-  );
+  const { mutate, isPending } = useCreateMeeting();
 
-  const onSubmit = () => {
-    // TODO: meetingName, deadline으로 약속 생성
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (meetingName === "" || deadline === undefined) return;
+
+    mutate(
+      { meetingName, deadline },
+      {
+        onSuccess: ({ appointment }) => {
+          // 약속 페이지로 이동
+          router.push(`/meeting/${appointment.appointmentId}`);
+        },
+        onError: () => {
+          // 에러 페이지로 전환?
+          alert("약속 생성에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+        },
+      },
+    );
   };
 
   return (
@@ -56,7 +70,7 @@ const MeetingForm = () => {
           size="Large"
           color="Primary"
           className="w-full"
-          disabled={isButtonDisabled(meetingName, deadline)}
+          disabled={meetingName === "" || deadline === undefined}
         >
           약속 정하러 가기
         </Button>

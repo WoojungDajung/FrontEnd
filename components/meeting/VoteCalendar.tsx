@@ -4,6 +4,7 @@ import {
   addMonths,
   dateToString,
   getDayCells,
+  isBeforeDay,
   startOfMonth,
   WEEKDAYS_KO,
 } from "@/utils/calendar";
@@ -12,12 +13,12 @@ import LeftChevronIcon from "../shared/icons/LeftChevronIcon";
 import RightChevronIcon from "../shared/icons/RightChevronIcon";
 import { cn } from "@/utils/cn";
 
-export type VoteState = "selected" | "uncertain" | "unselected";
+export type VoteState = "possible" | "uncertain" | "impossible";
 
 interface VoteCalendarProps {
   startDate: Date;
   /* 사용자의 투표 상태(선택, 애매). YYMMDD 형식의 문자열로 이루어짐 */
-  value: { selected: Set<string>; uncertain: Set<string> };
+  value: { possible: Set<string>; uncertain: Set<string> };
   onChange?: (date: Date, prevState: VoteState, nextState: VoteState) => void;
 }
 
@@ -35,11 +36,11 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
   const cells: Cell[] = useMemo(() => {
     return getDayCells(curMonth).map((c) => {
       const dateStr = dateToString(c);
-      const state = value.selected.has(dateStr)
-        ? "selected"
+      const state = value.possible.has(dateStr)
+        ? "possible"
         : value.uncertain.has(dateStr)
           ? "uncertain"
-          : "unselected";
+          : "impossible";
 
       return {
         day: c,
@@ -52,26 +53,32 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
     (cell: Cell) => {
       const curState = cell.state;
       const nextState =
-        curState === "unselected"
-          ? "selected"
-          : curState === "selected"
+        curState === "impossible"
+          ? "possible"
+          : curState === "possible"
             ? "uncertain"
-            : "unselected";
+            : "impossible";
       onChange?.(cell.day, curState, nextState);
     },
     [onChange],
   );
 
+  const isDisabledCell = useCallback((date: Date) => {
+    return (
+      date.getMonth() !== curMonth.getMonth() || isBeforeDay(date, startDate)
+    );
+  }, [curMonth,startDate]);
+
   const getCellStyle = useCallback(
     (cell: Cell): string => {
-      if (cell.state === "selected") {
+      if (cell.state === "possible") {
         return "bg-primary-400 text-white";
       } else if (cell.state === "uncertain") {
         return "bg-gray-300 text-gray-800";
       }
-      // cell.state === "unselected"
+      // cell.state === "impossible"
       const style: string[] = [];
-      const isUnavailable = cell.day.getMonth() !== curMonth.getMonth();
+      const isUnavailable = isDisabledCell(cell.day);
       if (!isUnavailable) {
         style.push("border-[0.6px] border-gray-200");
       }
@@ -86,7 +93,7 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
       }
       return style.join(" ");
     },
-    [curMonth],
+    [isDisabledCell],
   );
 
   return (
@@ -148,7 +155,7 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
                 "button w-40 h-40 typo-14-regular rounded-[8px] flex justify-center items-center",
                 getCellStyle(cell),
               )}
-              disabled={cell.day.getMonth() !== curMonth.getMonth()}
+              disabled={isDisabledCell(cell.day)}
               onClick={() => onClickCell(cell)}
             >
               {cell.day.getDate()}

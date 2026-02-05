@@ -38,10 +38,10 @@ const Modal = ({
     return () => lockBodyScroll(false);
   }, [open]);
 
-  useEffect(() => {
-    if (!open) return;
-    contentRef.current?.focus();
-  }, [open]);
+  // useEffect(() => {
+  //   if (!open) return;
+  //   contentRef.current?.focus();
+  // }, [open]);
 
   if (!portalContainer || !open) return null;
 

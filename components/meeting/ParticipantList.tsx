@@ -1,4 +1,3 @@
-import { Participant, Profile } from "@/types/meeting";
 import {
   MouseEvent,
   useCallback,
@@ -11,13 +10,22 @@ import DownChevronIcon from "./icons/DownChevronIcon";
 import UpChevronIcon from "./icons/UpChevronIcon";
 import EditProfileDrawer from "./EditProfileDrawer";
 import ParticipantBadge from "./ParticipantBadge";
+import { AppointmentUser, MemberProfile } from "@/types/apiResponse";
+import { useAppointmentPage } from "@/context/AppointmentContext";
 
 interface ParticipantListProps {
-  myProfile?: Profile;
-  participants: Participant[];
+  appointmentId: string;
+  appointmentHostId: number;
+  myProfile: MemberProfile | null;
+  participants: AppointmentUser[];
 }
 
-const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
+const ParticipantList = ({
+  appointmentId,
+  appointmentHostId,
+  myProfile,
+  participants,
+}: ParticipantListProps) => {
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
 
   const me = participants.find((p) => p.id === myProfile?.id);
@@ -28,10 +36,15 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
     setProfileDrawerOpen(true);
   };
 
-  // 선택된 User의 투표 상태를 보여주기 기능 관련 값
-  const selectedUserId: string | undefined = undefined;
-  const onClickBadge = (userId: string) => {
-    // 해당 user 선택
+  /* 선택된 User의 투표 상태를 보여주기 기능 */
+  const { selectedParticipantId, selectParticipant } = useAppointmentPage();
+
+  const onClickBadge = (userId: number) => {
+    if (userId === selectedParticipantId) {
+      selectParticipant(null);
+    } else {
+      selectParticipant(userId);
+    }
   };
 
   /* 사용자 목록 2줄까지만 보여주기 */
@@ -82,7 +95,6 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
     if (!containerRef.current) return;
 
     const { canToggle, containerHeight } = compute(containerRef.current, 2);
-    console.log(canToggle, containerHeight);
     setCanToggle(canToggle);
     setContainerMaxHeight(containerHeight);
   }, [participants, containerRef, compute]);
@@ -103,7 +115,7 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
             <ParticipantBadge
               className="bg-primary-25"
               onClick={() => onClickBadge(me.id)}
-              selected={me.id === selectedUserId}
+              selected={me.id === selectedParticipantId}
             >
               <span className="typo-14-regular text-gray-800">
                 {me.nickName}
@@ -118,7 +130,7 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
               key={participant.id}
               className="bg-gray-100"
               onClick={() => onClickBadge(participant.id)}
-              selected={participant.id === selectedUserId}
+              selected={participant.id === selectedParticipantId}
             >
               <span className="typo-14-regular text-gray-800">
                 {participant.nickName}
@@ -149,8 +161,11 @@ const ParticipantList = ({ myProfile, participants }: ParticipantListProps) => {
         )}
       </div>
 
-      {me && (
+      {me && myProfile && (
         <EditProfileDrawer
+          key={`${myProfile.id}-${myProfile.memberNickName}-${myProfile.startingPlace}`}
+          appointmentId={appointmentId}
+          appointmentHostId={appointmentHostId}
           initialProfile={myProfile}
           open={profileDrawerOpen}
           setOpen={setProfileDrawerOpen}

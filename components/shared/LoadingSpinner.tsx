@@ -7,6 +7,7 @@ import style from "./LoadingSpinner.module.css";
 type Phase = "idle" | "loading" | "success";
 
 interface LoadingSpinnerProps {
+  size: number;
   open: boolean;
   success?: boolean;
   onClose?: () => void;
@@ -14,6 +15,7 @@ interface LoadingSpinnerProps {
 }
 
 const LoadingSpinner = ({
+  size,
   open,
   success = false,
   onClose,
@@ -39,21 +41,18 @@ const LoadingSpinner = ({
 
   if (!open) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 grid place-items-center">
-      {phase === "loading" ? (
-        <div className={style.spinner8} />
-      ) : (
-        <Image
-          src="/images/loading/success.svg"
-          alt="완료"
-          width={24}
-          height={24}
-          draggable={false}
-          className={style.successFade}
-        />
-      )}
-    </div>
+  return phase === "loading" ? (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <div className={style.spinner8} style={{ "--size": `${size}px` } as any} />
+  ) : (
+    <Image
+      src="/images/loading/success.svg"
+      alt="완료"
+      width={size}
+      height={size}
+      draggable={false}
+      className={style.successFade}
+    />
   );
 };
 

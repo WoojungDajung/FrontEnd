@@ -1,5 +1,5 @@
 import { ERROR_CODE } from "@/constants/error-code";
-import { cookies } from "next/headers";
+import { saveToken } from "@/lib/auth/token";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
       const { accessToken, refreshToken } = resData.data;
       // 토큰 처리
-      saveToken(accessToken, refreshToken);
+      await saveToken(accessToken, refreshToken);
 
       // 기존 페이지로
       if (state) {
@@ -86,20 +86,4 @@ export async function GET(request: NextRequest) {
   return NextResponse.redirect(
     `${process.env.NEXT_PUBLIC_BASE_URL}/error?${urlSearchParams.toString()}`,
   );
-}
-
-async function saveToken(accessToken: string, refreshToken: string) {
-  const cookieStore = await cookies();
-  cookieStore.set("access-token", accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-  });
-  cookieStore.set("refresh-token", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-  });
 }

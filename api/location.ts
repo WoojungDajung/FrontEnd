@@ -1,0 +1,171 @@
+import {
+  TLocationListResponse,
+  TLocationResponse,
+  TMyVoteLocationResponse,
+} from "@/types/apiResponse";
+
+/* 장소 목록 조회 */
+export async function getLocations(appointmentId: string) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/${appointmentId}`;
+  const res = await fetch(url, {
+    method: "GET",
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 400) {
+      // 유저가 존재하지 않습니다.
+    }
+    if (status_code === 404) {
+      // 방 참여자가 아닙니다.
+    }
+
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return resBody.data as TLocationListResponse;
+}
+
+/* 장소 등록 */
+export async function registerLocation(
+  appointmentId: string,
+  placeName: string,
+  address: string,
+  latitude: string,
+  longitude: string,
+) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/${appointmentId}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      name: placeName,
+      address,
+      latitude,
+      longitude,
+    }),
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 402) {
+      // 프로필 미설정(닉네임/출발지)
+    }
+    if (status_code === 409) {
+      // 장소 중복
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return;
+}
+
+/* 특정 장소 조회 */
+export async function getLocation(appointmentId: string, placeId: number) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/specify/${appointmentId}/${placeId}`;
+  const res = await fetch(url, {
+    method: "GET",
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 404) {
+      // 방이 존재하지 않습니다.
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return resBody.data as TLocationResponse;
+}
+
+/* 장소 삭제 */
+export async function deleteLocation(appointmentId: string, placeId: number) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/${appointmentId}/${placeId}`;
+  const res = await fetch(url, {
+    method: "DELETE",
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 402) {
+      // 프로필 미설정(닉네임/출발지)
+    }
+    if (status_code === 404) {
+      // 방 참여자가 아닙니다.
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return;
+}
+
+/* 내 장소 투표 현황 */
+export async function getMyVoteLocation(appointmentId: string) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/myvote/${appointmentId}`;
+  const res = await fetch(url, {
+    method: "GET",
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 402) {
+      // 프로필 미설정(닉네임/출발지)
+    }
+    if (status_code === 404) {
+      // 방 참여자가 아닙니다.
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return resBody.data as TMyVoteLocationResponse[];
+}
+
+/* 장소 투표 */
+export async function voteLocation(
+  appointmentId: string,
+  placeIdList: number[],
+) {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/vote/${appointmentId}`;
+  const res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({
+      placeList: placeIdList,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 402) {
+      // 프로필 미설정(닉네임/출발지)
+    }
+    if (status_code === 404) {
+      // 방 참여자가 아닙니다.
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return;
+}

@@ -3,58 +3,76 @@
 import { cn } from "@/utils/cn";
 import Button from "../shared/Button";
 import PlaceIcon from "./icons/PlaceIcon";
-import { useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { PlaceItemForView, PlaceItemForVote } from "./PlaceItem";
-import { Place } from "@/types/meeting";
 import PostcodePopup from "../shared/PostcodePopup";
 import { Address } from "@/types/daum";
+import { Location } from "@/types/apiResponse";
+import useRegisterLocation from "@/hooks/useRegisterLocation";
+import useMyVoteLocationQuery from "@/hooks/useMyVoteLocationQuery";
+import useVoteLocation from "@/hooks/useVoteLocation";
 
 interface PlaceVoteCardProps {
+  appointmentId: string;
+  locations: Location[];
+  totalCount: number; // 총 인원 수
   disabled?: boolean;
 }
 
-const PlaceVoteCard = ({ disabled }: PlaceVoteCardProps) => {
+const PlaceVoteCard = ({
+  appointmentId,
+  locations,
+  totalCount,
+  disabled,
+}: PlaceVoteCardProps) => {
   const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
-  const [places, setPlaces] = useState<Place[]>([
-    { id: "1", name: "장소명", address: "상세 주소", count: 3 },
-    { id: "2", name: "장소명", address: "상세 주소", count: 2 },
-    { id: "3", name: "장소명", address: "상세 주소", count: 1 },
-  ]);
+
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
 
-  const placeIdVoted = "3";
+  /* 나의 투표 */
+  const { data: myVotes } = useMyVoteLocationQuery(appointmentId);
 
-  const totalCount = useMemo(
-    () => places.reduce((acc, cur) => acc + cur.count, 0),
-    [places],
+  const isMyVoteLocation = useCallback(
+    (locationId: number) =>
+      myVotes?.find((vote) => vote.id === locationId) !== undefined,
+    [myVotes],
   );
 
   const openSearchAddressPopup = () => {
     setPostcodePopupOpen(true);
   };
 
-  const addPlace = (address: Address) => {
-    // 장소 등록
-    console.log("장소 등록:", address);
-  };
-
   const startVote = () => {
     setMode("VOTE");
   };
 
+  /* 장소 등록 */
+  const { mutate } = useRegisterLocation(appointmentId);
+  const addPlace = async (address: Address) => {
+    mutate(
+      { address },
+      {
+        onError: () => {
+          alert("장소 등록에 실패했습니다. 잠시 후 다시 시도해주세요.");
+        },
+      },
+    );
+  };
+
   return (
     <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col items-center gap-16 items-center py-16">
-      {places.length > 0 ? (
+      {locations.length > 0 ? (
         <>
           {mode === "VIEW" ? (
             <>
               <div className="flex flex-col gap-16">
-                {places.map((place) => (
+                {locations.map((place) => (
                   <PlaceItemForView
                     key={place.id}
                     place={place}
-                    totalCount={6}
-                    votedByMe={place.id === placeIdVoted}
+                    appointmentId={appointmentId}
+                    totalCount={totalCount}
+                    votedByMe={isMyVoteLocation(place.id)}
                   />
                 ))}
               </div>
@@ -79,9 +97,10 @@ const PlaceVoteCard = ({ disabled }: PlaceVoteCardProps) => {
             </>
           ) : (
             <VotePlace
-              places={places}
-              placeIdVoted={placeIdVoted}
+              places={locations}
+              myVoteLocationIds={myVotes?.map((vote) => vote.id) ?? []}
               totalCount={totalCount}
+              appointmentId={appointmentId}
               onCompleteVote={() => setMode("VIEW")}
             />
           )}
@@ -125,31 +144,53 @@ const PlaceVoteCard = ({ disabled }: PlaceVoteCardProps) => {
   );
 };
 
+interface VotePlaceProps {
+  places: Location[];
+  myVoteLocationIds: number[];
+  totalCount: number;
+  appointmentId: string;
+  onCompleteVote: () => void;
+}
+
 const VotePlace = ({
   places,
-  placeIdVoted,
+  myVoteLocationIds,
   totalCount,
+  appointmentId,
   onCompleteVote,
-}: {
-  places: Place[];
-  placeIdVoted?: string;
-  totalCount: number;
-  onCompleteVote: () => void;
-}) => {
-  const [selected, setSelected] = useState<string | null>(placeIdVoted ?? null);
+}: VotePlaceProps) => {
+  const [selected, setSelected] = useState<number[]>(myVoteLocationIds);
 
-  const onVoteItem = (placeId: string) => {
-    if (placeId === selected) {
-      setSelected(null);
+  const onClickItem = (placeId: number) => {
+    const idx = selected.findIndex((id) => id === placeId);
+    if (idx === -1) {
+      // 투표
+      setSelected([...selected, placeId]);
     } else {
-      setSelected(placeId);
+      // 투표 취소
+      const newSelected = [...selected];
+      newSelected.splice(idx, 1);
+      setSelected(newSelected);
     }
   };
 
+  /* 투표 반영 */
+  const { mutate } = useVoteLocation(appointmentId);
   const saveVote = () => {
-    // TODO: 투표 반영
-    onCompleteVote();
+    mutate(
+      { placeIdList: selected },
+      {
+        onError: () => {
+          alert("투표 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
+        },
+        onSettled: () => {
+          onCompleteVote();
+        },
+      },
+    );
   };
+
+  const isVoted = (locationId: number) => selected.includes(locationId);
 
   return (
     <>
@@ -158,8 +199,9 @@ const VotePlace = ({
           <PlaceItemForVote
             key={place.id}
             place={place}
-            onClick={() => onVoteItem(place.id)}
-            voted={place.id === selected}
+            appointmentId={appointmentId}
+            onClick={() => onClickItem(place.id)}
+            voted={isVoted(place.id)}
             totalCount={totalCount}
           />
         ))}

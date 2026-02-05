@@ -4,15 +4,18 @@ import CheckIcon from "./icons/CheckIcon";
 import ClockIcon from "./icons/ClocktIcon";
 
 interface VoteStatusModalProps {
+  votedMembers: string[];
+  unvotedMembers: string[];
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
 
-const VoteStatusModal = ({ open, setOpen }: VoteStatusModalProps) => {
-  // TODO: 투표 현황 API 연결
-  const completeMembers = ["우정", "우정", "우정"];
-  const incompleteMembers = ["우정", "우정", "우정", "우정"];
-
+const VoteStatusModal = ({
+  votedMembers,
+  unvotedMembers,
+  open,
+  setOpen,
+}: VoteStatusModalProps) => {
   return (
     <Modal
       className="py-16"
@@ -38,10 +41,10 @@ const VoteStatusModal = ({ open, setOpen }: VoteStatusModalProps) => {
                     color="var(--color-primary-400)"
                   />
                 </div>
-                <p className="typo-14-regular text-gray-800">{`투표 완료 (${completeMembers.length}명)`}</p>
+                <p className="typo-14-regular text-gray-800">{`투표 완료 (${votedMembers.length}명)`}</p>
               </div>
               <div className="flex gap-4">
-                {completeMembers.map((member) => (
+                {votedMembers.map((member) => (
                   <div
                     key={member}
                     className="px-8 py-4 rounded-[100px] bg-primary-25"
@@ -61,10 +64,10 @@ const VoteStatusModal = ({ open, setOpen }: VoteStatusModalProps) => {
                     color="var(--color-gray-400)"
                   />
                 </div>
-                <p className="typo-14-regular text-gray-800">{`투표 대기 (${incompleteMembers.length}명)`}</p>
+                <p className="typo-14-regular text-gray-800">{`투표 대기 (${unvotedMembers.length}명)`}</p>
               </div>
               <div className="flex gap-4">
-                {incompleteMembers.map((member) => (
+                {unvotedMembers.map((member) => (
                   <div
                     key={member}
                     className="px-8 py-4 rounded-[100px] bg-gray-100"
