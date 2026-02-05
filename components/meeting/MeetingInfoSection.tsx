@@ -24,7 +24,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
 
   const { data: appointmentData } = useAppointmentQuery({ appointmentId });
 
-  // 사용자의 프로필. 프로필 등록 전엔 null (룸 생성자는 프로필은 존재함. nickName, startingPlace가 null)
+  // 사용자의 프로필 (프로필 입력 전엔 nickName, startingPlace가 null, id는 부여됨)
   const { data: profileData } = useAppointmentUserProfileQuery({
     appointmentId,
   });
