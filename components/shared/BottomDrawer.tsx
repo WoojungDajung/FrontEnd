@@ -82,10 +82,10 @@ const BottomDrawer = ({
     return () => lockBodyScroll(false);
   }, [open]);
 
-  useEffect(() => {
-    if (!open) return;
-    contentRef.current?.focus();
-  }, [open]);
+  // useEffect(() => {
+  //   if (!open) return;
+  //   contentRef.current?.focus();
+  // }, [open]);
 
   const { mounted, state } = usePresence(open);
 
