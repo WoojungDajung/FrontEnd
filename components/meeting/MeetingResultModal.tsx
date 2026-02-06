@@ -17,28 +17,31 @@ import {
   MESSAGE_TEMPLATE_ID,
   shareMeetingOnKakaoTalk,
 } from "@/lib/kakao-share/utils";
-import { Appointment } from "@/types/apiResponse";
+import { Appointment, ConfirmedResult } from "@/types/apiResponse";
+import dayjs from "dayjs";
 
 interface MeetingResultModalProps {
   open?: boolean;
   setOpen?: (open: boolean) => void;
   appointment: Appointment;
+  appointmentUserCount: number;
+  result: ConfirmedResult;
 }
 
 const MeetingResultModal = ({
   open,
   setOpen,
   appointment,
+  appointmentUserCount,
+  result,
 }: MeetingResultModalProps) => {
-  // TODO: 결과 API 연결
-  const date: Date = useMemo(() => new Date(), []);
-  const place = useMemo(() => {
-    return {
-      name: "만리재 비스트로",
-      address: "서울특별시 중구 만리재로 201",
-    };
-  }, []);
-  const isDateTie = true; // 날짜 결과 동률 여부
+  const confirmedDateStr = useMemo(() => {
+    const date = dayjs(result.confirmedDate).toDate();
+    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${WEEKDAYS_KO[date.getDay()]}요일`;
+  }, [result]);
+
+  // TODO: 결과 동룔 여부에 따른 다른 메시지 표시
+  const isDateTie = false; // 날짜 결과 동률 여부
   const isPlaceTie = false; // 장소 결과 동률 여부
   // 결과 선정 이유 표시
   const [showDateReason, setShowDateReason] = useState(false);
@@ -61,6 +64,10 @@ const MeetingResultModal = ({
       appointment.appointmentName,
       MESSAGE_TEMPLATE_ID.SHARE_RESULT,
     );
+  };
+
+  const copyAddress = () => {
+    navigator.clipboard.writeText(result.confirmedPlaceAddress);
   };
 
   return (
@@ -142,7 +149,9 @@ const MeetingResultModal = ({
                         </>
                       )}
                     </div>
-                    <p className="typo-16-semibold text-gray-800">{`${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${WEEKDAYS_KO[date.getDay()]}요일`}</p>
+                    <p className="typo-16-semibold text-gray-800">
+                      {confirmedDateStr}
+                    </p>
                   </div>
                   {/* 추천 이유 */}
                   {isDateTie && (
@@ -190,23 +199,19 @@ const MeetingResultModal = ({
                                 선택한 사람
                               </p>
                               <p className="typo-14-regular">
-                                <span className="text-primary-400">{`${4}`}</span>
-                                <span className="text-gray-500">{`/${5}`}</span>
+                                <span className="text-primary-400">{`${result.dateVotedList.length}`}</span>
+                                <span className="text-gray-500">{`/${appointmentUserCount}`}</span>
                               </p>
                             </div>
                             <div className="flex gap-4 flex-wrap">
-                              <div className="px-8 py-4 rounded-[100px] bg-gray-100 text-gray-800 typo-12-regular">
-                                우정
-                              </div>
-                              <div className="px-8 py-4 rounded-[100px] bg-gray-100 text-gray-800 typo-12-regular">
-                                순대
-                              </div>
-                              <div className="px-8 py-4 rounded-[100px] bg-gray-100 text-gray-800 typo-12-regular">
-                                민지
-                              </div>
-                              <div className="px-8 py-4 rounded-[100px] bg-gray-100 text-gray-800 typo-12-regular">
-                                김유정
-                              </div>
+                              {result.dateVotedList.map((member) => (
+                                <div
+                                  key={member}
+                                  className="px-8 py-4 rounded-[100px] bg-gray-100 text-gray-800 typo-12-regular"
+                                >
+                                  {member}
+                                </div>
+                              ))}
                             </div>
                           </div>
                         </div>
@@ -254,18 +259,13 @@ const MeetingResultModal = ({
                     </div>
                     <div>
                       <p className="typo-16-semibold text-gray-800">
-                        {place.name}
+                        {result.confirmedPlaceName}
                       </p>
                       <div className="flex gap-4 items-center">
                         <p className="typo-14-regular text-gray-500">
-                          {place.address}
+                          {result.confirmedPlaceAddress}
                         </p>
-                        <button
-                          className="button"
-                          onClick={() =>
-                            navigator.clipboard.writeText(place.address)
-                          }
-                        >
+                        <button className="button" onClick={copyAddress}>
                           <CopyIcon
                             width={24}
                             height={24}
@@ -321,20 +321,21 @@ const MeetingResultModal = ({
                                 선택한 사람
                               </p>
                               <p className="typo-14-regular">
-                                <span className="text-primary-400">{`${3}`}</span>
-                                <span className="text-gray-500">{`/${5}`}</span>
+                                <span className="text-primary-400">
+                                  {result.placeVotedList.length}
+                                </span>
+                                <span className="text-gray-500">{`/${appointmentUserCount}`}</span>
                               </p>
                             </div>
                             <div className="flex gap-4 flex-wrap">
-                              <div className="px-8 py-4 rounded-[100px] bg-gray-100 text-gray-800 typo-12-regular">
-                                우정
-                              </div>
-                              <div className="px-8 py-4 rounded-[100px] bg-gray-100 text-gray-800 typo-12-regular">
-                                순대
-                              </div>
-                              <div className="px-8 py-4 rounded-[100px] bg-gray-100 text-gray-800 typo-12-regular">
-                                김유정
-                              </div>
+                              {result.placeVotedList.map((member) => (
+                                <div
+                                  key={member}
+                                  className="px-8 py-4 rounded-[100px] bg-gray-100 text-gray-800 typo-12-regular"
+                                >
+                                  {member}
+                                </div>
+                              ))}
                             </div>
                           </div>
                         </div>
