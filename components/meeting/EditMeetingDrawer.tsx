@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import BottomDrawer from "../shared/BottomDrawer";
 import Button from "../shared/Button";
 import DateInput from "../shared/DateInput";
@@ -25,6 +25,13 @@ const EditMeetingDrawer = ({
   const [name, setName] = useState<string>(initialName);
   const [dueDate, setDueDate] = useState<Date | undefined>(initialDueDate);
 
+  useEffect(() => {
+    setName(initialName);
+  }, [initialName]);
+  useEffect(() => {
+    setDueDate(initialDueDate);
+  }, [initialDueDate]);
+
   const { mutate, isPending, isSuccess, reset } = useEditAppointment({
     appointmentId,
   });
@@ -38,7 +45,7 @@ const EditMeetingDrawer = ({
       { appointmentName: name, appointmentDueDate: dueDate },
       {
         onSuccess: () => {
-          closeModal();
+          // closeModal();
         },
         onError: (error) => {
           alert(
@@ -101,7 +108,12 @@ const EditMeetingDrawer = ({
               <LoadingSpinner
                 size={40}
                 open={isPending || isSuccess}
-                onClose={() => reset()}
+                success={isSuccess}
+                onClose={() => {
+                  // 성공 표시 후 드로워가 닫히도록 하기
+                  close();
+                  reset();
+                }}
               />
             </div>
           )}
