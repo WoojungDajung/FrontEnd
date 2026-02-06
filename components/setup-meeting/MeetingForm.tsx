@@ -6,6 +6,7 @@ import FormField from "../shared/FormField";
 import DateInput from "../shared/DateInput";
 import useCreateMeeting from "@/hooks/useCreateMeeting";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 const MeetingForm = () => {
   const router = useRouter();
@@ -75,6 +76,12 @@ const MeetingForm = () => {
           약속 정하러 가기
         </Button>
       </form>
+
+      {isPending && (
+        <div className="fixed inset-0 w-full h-full grid place-items-center">
+          <LoadingSpinner size={40} open />
+        </div>
+      )}
     </section>
   );
 };
