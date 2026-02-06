@@ -132,7 +132,7 @@ const MeetingResultModal = ({
                             height={16}
                             color="var(--color-primary-400)"
                           />
-                          <p className="typo-12-regular text-primary-400">
+                          <p className="typo-14-regular text-primary-400">
                             만날우정 추천 일정
                           </p>
                         </>
@@ -143,7 +143,7 @@ const MeetingResultModal = ({
                             height={16}
                             color="var(--color-primary-300)"
                           />
-                          <p className="typo-12-regular text-primary-400">
+                          <p className="typo-14-regular text-primary-400">
                             친구들이 가장 많이 선택한 일정
                           </p>
                         </>
@@ -240,7 +240,7 @@ const MeetingResultModal = ({
                             height={16}
                             color="var(--color-primary-400)"
                           />
-                          <p className="typo-12-regular text-primary-400">
+                          <p className="typo-14-regular text-primary-400">
                             만날우정 추천 장소
                           </p>
                         </>
@@ -251,7 +251,7 @@ const MeetingResultModal = ({
                             height={16}
                             color="var(--color-primary-300)"
                           />
-                          <p className="typo-12-regular text-primary-400">
+                          <p className="typo-14-regular text-primary-400">
                             친구들이 가장 많이 선택한 장소
                           </p>
                         </>
