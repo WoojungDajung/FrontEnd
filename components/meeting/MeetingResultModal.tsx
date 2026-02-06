@@ -93,14 +93,9 @@ const MeetingResultModal = ({
                 {isDateTie || isPlaceTie ? (
                   <>
                     <p className="typo-18-semibold text-gray-800 text-center">
-                      일정과 장소를 함께 고려해
+                      투표 결과가 동일해
                       <br />
-                      가장 잘 맞는 조합을 추천해요!
-                    </p>
-                    <p className="typo-12-regular text-gray-500 text-center">
-                      투표수가 같을 때,
-                      <br />
-                      모두가 편하게 모일 수 있는 선택지를 추천해드려요.
+                      가장 잘 맞는 약속 조합을 추천해요!
                     </p>
                   </>
                 ) : (
@@ -132,7 +127,7 @@ const MeetingResultModal = ({
                             height={16}
                             color="var(--color-primary-400)"
                           />
-                          <p className="typo-12-regular text-primary-400">
+                          <p className="typo-14-regular text-primary-400">
                             만날우정 추천 일정
                           </p>
                         </>
@@ -143,7 +138,7 @@ const MeetingResultModal = ({
                             height={16}
                             color="var(--color-primary-300)"
                           />
-                          <p className="typo-12-regular text-primary-400">
+                          <p className="typo-14-regular text-primary-400">
                             친구들이 가장 많이 선택한 일정
                           </p>
                         </>
@@ -240,7 +235,7 @@ const MeetingResultModal = ({
                             height={16}
                             color="var(--color-primary-400)"
                           />
-                          <p className="typo-12-regular text-primary-400">
+                          <p className="typo-14-regular text-primary-400">
                             만날우정 추천 장소
                           </p>
                         </>
@@ -251,7 +246,7 @@ const MeetingResultModal = ({
                             height={16}
                             color="var(--color-primary-300)"
                           />
-                          <p className="typo-12-regular text-primary-400">
+                          <p className="typo-14-regular text-primary-400">
                             친구들이 가장 많이 선택한 장소
                           </p>
                         </>

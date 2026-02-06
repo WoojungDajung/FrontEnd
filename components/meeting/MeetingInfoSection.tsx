@@ -81,7 +81,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
             </p>
             <Button
               color="White"
-              className="px-8 py-4 h-32 rounded-[12px]"
+              className="pl-4 pr-12 py-4 h-32 rounded-[12px]"
               onClick={() => setShareModalOpen(true)}
             >
               <PlusIcon />

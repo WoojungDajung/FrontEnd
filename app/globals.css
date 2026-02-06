@@ -57,73 +57,73 @@
   .typo-48-semibold {
     font-size: 48px;
     line-height: 64px;
-    letter-spacing: -2.5%;
+    letter-spacing: -1.2px;
     font-weight: 600;
   }
   .typo-32-semibold {
     font-size: 32px;
     line-height: 44px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.8px;
     font-weight: 600;
   }
   .typo-28-semibold {
     font-size: 28px;
     line-height: 40px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.7px;
     font-weight: 600;
   }
   .typo-24-bold {
     font-size: 24px;
     line-height: 36px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.6px;
     font-weight: 700;
   }
   .typo-20-bold {
     font-size: 20px;
     line-height: 32px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.5px;
     font-weight: 700;
   }
   .typo-18-semibold {
     font-size: 18px;
     line-height: 26px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.45px;
     font-weight: 600;
   }
   .typo-18-regular {
     font-size: 18px;
     line-height: 26px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.45px;
     font-weight: 400;
   }
   .typo-16-semibold {
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.4px;
     font-weight: 600;
   }
   .typo-16-regular {
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.4px;
     font-weight: 400;
   }
   .typo-14-medium {
     font-size: 14px;
     line-height: 24px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.35px;
     font-weight: 500;
   }
   .typo-14-regular {
     font-size: 14px;
     line-height: 24px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.35px;
     font-weight: 400;
   }
   .typo-12-regular {
     font-size: 12px;
     line-height: 16px;
-    letter-spacing: -2.5%;
+    letter-spacing: -0.3px;
     font-weight: 400;
   }
 
@@ -140,7 +140,7 @@
     cursor: pointer;
     display: flex;
     justify-content: center;
-    align-items: center;    
+    align-items: center;
 
     &:disabled {
       cursor: default;

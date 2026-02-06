@@ -86,7 +86,7 @@ const ViewCalendarShell = ({
           <div
             key={w}
             className={cn(
-              "w-40 h-40 typo-12-regular flex justify-center items-center",
+              "w-40 h-40 typo-14-regular flex justify-center items-center",
               w === "일"
                 ? "text-error-500"
                 : w === "토"
