@@ -112,6 +112,7 @@ const PlaceInfoDrawerContent = ({
         label: "삭제하기",
         onClick: deletePlace,
       }}
+      close={closeModal}
     >
       {data ? (
         <div className="relative flex flex-col gap-16">
