@@ -34,8 +34,12 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <main className="flex flex-col gap-24">
-        {isSettled && (
-          <MeetingSettledSection appointment={appointmentInfo.appointment} />
+        {isSettled && appointmentInfo.confirmedResult !== null && (
+          <MeetingSettledSection
+            appointment={appointmentInfo.appointment}
+            appointmentUserCount={appointmentInfo.appointmentUserList.length}
+            result={appointmentInfo.confirmedResult}
+          />
         )}
         <AppointmentPageProvider>
           <div className="flex flex-col gap-16">

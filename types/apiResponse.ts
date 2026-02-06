@@ -1,5 +1,13 @@
 type Yn = "Y" | "N";
 
+export type ConfirmedResult = {
+  confirmedDate: string; // YYYY-MM-DD
+  dateVotedList: string[]; // 참여자 nickName
+  confirmedPlaceName: string;
+  confirmedPlaceAddress: string;
+  placeVotedList: string[];
+};
+
 export type Appointment = {
   appointmentId: string;
   appointmentName: string;
@@ -19,6 +27,7 @@ export type AppointmentUser = {
 export type TAppointmentResponse = {
   appointment: Appointment;
   appointmentUserList: AppointmentUser[];
+  confirmedResult: ConfirmedResult | null;
 };
 
 // 방을 생성한 사용자는 처음엔 id만 부여됨

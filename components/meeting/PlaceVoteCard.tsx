@@ -179,7 +179,7 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
         </div>
       )}
 
-      <PlaceInfoDrawer appointmentId={appointmentId} />
+      <PlaceInfoDrawer appointmentId={appointmentId} deletable={canAddPlace} />
     </div>
   );
 };

@@ -10,9 +10,13 @@ import useDeleteLocation from "@/hooks/useDeleteLocation";
 
 interface PlaceInfoDrawerProps {
   appointmentId: string;
+  deletable: boolean;
 }
 
-const PlaceInfoDrawer = ({ appointmentId }: PlaceInfoDrawerProps) => {
+const PlaceInfoDrawer = ({
+  appointmentId,
+  deletable,
+}: PlaceInfoDrawerProps) => {
   const { selectedPlaceId, selectPlace } = useAppointmentPage();
 
   const onLoadScript = () => {
@@ -39,6 +43,7 @@ const PlaceInfoDrawer = ({ appointmentId }: PlaceInfoDrawerProps) => {
               placeId={selectedPlaceId}
               appointmentId={appointmentId}
               closeModal={close}
+              deletable={deletable}
             />
           ) : (
             <></>
@@ -55,12 +60,14 @@ interface PlaceInfoDrawerContentProps {
   placeId: number;
   appointmentId: string;
   closeModal: () => void;
+  deletable: boolean;
 }
 
 const PlaceInfoDrawerContent = ({
   placeId,
   appointmentId,
   closeModal,
+  deletable,
 }: PlaceInfoDrawerContentProps) => {
   const { data } = useLocationInfoQuery({
     appointmentId,
@@ -108,10 +115,14 @@ const PlaceInfoDrawerContent = ({
   return (
     <DefaultDrawerLayout
       title="장소 정보"
-      secondaryAction={{
-        label: "삭제하기",
-        onClick: deletePlace,
-      }}
+      secondaryAction={
+        deletable
+          ? {
+              label: "삭제하기",
+              onClick: deletePlace,
+            }
+          : undefined
+      }
       close={closeModal}
     >
       {data ? (
