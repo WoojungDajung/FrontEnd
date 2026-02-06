@@ -93,14 +93,9 @@ const MeetingResultModal = ({
                 {isDateTie || isPlaceTie ? (
                   <>
                     <p className="typo-18-semibold text-gray-800 text-center">
-                      일정과 장소를 함께 고려해
+                      투표 결과가 동일해
                       <br />
-                      가장 잘 맞는 조합을 추천해요!
-                    </p>
-                    <p className="typo-12-regular text-gray-500 text-center">
-                      투표수가 같을 때,
-                      <br />
-                      모두가 편하게 모일 수 있는 선택지를 추천해드려요.
+                      가장 잘 맞는 약속 조합을 추천해요!
                     </p>
                   </>
                 ) : (
