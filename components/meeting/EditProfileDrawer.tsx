@@ -201,7 +201,7 @@ const EditProfileDrawer = ({
                     </div>
                   ) : (
                     /* typo-16-regular 글자 높이만큼 빈 */
-                    <div className="h-26 w-full" />
+                    <div className="h-24 w-full" />
                   )}
                   <input
                     type="hidden"
@@ -212,7 +212,7 @@ const EditProfileDrawer = ({
                 </div>
               </FormField>
             </div>
-            <Button className="h-56" size="Large" disabled={isDisabled()}>
+            <Button className="w-full h-56" size="Large" disabled={isDisabled()}>
               저장하기
             </Button>
           </form>

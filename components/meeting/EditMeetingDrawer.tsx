@@ -72,7 +72,7 @@ const EditMeetingDrawer = ({
               <FormField label="약속 이름" required inputId="appointment-name">
                 <div className="input-container">
                   <input
-                    className="input"
+                    className="input typo-16-regular"
                     id="appointment-name"
                     name="appointment-name"
                     type="text"
