@@ -3,6 +3,7 @@ import { PlaceItemForVote } from "./PlaceItem";
 import Button from "../shared/Button";
 import useVoteLocation from "@/hooks/useVoteLocation";
 import { useState } from "react";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 interface VotePlaceFormProps {
   places: Location[];
@@ -35,7 +36,8 @@ const VotePlaceForm = ({
   };
 
   /* 투표 반영 */
-  const { mutate } = useVoteLocation(appointmentId);
+  const { mutate, isPending, isSuccess, reset } =
+    useVoteLocation(appointmentId);
   const saveVote = () => {
     mutate(
       { placeIdList: selected },
@@ -74,6 +76,17 @@ const VotePlaceForm = ({
           저장하기
         </Button>
       </div>
+
+      {(isPending || isSuccess) && (
+        <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
+          <LoadingSpinner
+            size={25}
+            open={isPending || isSuccess}
+            success={isSuccess}
+            onClose={() => reset()}
+          />
+        </div>
+      )}
     </>
   );
 };

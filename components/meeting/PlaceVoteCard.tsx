@@ -113,6 +113,7 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
                 </div>
               </>
             ) : (
+              /* mode === "VOTE" (장소 투표 모드) */
               <VotePlaceForm
                 places={data.locationList}
                 myVoteLocationIds={myVotes?.map((vote) => vote.id) ?? []}
