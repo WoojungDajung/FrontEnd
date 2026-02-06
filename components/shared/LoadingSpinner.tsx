@@ -41,18 +41,27 @@ const LoadingSpinner = ({
 
   if (!open) return null;
 
-  return phase === "loading" ? (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <div className={style.spinner8} style={{ "--size": `${size}px` } as any} />
-  ) : (
-    <Image
-      src="/images/loading/success.svg"
-      alt="완료"
-      width={size}
-      height={size}
-      draggable={false}
-      className={style.successFade}
-    />
+  return (
+    <>
+      {phase === "loading" && (
+        <div
+          className={style.spinner8}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          style={{ "--size": `${size}px` } as any}
+        />
+      )}
+
+      {phase === "success" && (
+        <Image
+          src="/images/loading/success.svg"
+          alt="완료"
+          width={size}
+          height={size}
+          draggable={false}
+          className={style.successFade}
+        />
+      )}
+    </>
   );
 };
 

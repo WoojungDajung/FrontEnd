@@ -1,11 +1,13 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import BottomDrawer from "../shared/BottomDrawer";
 import Button from "../shared/Button";
 import DateInput from "../shared/DateInput";
 import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
 import FormField from "../shared/FormField";
 import useEditAppointment from "@/hooks/useEditAppointment";
-import { useQueryClient } from "@tanstack/react-query";
+import LoadingSpinner from "../shared/LoadingSpinner";
+import useDeleteAppointment from "@/hooks/useDeleteAppointment";
+import { useRouter } from "next/navigation";
 
 interface EditMeetingDrawerProps {
   appointmentId: string;
@@ -22,25 +24,32 @@ const EditMeetingDrawer = ({
   open,
   setOpen,
 }: EditMeetingDrawerProps) => {
+  const router = useRouter();
+
   const [name, setName] = useState<string>(initialName);
   const [dueDate, setDueDate] = useState<Date | undefined>(initialDueDate);
 
-  const queryClient = useQueryClient();
-  const { mutate } = useEditAppointment({ appointmentId });
+  useEffect(() => {
+    setName(initialName);
+  }, [initialName]);
+  useEffect(() => {
+    setDueDate(initialDueDate);
+  }, [initialDueDate]);
+
+  const { mutate, isPending, isSuccess, reset } = useEditAppointment({
+    appointmentId,
+  });
 
   const onSubmit = (e: FormEvent<HTMLFormElement>, closeModal: () => void) => {
     e.preventDefault();
-    
+
     if (name === "" || dueDate === undefined) return;
 
     mutate(
       { appointmentName: name, appointmentDueDate: dueDate },
       {
-        onSuccess: async () => {
-          await queryClient.invalidateQueries({
-            queryKey: ["appointment", appointmentId],
-          });
-          closeModal();
+        onSuccess: () => {
+          // closeModal();
         },
         onError: (error) => {
           alert(
@@ -51,12 +60,25 @@ const EditMeetingDrawer = ({
     );
   };
 
+  /* 약속 방 삭제 */
+  const deleteMutation = useDeleteAppointment(appointmentId);
+  const deleteAppointment = () => {
+    deleteMutation.mutate(undefined, {
+      onSuccess: () => {
+        router.push("/setup-meeting");
+      },
+      onError: () => {
+        alert("약속 삭제에 실패했습니다. 잠시후 다시 시도해주세요.");
+      },
+    });
+  };
+
   return (
     <BottomDrawer open={open} onOpenChange={setOpen}>
       {({ close }) => (
         <DefaultDrawerLayout
           title="약속 정보"
-          secondaryAction={{ label: "약속 없애기", onClick: () => {} }}
+          secondaryAction={{ label: "약속 없애기", onClick: deleteAppointment }}
           close={close}
         >
           <form
@@ -67,7 +89,7 @@ const EditMeetingDrawer = ({
               <FormField label="약속 이름" required inputId="appointment-name">
                 <div className="input-container">
                   <input
-                    className="input"
+                    className="input typo-16-regular"
                     id="appointment-name"
                     name="appointment-name"
                     type="text"
@@ -97,6 +119,27 @@ const EditMeetingDrawer = ({
               등록하기
             </Button>
           </form>
+
+          {(isPending || isSuccess) && (
+            <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
+              <LoadingSpinner
+                size={40}
+                open={isPending || isSuccess}
+                success={isSuccess}
+                onClose={() => {
+                  // 성공 표시 후 드로워가 닫히도록 하기
+                  close();
+                  reset();
+                }}
+              />
+            </div>
+          )}
+
+          {deleteMutation.isPending && (
+            <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
+              <LoadingSpinner size={40} open={deleteMutation.isPending} />
+            </div>
+          )}
         </DefaultDrawerLayout>
       )}
     </BottomDrawer>

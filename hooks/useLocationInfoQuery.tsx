@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 interface useLocationInfoQueryProps {
   appointmentId: string;
   placeId: number;
-  enabled: boolean;
 }
 
 const useLocationInfoQuery = ({

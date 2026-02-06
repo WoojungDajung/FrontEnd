@@ -24,12 +24,12 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
 
   const { data: appointmentData } = useAppointmentQuery({ appointmentId });
 
-  // 사용자의 프로필. 프로필 등록 전엔 null (룸 생성자는 프로필은 존재함. nickName, startingPlace가 null)
+  // 사용자의 프로필 (프로필 입력 전엔 nickName, startingPlace가 null, id는 부여됨)
   const { data: profileData } = useAppointmentUserProfileQuery({
     appointmentId,
   });
 
-  if (appointmentData === undefined || profileData === undefined) {
+  if (appointmentData === undefined) {
     return <></>;
   }
 
@@ -116,16 +116,14 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
       )}
 
       {/* Drawer */}
-      <EditProfileDrawer
-        key={`${profileData?.id}-${profileData?.memberNickName}-${profileData?.startingPlace}`}
+      {profileData && <EditProfileDrawer
         appointmentId={appointmentId}
         appointmentHostId={appointmentData.appointment.appointmentUserId}
         initialProfile={profileData}
         open={profileDrawerOpen}
         setOpen={setProfileDrawerOpen}
-      />
+      />}
       <EditMeetingDrawer
-        key={`${appointmentData.appointment.appointmentName}-${appointmentData.appointment.appointmentDueDate}`}
         appointmentId={appointmentId}
         initialName={appointmentData.appointment.appointmentName}
         initialDueDate={dayjs(

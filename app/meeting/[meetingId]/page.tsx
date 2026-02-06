@@ -43,7 +43,7 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
             <DateVoteSection appointmentId={meetingId} canVote={!isSettled} />
             <PlaceVoteSection
               appointmentId={meetingId}
-              canRegisterOrVote={!isSettled}
+              isAppointmentSettled={isSettled}
             />
           </div>
         </AppointmentPageProvider>

@@ -18,7 +18,6 @@ interface dateVoteSectionProps {
 
 const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
   const [mode, setMode] = useState<"VIEW" | "VOTE">("VIEW");
-  const [voteStatusModalOpen, setVoteStatusModalOpen] = useState(false);
 
   const { selectedParticipantId } = useAppointmentPage();
 
@@ -26,8 +25,6 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
   const { data: profileData } = useAppointmentUserProfileQuery({
     appointmentId,
   });
-
-  const { data } = useDateVoteQuery({ appointmentId });
 
   const isRegistered =
     profileData !== undefined &&
@@ -42,17 +39,11 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
     setMode("VOTE");
   };
 
-  if (data === undefined) return <></>;
-
   return (
     <section className="flex flex-col gap-8">
       <div className="w-full flex justify-between items-center">
         <p className="typo-16-regular text-gray-800 relative left-8">일정</p>
-        <CountButton
-          currentCount={data.votedListCount}
-          totalCount={data.unVotedListCount + data.votedListCount}
-          onClick={() => setVoteStatusModalOpen(true)}
-        />
+        <VoteCountButton appointmentId={appointmentId} />
       </div>
       <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col gap-16 items-center pt-8 pb-16">
         {selectedParticipantId !== null ? (
@@ -92,6 +83,33 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
           )
         )}
       </div>
+    </section>
+  );
+};
+
+interface VoteCountButtonProps {
+  appointmentId: string;
+}
+
+const VoteCountButton = ({ appointmentId }: VoteCountButtonProps) => {
+  const [voteStatusModalOpen, setVoteStatusModalOpen] = useState(false);
+
+  const { data } = useDateVoteQuery({ appointmentId });
+
+  const onClickCountButton = () => {
+    if (!data) return;
+    setVoteStatusModalOpen(true);
+  };
+
+  if (!data) return <></>;
+
+  return (
+    <>
+      <CountButton
+        currentCount={data.votedListCount}
+        totalCount={data.unVotedListCount + data.votedListCount}
+        onClick={onClickCountButton}
+      />
 
       {/* 투표 현황 모달 */}
       <VoteStatusModal
@@ -100,7 +118,7 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
         open={voteStatusModalOpen}
         setOpen={setVoteStatusModalOpen}
       />
-    </section>
+    </>
   );
 };
 
