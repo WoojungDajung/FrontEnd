@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import BottomDrawer from "../shared/BottomDrawer";
 import Button from "../shared/Button";
 import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
@@ -12,6 +12,7 @@ import { joinAppointment } from "@/api/appointment";
 import { registerMemberProfile } from "@/api/member";
 import useLeaveAppointment from "@/hooks/useLeaveAppointment";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 type Place = {
   address: string;
@@ -23,7 +24,7 @@ type Place = {
 interface EditProfileDrawerProps {
   appointmentId: string;
   appointmentHostId: number;
-  initialProfile: MemberProfile | null;
+  initialProfile: MemberProfile;
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
@@ -35,19 +36,22 @@ const EditProfileDrawer = ({
   open,
   setOpen,
 }: EditProfileDrawerProps) => {
-  const [nickName, setNickName] = useState(
-    initialProfile?.memberNickName ?? "",
-  );
+  const [nickName, setNickName] = useState(initialProfile.memberNickName ?? "");
   /* 출발 장소
   기존에 출발 장소를 등록한 경우, string (/member/{roomHash}가 장소명만 제공)
   지금 수정한 경우, Place (Postcode Popup에서 고른 주소를 경도/위도 포함한 타입으로 변환) 
   */
   const [startingPlace, setStartingPlace] = useState<string | Place | null>(
-    () => {
-      if (!initialProfile || initialProfile.startingPlace === "") return null;
-      return initialProfile.startingPlace;
-    },
+    initialProfile.startingPlace === "" ? null : initialProfile.startingPlace,
   );
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNickName(initialProfile.memberNickName ?? "");
+    setStartingPlace(
+      initialProfile.startingPlace === "" ? null : initialProfile.startingPlace,
+    );
+  }, [initialProfile]);
 
   const alreadyJoined = initialProfile !== null;
 
@@ -65,7 +69,7 @@ const EditProfileDrawer = ({
   };
 
   /* 저장하기 */
-  const { mutate: mutateSubmit } = useMutation({
+  const saveMutation = useMutation({
     mutationFn: async ({
       alreadyJoined,
       nickName,
@@ -92,7 +96,7 @@ const EditProfileDrawer = ({
     // 출발 장소
     const place = typeof startingPlace === "string" ? undefined : startingPlace;
 
-    mutateSubmit(
+    saveMutation.mutate(
       { alreadyJoined, nickName, place },
       {
         onSuccess: async () => {
@@ -102,8 +106,8 @@ const EditProfileDrawer = ({
           await queryClient.invalidateQueries({
             queryKey: ["appointment", appointmentId],
           });
-          
-          closeModal();
+
+          // closeModal();
         },
         onError: () => {
           alert("프로필 수정에 실패하였습니다. 잠시후 다시 시도해주세요.");
@@ -212,9 +216,28 @@ const EditProfileDrawer = ({
                 </div>
               </FormField>
             </div>
-            <Button className="w-full h-56" size="Large" disabled={isDisabled()}>
+            <Button
+              className="w-full h-56"
+              size="Large"
+              disabled={isDisabled()}
+            >
               저장하기
             </Button>
+
+            {(saveMutation.isPending || saveMutation.isSuccess) && (
+              <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
+                <LoadingSpinner
+                  size={40}
+                  open={saveMutation.isPending || saveMutation.isSuccess}
+                  success={saveMutation.isSuccess}
+                  onClose={() => {
+                    // 성공 표시 후 드로워가 닫히도록 하기
+                    close();
+                    saveMutation.reset();
+                  }}
+                />
+              </div>
+            )}
           </form>
 
           {/* 주소 입력 팝업 */}

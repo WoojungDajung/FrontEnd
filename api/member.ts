@@ -5,7 +5,7 @@ import {
 
 export async function getMemberProfile(
   appointmentId: string,
-): Promise<MemberProfile | null> {
+): Promise<MemberProfile> {
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/member/${appointmentId}`;
   const res = await fetch(url, {
     method: "GET",
@@ -16,9 +16,8 @@ export async function getMemberProfile(
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
-    // 해당 방에 유저 참여 정보가 없음 (=아직 프로필 등록 안한 사용자)
     if (status_code === 400) {
-      return null;
+      // 해당 방에 유저 참여 정보가 없음 (=아직 프로필 등록 안한 사용자)
     }
     if (status_code === 401 || res.status === 401) {
       // 토큰 만료

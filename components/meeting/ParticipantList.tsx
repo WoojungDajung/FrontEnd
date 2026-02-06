@@ -163,7 +163,6 @@ const ParticipantList = ({
 
       {me && myProfile && (
         <EditProfileDrawer
-          key={`${myProfile.id}-${myProfile.memberNickName}-${myProfile.startingPlace}`}
           appointmentId={appointmentId}
           appointmentHostId={appointmentHostId}
           initialProfile={myProfile}

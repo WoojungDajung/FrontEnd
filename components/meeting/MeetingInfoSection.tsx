@@ -117,7 +117,6 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
 
       {/* Drawer */}
       {profileData && <EditProfileDrawer
-        key={`${profileData?.id}-${profileData?.memberNickName}-${profileData?.startingPlace}`}
         appointmentId={appointmentId}
         appointmentHostId={appointmentData.appointment.appointmentUserId}
         initialProfile={profileData}
