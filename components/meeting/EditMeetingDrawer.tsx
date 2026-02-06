@@ -5,7 +5,7 @@ import DateInput from "../shared/DateInput";
 import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
 import FormField from "../shared/FormField";
 import useEditAppointment from "@/hooks/useEditAppointment";
-import { useQueryClient } from "@tanstack/react-query";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 interface EditMeetingDrawerProps {
   appointmentId: string;
@@ -25,21 +25,19 @@ const EditMeetingDrawer = ({
   const [name, setName] = useState<string>(initialName);
   const [dueDate, setDueDate] = useState<Date | undefined>(initialDueDate);
 
-  const queryClient = useQueryClient();
-  const { mutate } = useEditAppointment({ appointmentId });
+  const { mutate, isPending, isSuccess, reset } = useEditAppointment({
+    appointmentId,
+  });
 
   const onSubmit = (e: FormEvent<HTMLFormElement>, closeModal: () => void) => {
     e.preventDefault();
-    
+
     if (name === "" || dueDate === undefined) return;
 
     mutate(
       { appointmentName: name, appointmentDueDate: dueDate },
       {
-        onSuccess: async () => {
-          await queryClient.invalidateQueries({
-            queryKey: ["appointment", appointmentId],
-          });
+        onSuccess: () => {
           closeModal();
         },
         onError: (error) => {
@@ -97,6 +95,16 @@ const EditMeetingDrawer = ({
               등록하기
             </Button>
           </form>
+
+          {(isPending || isSuccess) && (
+            <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
+              <LoadingSpinner
+                size={40}
+                open={isPending || isSuccess}
+                onClose={() => reset()}
+              />
+            </div>
+          )}
         </DefaultDrawerLayout>
       )}
     </BottomDrawer>
