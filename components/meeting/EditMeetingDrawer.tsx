@@ -6,6 +6,8 @@ import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
 import FormField from "../shared/FormField";
 import useEditAppointment from "@/hooks/useEditAppointment";
 import LoadingSpinner from "../shared/LoadingSpinner";
+import useDeleteAppointment from "@/hooks/useDeleteAppointment";
+import { useRouter } from "next/navigation";
 
 interface EditMeetingDrawerProps {
   appointmentId: string;
@@ -22,6 +24,8 @@ const EditMeetingDrawer = ({
   open,
   setOpen,
 }: EditMeetingDrawerProps) => {
+  const router = useRouter();
+
   const [name, setName] = useState<string>(initialName);
   const [dueDate, setDueDate] = useState<Date | undefined>(initialDueDate);
 
@@ -56,12 +60,25 @@ const EditMeetingDrawer = ({
     );
   };
 
+  /* 약속 방 삭제 */
+  const deleteMutation = useDeleteAppointment(appointmentId);
+  const deleteAppointment = () => {
+    deleteMutation.mutate(undefined, {
+      onSuccess: () => {
+        router.push("/setup-meeting");
+      },
+      onError: () => {
+        alert("약속 삭제에 실패했습니다. 잠시후 다시 시도해주세요.");
+      },
+    });
+  };
+
   return (
     <BottomDrawer open={open} onOpenChange={setOpen}>
       {({ close }) => (
         <DefaultDrawerLayout
           title="약속 정보"
-          secondaryAction={{ label: "약속 없애기", onClick: () => {} }}
+          secondaryAction={{ label: "약속 없애기", onClick: deleteAppointment }}
           close={close}
         >
           <form
@@ -115,6 +132,12 @@ const EditMeetingDrawer = ({
                   reset();
                 }}
               />
+            </div>
+          )}
+
+          {deleteMutation.isPending && (
+            <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
+              <LoadingSpinner size={40} open={deleteMutation.isPending} />
             </div>
           )}
         </DefaultDrawerLayout>

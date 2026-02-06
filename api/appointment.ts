@@ -102,3 +102,29 @@ export async function leaveAppointment(appointmentId: string) {
 
   return;
 }
+
+/**
+ * 약속 방 삭제
+ * @param appointmentId
+ */
+export async function deleteAppointment(appointmentId: string) {
+  const res = await fetch(`/auth-api/appointment/${appointmentId}`, {
+    method: "DELETE",
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 401) {
+      // 삭제 권한 없음 (호스트가 아님)
+    }
+    if (status_code === 404) {
+      // 방이 존재하지 않음
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return;
+}
