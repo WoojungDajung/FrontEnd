@@ -116,7 +116,7 @@ const BottomDrawer = ({
         aria-modal="true"
         data-state={state}
         className={cn(
-          "absolute inset-x-0 bottom-0 rounded-t-[32px] bg-white w-full h-448",
+          "absolute inset-x-0 bottom-0 rounded-t-[32px] bg-white w-full h-448 overflow-hidden",
           "transform-gpu transition-transform duration-300 ease-out",
           "data-[state=closed]:translate-y-full data-[state=open]:translate-y-0"
         )}
