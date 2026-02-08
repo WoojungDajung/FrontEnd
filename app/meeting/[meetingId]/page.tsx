@@ -7,7 +7,17 @@ import { ERROR_MESSAGE } from "@/constants/error-message";
 import { AppointmentPageProvider } from "@/context/AppointmentContext";
 import { getQueryClient } from "@/lib/react-query/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
+
+async function getAppointmentServer(appointmentId: string) {
+  const cookieStore = await cookies()
+  return getAppointment(appointmentId, {
+    headers: {
+      cookie: cookieStore.toString()
+    }
+  })
+}
 
 const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
   const { meetingId } = await params;
@@ -19,7 +29,7 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
   try {
     appointmentInfo = await queryClient.fetchQuery({
       queryKey: ["appointment", meetingId],
-      queryFn: ({ queryKey }) => getAppointment(queryKey[1]),
+      queryFn: async ({ queryKey }) => getAppointmentServer(queryKey[1])
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

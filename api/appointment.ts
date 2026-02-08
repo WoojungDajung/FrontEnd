@@ -2,12 +2,13 @@ import { ERROR_MESSAGE } from "@/constants/error-message";
 import { TAppointmentResponse } from "@/types/apiResponse";
 import dayjs from "dayjs";
 
-export async function getAppointment(appointmentId: string) {
+export async function getAppointment(
+  appointmentId: string,
+  init?: RequestInit,
+) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/appointment/${appointmentId}`,
-    {
-      method: "GET",
-    },
+    { method: "GET", ...init },
   );
 
   const resBody = await res.json();
