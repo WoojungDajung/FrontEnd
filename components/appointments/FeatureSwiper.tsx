@@ -6,6 +6,7 @@ import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
 import CreateAppointmentForm from "./CreateAppointmentForm";
+import AppointmentList from "./AppointmentList";
 
 const features = [
   { id: "CREATE_APPOINTMENT", label: "약속 생성" },
@@ -68,7 +69,9 @@ const FeatureSwiper = () => {
         <SwiperSlide>
           <CreateAppointmentForm />
         </SwiperSlide>
-        <SwiperSlide>참여 목록</SwiperSlide>
+        <SwiperSlide>
+          <AppointmentList />
+        </SwiperSlide>
       </Swiper>
     </div>
   );

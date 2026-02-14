@@ -1,5 +1,6 @@
 import {
   MemberProfile,
+  TMemberAppointments,
   TRegisterMemberProfileResponse,
 } from "@/types/apiResponse";
 
@@ -82,4 +83,27 @@ export async function registerMemberProfile(
   }
 
   return resBody.data as TRegisterMemberProfileResponse;
+}
+
+export async function getMemberAppointments(): Promise<TMemberAppointments> {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/member/appointments`;
+  const res = await fetch(url, {
+    method: "GET",
+  });
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 401 || res.status === 401) {
+      // 토큰 만료 또는 유효하지 않은 요청 데이터
+    }
+    if (status_code === 404) {
+      // 방 정보를 찾을 수 없거나 참여자가 아님
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return resBody.data as TMemberAppointments;
 }
