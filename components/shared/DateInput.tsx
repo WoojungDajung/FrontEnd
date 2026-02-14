@@ -4,14 +4,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import CalendarIcon from "./icons/CalendarIcon";
 import DatePicker from "./DatePicker";
 import { createPortal } from "react-dom";
-
-function formatDate(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-
-  return `${y}-${m}-${d}`;
-}
+import { dateToString } from "@/utils/calendar";
 
 interface DateInputProps {
   value?: Date | undefined;
@@ -54,7 +47,7 @@ const DateInput = ({ value, onValueChange, id, name }: DateInputProps) => {
         className="w-full typo-16-regular cursor-pointer"
       >
         {value ? (
-          <p className="input">{formatDate(value)}</p>
+          <p className="input">{dateToString(value)}</p>
         ) : (
           <p className="input-placeholder">연도-월-일</p>
         )}
@@ -63,7 +56,7 @@ const DateInput = ({ value, onValueChange, id, name }: DateInputProps) => {
         type="hidden"
         id={id}
         name={name}
-        value={value ? formatDate(value) : ""}
+        value={value ? dateToString(value) : ""}
         required
       />
 
