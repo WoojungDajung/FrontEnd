@@ -2,6 +2,43 @@ import { ERROR_MESSAGE } from "@/constants/error-message";
 import { TAppointmentResponse } from "@/types/apiResponse";
 import dayjs from "dayjs";
 
+/**
+ * 약속방 생성
+ * @param appointmentName
+ * @param deadline YYYY-MM-DD 형식의 문자열
+ * @returns
+ */
+export async function createAppointment(
+  appointmentName: string,
+  deadline: string,
+): Promise<TAppointmentResponse> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/appointment`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        appointmentName,
+        appointmentDueDate: deadline,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 400) {
+      // 유저가 존재하지 않음
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+  return resBody.data as TAppointmentResponse;
+}
+
 export async function getAppointment(
   appointmentId: string,
   init?: RequestInit,

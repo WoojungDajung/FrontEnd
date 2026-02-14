@@ -1,5 +1,4 @@
 import { Address, Postcode } from "@/types/daum";
-import { cn } from "@/utils/cn";
 import { lockBodyScroll } from "@/utils/lockBodyScroll";
 import Script from "next/script";
 import { useCallback, useEffect, useRef } from "react";

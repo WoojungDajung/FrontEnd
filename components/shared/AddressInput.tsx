@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import PlaceIcon from "../meeting/icons/PlaceIcon";
 import PostcodePopup from "./PostcodePopup";
 import { Address } from "@/types/daum";
+import { Place } from "@/types/shared";
+
+type TValue = string | Place | null;
 
 interface AddressInputProps {
   inputId: string;
-  initialValue?: string;
+  value?: TValue;
+  onChange: (value: TValue) => void;
 }
 
-const AddressInput = ({ inputId, initialValue }: AddressInputProps) => {
+const AddressInput = ({ inputId, value, onChange }: AddressInputProps) => {
   const [address, setAddress] = useState<string>("");
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
 
@@ -18,8 +22,19 @@ const AddressInput = ({ inputId, initialValue }: AddressInputProps) => {
     // 주소 변환
     const value =
       address.buildingName !== "" ? address.buildingName : address.address;
+    onChange?.(value);
     setAddress(value);
   };
+
+  const val = useMemo(() => {
+    if (value !== undefined) {
+      if (value === null) return "";
+      if (typeof value === "string") return value;
+      return value.address;
+    } else {
+      return address;
+    }
+  }, [value, address]);
 
   return (
     <>
@@ -29,8 +44,8 @@ const AddressInput = ({ inputId, initialValue }: AddressInputProps) => {
       >
         <PlaceIcon width={20} height={20} color="var(--color-gray-500)" />
 
-        {address ? (
-          <div className="input typo-16-regular">{address}</div>
+        {val ? (
+          <div className="input typo-16-regular">{val}</div>
         ) : (
           <div className="input-placeholder typo-16-regular">
             서울 강서구 마곡동로 161
@@ -41,7 +56,7 @@ const AddressInput = ({ inputId, initialValue }: AddressInputProps) => {
           type="hidden"
           id={inputId}
           name={inputId}
-          value={initialValue ?? ""}
+          value={val}
         />
       </div>
 
