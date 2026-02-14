@@ -22,8 +22,8 @@ const FormField = ({
 }: FormFieldProps) => {
   return (
     <div className={cn("flex flex-col gap-8", wrapperClassName)}>
-      <div className="flex typo-14-medium ml-8">
-        <label htmlFor={inputId} className={cn("", labelClassName)}>
+      <div className="flex ml-8">
+        <label htmlFor={inputId} className={cn("typo-14-medium text-gray-800", labelClassName)}>
           {label}
         </label>
         {required && <p className="text-error-500">*</p>}
