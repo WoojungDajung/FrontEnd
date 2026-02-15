@@ -12,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { dateToString } from "@/utils/calendar";
 import { createAppointment } from "@/api/appointment";
 import { registerMemberProfile } from "@/api/member";
+import { cn } from "@/utils/cn";
 
 interface FormValues {
   appointmentName: string;
@@ -34,8 +35,8 @@ const CreateAppointmentForm = () => {
     register,
     control,
     handleSubmit,
-    formState: { isValid },
-  } = useForm<FormValues>();
+    formState: { isValid, errors },
+  } = useForm<FormValues>({ mode: "onChange" });
 
   /* 약속방 생성 및 프로필 등록 */
   const { mutate, isPending, reset } = useMutation({
@@ -50,7 +51,7 @@ const CreateAppointmentForm = () => {
       nickName: string;
       departureLocation?: Place;
     }) => {
-      // TODO: 약속 생성과 프로필 등록 함께 처리하는 API 개발되면 수정하기 
+      // TODO: 약속 생성과 프로필 등록 함께 처리하는 API 개발되면 수정하기
       const { appointment } = await createAppointment(
         appointmentName,
         dateToString(deadline),
@@ -85,9 +86,14 @@ const CreateAppointmentForm = () => {
     <form className="flex flex-col gap-32" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-8">
         <FormField label="약속 이름" inputId="appointmentName" required>
-          <div className="input-container">
+          <div
+            className={cn(
+              "input-container",
+              errors.appointmentName && "input-container--error",
+            )}
+          >
             <input
-              className="input typo-16-regular"
+              className="input typo-16-regular w-full"
               placeholder="예: 노란고양이파"
               {...register("appointmentName", {
                 required: true,
@@ -114,9 +120,9 @@ const CreateAppointmentForm = () => {
         </FormField>
 
         <FormField label="이름" inputId="nickName" required>
-          <div className="input-container">
+          <div className={cn("input-container", errors.nickName && "input-container--error")}>
             <input
-              className="input typo-16-regular"
+              className="input typo-16-regular w-full"
               {...register("nickName", { required: true, maxLength: 14 })}
               placeholder="예) 애옹이"
             />

@@ -5,6 +5,7 @@ import Button from "../shared/Button";
 import { Place } from "@/types/shared";
 import FormField from "../shared/FormField";
 import AddressInput from "../shared/AddressInput";
+import { cn } from "@/utils/cn";
 
 interface JoinAppointmentFormProps {
   appointmentId: string;
@@ -20,8 +21,8 @@ const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
     register,
     control,
     handleSubmit,
-    formState: { isValid },
-  } = useForm<FormValues>();
+    formState: { isValid, errors },
+  } = useForm<FormValues>({ mode: "onChange" });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const { nickName, departureLocation } = data;
@@ -32,7 +33,12 @@ const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
     <form className="flex flex-col gap-40" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-16">
         <FormField label="이름" inputId="nickName" required>
-          <div className="input-container">
+          <div
+            className={cn(
+              "input-container",
+              errors.nickName && "input-container--error",
+            )}
+          >
             <input
               className="input typo-16-regular"
               {...register("nickName", { required: true, maxLength: 14 })}

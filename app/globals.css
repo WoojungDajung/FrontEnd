@@ -230,6 +230,15 @@
     }
   }
 
+  .input-container--error {
+    border-color: var(--color-error-500);
+
+    &:focus-within,
+    &[data-focus="true"] {
+      border-color: var(--color-error-500);
+    }
+  }
+
   .input {
     color: var(--color-gray-800);
 
