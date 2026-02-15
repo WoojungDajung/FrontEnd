@@ -60,6 +60,7 @@ const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
                 inputId="departureLocation"
                 value={field.value}
                 onChange={field.onChange}
+                placeholder="서울 강서구 마곡동로 161"
               />
             )}
           />

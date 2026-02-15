@@ -6,35 +6,40 @@ import PostcodePopup from "./PostcodePopup";
 import { Address } from "@/types/daum";
 import { Place } from "@/types/shared";
 
-type TValue = string | Place | null;
-
 interface AddressInputProps {
   inputId: string;
-  value?: TValue;
-  onChange: (value: TValue) => void;
+  value?: Place | null;
+  onChange?: (value: Place) => void;
+  placeholder?: string;
 }
 
-const AddressInput = ({ inputId, value, onChange }: AddressInputProps) => {
-  const [address, setAddress] = useState<string>("");
+const AddressInput = ({
+  inputId,
+  value,
+  onChange,
+  placeholder,
+}: AddressInputProps) => {
+  const [place, setPlace] = useState<Place | null>(null);
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
 
   const onCompleteAddressPopup = (address: Address) => {
-    // 주소 변환
-    const value =
-      address.buildingName !== "" ? address.buildingName : address.address;
-    onChange?.(value);
-    setAddress(value);
+    const place = {
+      address: address.address,
+      placeName:
+        address.buildingName !== "" ? address.buildingName : address.address,
+    };
+    setPlace(place);
+    onChange?.(place);
   };
 
   const val = useMemo(() => {
-    if (value !== undefined) {
-      if (value === null) return "";
-      if (typeof value === "string") return value;
-      return value.address;
+    const isControlled = value !== undefined;
+    if (isControlled) {
+      return value ? (value.placeName ?? value.address) : "";
     } else {
-      return address;
+      return place ? (place.placeName ?? place.address) : "";
     }
-  }, [value, address]);
+  }, [value, place]);
 
   return (
     <>
@@ -47,9 +52,7 @@ const AddressInput = ({ inputId, value, onChange }: AddressInputProps) => {
         {val ? (
           <div className="input typo-16-regular">{val}</div>
         ) : (
-          <div className="input-placeholder typo-16-regular">
-            서울 강서구 마곡동로 161
-          </div>
+          <div className="input-placeholder typo-16-regular">{placeholder}</div>
         )}
         <input
           className="input"

@@ -13,6 +13,8 @@ import { dateToString } from "@/utils/calendar";
 import { createAppointment } from "@/api/appointment";
 import { registerMemberProfile } from "@/api/member";
 import { cn } from "@/utils/cn";
+import { Place } from "@/types/shared";
+import { getAddressLngLat } from "@/api/kakao-local";
 
 interface FormValues {
   appointmentName: string;
@@ -20,13 +22,6 @@ interface FormValues {
   nickName: string;
   departureLocation?: Place;
 }
-
-type Place = {
-  address: string;
-  startingPlace: string;
-  latitude: string;
-  longitude: string;
-};
 
 const CreateAppointmentForm = () => {
   const router = useRouter();
@@ -52,6 +47,20 @@ const CreateAppointmentForm = () => {
       nickName: string;
       departureLocation?: Place;
     }) => {
+      let place = undefined;
+      if (departureLocation) {
+        const { longitude, latitude } = await getAddressLngLat(
+          departureLocation.address,
+        );
+        place = {
+          address: departureLocation.address,
+          startingPlace:
+            departureLocation.placeName ?? departureLocation.address,
+          longitude,
+          latitude,
+        };
+      }
+
       // TODO: 약속 생성과 프로필 등록 함께 처리하는 API 개발되면 수정하기
       const { appointment } = await createAppointment(
         appointmentName,
@@ -60,7 +69,7 @@ const CreateAppointmentForm = () => {
       const profile = await registerMemberProfile(
         appointment.appointmentId,
         nickName,
-        departureLocation,
+        place,
       );
       return appointment.appointmentId;
     },
@@ -149,6 +158,7 @@ const CreateAppointmentForm = () => {
                 inputId="departureLocation"
                 value={field.value}
                 onChange={field.onChange}
+                placeholder="서울 강서구 마곡동로 161"
               />
             )}
           />
