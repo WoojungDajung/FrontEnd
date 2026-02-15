@@ -4,7 +4,7 @@ const HomeButton = () => {
   return (
     <Link
       href="/appointments"
-      className="w-fit px-8 py-4 flex flex-row bg-white inset-ring-1 inset-ring-gray-100 rounded-[12px]"
+      className="w-fit px-8 py-4 flex flex-row bg-white hover:bg-gray-200 inset-ring-1 inset-ring-gray-100 rounded-[12px]"
     >
       <div className="w-24 h-24">
         <svg
