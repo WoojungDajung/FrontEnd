@@ -112,7 +112,6 @@ const EditMeetingDrawer = ({
               </FormField>
             </div>
             <Button
-              className="h-56"
               size="Large"
               disabled={name === "" || dueDate === undefined}
             >

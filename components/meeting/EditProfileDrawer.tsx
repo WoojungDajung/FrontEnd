@@ -216,11 +216,7 @@ const EditProfileDrawer = ({
                 </div>
               </FormField>
             </div>
-            <Button
-              className="w-full h-56"
-              size="Large"
-              disabled={isDisabled()}
-            >
+            <Button className="w-full" size="Large" disabled={isDisabled()}>
               저장하기
             </Button>
 
