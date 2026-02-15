@@ -8,7 +8,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { createPortal } from "react-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { dateToString } from "@/utils/calendar";
 import { createAppointment } from "@/api/appointment";
 import { registerMemberProfile } from "@/api/member";
@@ -39,6 +39,7 @@ const CreateAppointmentForm = () => {
   } = useForm<FormValues>({ mode: "onChange" });
 
   /* 약속방 생성 및 프로필 등록 */
+  const queryClient = useQueryClient();
   const { mutate, isPending, reset } = useMutation({
     mutationFn: async ({
       appointmentName,
@@ -72,6 +73,7 @@ const CreateAppointmentForm = () => {
       {
         onSuccess: (appointmentId) => {
           // 약속 페이지로 이동
+          queryClient.invalidateQueries({ queryKey: ["member-appointments"] });
           router.push(`/meeting/${appointmentId}`);
         },
         onError: () => {
@@ -120,7 +122,12 @@ const CreateAppointmentForm = () => {
         </FormField>
 
         <FormField label="이름" inputId="nickName" required>
-          <div className={cn("input-container", errors.nickName && "input-container--error")}>
+          <div
+            className={cn(
+              "input-container",
+              errors.nickName && "input-container--error",
+            )}
+          >
             <input
               className="input typo-16-regular w-full"
               {...register("nickName", { required: true, maxLength: 14 })}
