@@ -198,7 +198,7 @@
     }
   }
   .button--gray {
-    background-color: white;
+    background-color: var(--color-gray-100);
     color: var(--color-gray-800);
 
     &:active {
