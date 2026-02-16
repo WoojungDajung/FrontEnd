@@ -11,6 +11,13 @@ import dayjs from "dayjs";
 export async function createAppointment(
   appointmentName: string,
   deadline: string,
+  nickName: string,
+  startingPlace: {
+    address: string;
+    startingPlace: string;
+    latitude: string;
+    longitude: string;
+  } | null,
 ): Promise<TAppointmentResponse> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/appointment`,
@@ -19,6 +26,13 @@ export async function createAppointment(
       body: JSON.stringify({
         appointmentName,
         appointmentDueDate: deadline,
+        appointmentUserProfile: {
+          nickName: nickName,
+          address: startingPlace?.address ?? "",
+          startingPlace: startingPlace?.startingPlace ?? "",
+          latitude: startingPlace?.latitude ?? "",
+          longitude: startingPlace?.longitude ?? "",
+        },
       }),
       headers: {
         "Content-Type": "application/json",

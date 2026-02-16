@@ -8,19 +8,15 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { createPortal } from "react-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { dateToString } from "@/utils/calendar";
-import { createAppointment } from "@/api/appointment";
-import { registerMemberProfile } from "@/api/member";
 import { cn } from "@/utils/cn";
 import { Place } from "@/types/shared";
-import { getAddressLngLat } from "@/api/kakao-local";
+import useCreateAppointment from "@/hooks/useCreateAppointment";
 
 interface FormValues {
   appointmentName: string;
   deadline: Date;
   nickName: string;
-  departureLocation?: Place;
+  startingPlace?: Place;
 }
 
 const CreateAppointmentForm = () => {
@@ -34,55 +30,15 @@ const CreateAppointmentForm = () => {
   } = useForm<FormValues>({ mode: "onChange" });
 
   /* 약속방 생성 및 프로필 등록 */
-  const queryClient = useQueryClient();
-  const { mutate, isPending, reset } = useMutation({
-    mutationFn: async ({
-      appointmentName,
-      deadline,
-      nickName,
-      departureLocation,
-    }: {
-      appointmentName: string;
-      deadline: Date;
-      nickName: string;
-      departureLocation?: Place;
-    }) => {
-      let place = undefined;
-      if (departureLocation) {
-        const { longitude, latitude } = await getAddressLngLat(
-          departureLocation.address,
-        );
-        place = {
-          address: departureLocation.address,
-          startingPlace:
-            departureLocation.placeName ?? departureLocation.address,
-          longitude,
-          latitude,
-        };
-      }
-
-      // TODO: 약속 생성과 프로필 등록 함께 처리하는 API 개발되면 수정하기
-      const { appointment } = await createAppointment(
-        appointmentName,
-        dateToString(deadline),
-      );
-      const profile = await registerMemberProfile(
-        appointment.appointmentId,
-        nickName,
-        place,
-      );
-      return appointment.appointmentId;
-    },
-  });
+  const { mutate, isPending, reset } = useCreateAppointment()
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    const { appointmentName, deadline, nickName, departureLocation } = data;
+    const { appointmentName, deadline, nickName, startingPlace } = data;
     mutate(
-      { appointmentName, deadline, nickName, departureLocation },
+      { appointmentName, deadline, nickName, startingPlace },
       {
         onSuccess: (appointmentId) => {
           // 약속 페이지로 이동
-          queryClient.invalidateQueries({ queryKey: ["member-appointments"] });
           router.push(`/appointment/${appointmentId}`);
         },
         onError: () => {
@@ -147,15 +103,15 @@ const CreateAppointmentForm = () => {
 
         <FormField
           label="출발 장소"
-          inputId="departureLocation"
+          inputId="startingPlace"
           description="장소 투표 결과가 같을 경우, 모두의 출발지에서 가까운 중간 지점을 추천해 드려요."
         >
           <Controller
-            name="departureLocation"
+            name="startingPlace"
             control={control}
             render={({ field }) => (
               <AddressInput
-                inputId="departureLocation"
+                inputId="startingPlace"
                 value={field.value}
                 onChange={field.onChange}
                 placeholder="서울 강서구 마곡동로 161"
