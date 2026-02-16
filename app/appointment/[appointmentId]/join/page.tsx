@@ -1,4 +1,9 @@
+import { getAppointment } from "@/api/appointment";
 import JoinAppointmentForm from "@/components/appointment/JoinAppointmentForm";
+import { ERROR_MESSAGE } from "@/constants/error-message";
+import dayjs from "dayjs";
+import { cookies } from "next/headers";
+import { notFound, redirect } from "next/navigation";
 
 const Page = async ({
   params,
@@ -7,17 +12,38 @@ const Page = async ({
 }) => {
   const { appointmentId } = await params;
 
+  let appointmentInfo;
+  try {
+    const cookieStore = await cookies();
+    appointmentInfo = await getAppointment(appointmentId, {
+      headers: {
+        cookie: cookieStore.toString(),
+      },
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.message === ERROR_MESSAGE.APPOINTMENT_NOT_EXIST) {
+      notFound();
+    }
+    redirect("/error");
+  }
+
+  const { appointment } = appointmentInfo;
+  const dueDateStr = dayjs(appointment.appointmentDueDate).format("YYYY.MM.DD");
+
   return (
     <main>
       <div className="flex flex-col gap-40">
         <div className="flex flex-col items-center">
-          <p className="typo-20-bold text-gray-800">스터디밥먹으러</p>
+          <p className="typo-20-bold text-gray-800">
+            {appointment.appointmentName}
+          </p>
           <div className="flex flex-row gap-8">
             <p className="typo-16-regular text-gray-600">
-              투표 마감일 2026.01.06
+              {`투표 마감일 ${dueDateStr}`}
             </p>
             <div className="w-fit h-fit bg-primary-25 px-8 py-4 text-primary-400 typo-12-regular rounded-[40px]">
-              D-5
+              {appointment.dday}
             </div>
           </div>
         </div>
