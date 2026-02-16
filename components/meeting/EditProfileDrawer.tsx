@@ -6,7 +6,6 @@ import { MemberProfile } from "@/types/apiResponse";
 import { getAddressLngLat } from "@/api/kakao-local";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { registerMemberProfile } from "@/api/member";
-import useLeaveAppointment from "@/hooks/useLeaveAppointment";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -14,6 +13,8 @@ import AddressInput from "../shared/AddressInput";
 import { Place } from "@/types/shared";
 import { cn } from "@/utils/cn";
 import { useEffect, useEffectEvent } from "react";
+import useLeaveAppointment from "@/hooks/useLeaveAppointment";
+import { useConfirm } from "@/context/ConfirmContext";
 
 async function transformPlace(place: Place): Promise<{
   address: string;
@@ -64,6 +65,8 @@ const EditProfileDrawer = ({
 }: EditProfileDrawerProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const confirm = useConfirm();
 
   const {
     register,
@@ -129,18 +132,32 @@ const EditProfileDrawer = ({
 
   /* 약속 나가기 */
   const canLeave = initialProfile.id !== appointmentHostId;
+  const leaveMutation = useLeaveAppointment(appointmentId);
 
-  const { mutate: mutateLeave } = useLeaveAppointment(appointmentId);
-
-  const leaveAppointment = () => {
-    mutateLeave(undefined, {
-      onSuccess: () => {
-        router.push("/appointments");
-      },
-      onError: () => {
-        alert("약속 나가기에 실패했습니다. 잠시후 다시 시도해주세요.");
-      },
+  const leaveAppointment = async () => {
+    const result = await confirm({
+      title: "약속나가기",
+      message: (
+        <>
+          정말 약속을 나가실 건가요?
+          <br />
+          링크를 통해 언제든 다시 참석할 수 있어요.
+        </>
+      ),
+      confirmText: "나가기",
+      cancelText: "닫기",
     });
+
+    if (result) {
+      leaveMutation.mutate(undefined, {
+        onSuccess: () => {
+          router.push("/appointments");
+        },
+        onError: () => {
+          alert("약속 나가기에 실패했습니다. 잠시후 다시 시도해주세요.");
+        },
+      });
+    }
   };
 
   const onVisibleChange = (visibility: boolean) => {
@@ -217,6 +234,16 @@ const EditProfileDrawer = ({
                     close();
                     saveMutation.reset();
                   }}
+                />
+              </div>
+            )}
+
+            {(leaveMutation.isPending || leaveMutation.isSuccess) && (
+              <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
+                <LoadingSpinner
+                  size={40}
+                  open={leaveMutation.isPending || leaveMutation.isSuccess}
+                  success={leaveMutation.isSuccess}
                 />
               </div>
             )}
