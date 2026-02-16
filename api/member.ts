@@ -40,7 +40,7 @@ export async function getMemberProfile(
  * 멤버 정보 등록 및 수정
  * @param {string} place - 출발 장소. undefined이면 nickName만 수정. null이면 출발 장소 없음.
  */
-export async function registerMemberProfile(
+export async function updateMemberProfile(
   appointmentId: string,
   nickName: string,
   place?: {
@@ -64,7 +64,7 @@ export async function registerMemberProfile(
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/member/${appointmentId}`,
     {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },

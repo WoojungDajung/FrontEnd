@@ -5,7 +5,7 @@ import FormField from "../shared/FormField";
 import { MemberProfile } from "@/types/apiResponse";
 import { getAddressLngLat } from "@/api/kakao-local";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { registerMemberProfile } from "@/api/member";
+import { updateMemberProfile } from "@/api/member";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -99,7 +99,7 @@ const EditProfileDrawer = ({
         ? await transformPlace(startingPlace)
         : startingPlace;
 
-      await registerMemberProfile(appointmentId, nickName, place);
+      await updateMemberProfile(appointmentId, nickName, place);
     },
   });
 
