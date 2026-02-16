@@ -36,7 +36,7 @@ const useCreateAppointment = () => {
         appointmentName,
         dateToString(deadline),
         nickName,
-        place ?? null,
+        place,
       );
       return appointment.appointment.appointmentId;
     },
