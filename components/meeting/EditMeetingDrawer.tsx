@@ -5,10 +5,11 @@ import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
 import FormField from "../shared/FormField";
 import useEditAppointment from "@/hooks/useEditAppointment";
 import LoadingSpinner from "../shared/LoadingSpinner";
-import useDeleteAppointment from "@/hooks/useDeleteAppointment";
 import { useRouter } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { cn } from "@/utils/cn";
+import { useConfirm } from "@/context/ConfirmContext";
+import useDeleteAppointment from "@/hooks/useDeleteAppointment";
 
 interface EditMeetingDrawerProps {
   appointmentId: string;
@@ -31,6 +32,7 @@ const EditMeetingDrawer = ({
   setOpen,
 }: EditMeetingDrawerProps) => {
   const router = useRouter();
+  const confirm = useConfirm();
 
   const {
     register,
@@ -46,6 +48,7 @@ const EditMeetingDrawer = ({
     mode: "onChange",
   });
 
+  /* 약속 정보 수정 */
   const editMutation = useEditAppointment({
     appointmentId,
   });
@@ -67,26 +70,39 @@ const EditMeetingDrawer = ({
     );
   };
 
-  /* 약속 방 삭제 */
+  /* 약속 없애기 */
   const deleteMutation = useDeleteAppointment(appointmentId);
-  const deleteAppointment = () => {
-    deleteMutation.mutate(undefined, {
-      onSuccess: () => {
-        router.push("/appointments");
-      },
-      onError: () => {
-        alert("약속 삭제에 실패했습니다. 잠시후 다시 시도해주세요.");
-      },
+
+  const onClickAction = async () => {
+    const result = await confirm({
+      title: "약속 없애기",
+      message: (
+        <>
+          정말 약속을 없애실 건가요?
+          <br />
+          링크를 통해 언제든 다시 약속을 만들 수 있어요.
+        </>
+      ),
+      confirmText: "없애기",
+      cancelText: "닫기",
     });
+
+    if (result) {
+      deleteMutation.mutate(undefined, {
+        onSuccess: () => {
+          router.push("/appointments");
+        },
+        onError: () => {
+          alert("약속 삭제에 실패했습니다. 잠시후 다시 시도해주세요.");
+        },
+      });
+    }
   };
 
   const onVisibleChange = (visibility: boolean) => {
-    // 닫으면 처음 상태로 되돌리기
+    // 닫으면 폼 초기값으로 되돌리기
     if (!visibility) {
-      resetForm({
-        appointmentName: initialName,
-        deadline: initialDueDate,
-      });
+      resetForm();
     }
   };
 
@@ -99,7 +115,11 @@ const EditMeetingDrawer = ({
       {({ close }) => (
         <DefaultDrawerLayout
           title="약속 정보"
-          secondaryAction={{ label: "약속 없애기", onClick: deleteAppointment }}
+          secondaryAction={{
+            label: "약속 없애기",
+            // onClick: () => setDeleteModalOpen(true),
+            onClick: onClickAction,
+          }}
           close={close}
         >
           <form
@@ -161,9 +181,13 @@ const EditMeetingDrawer = ({
             </div>
           )}
 
-          {deleteMutation.isPending && (
+          {(deleteMutation.isPending || deleteMutation.isSuccess) && (
             <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
-              <LoadingSpinner size={40} open={deleteMutation.isPending} />
+              <LoadingSpinner
+                size={40}
+                open={deleteMutation.isPending}
+                success={deleteMutation.isSuccess}
+              />
             </div>
           )}
         </DefaultDrawerLayout>
