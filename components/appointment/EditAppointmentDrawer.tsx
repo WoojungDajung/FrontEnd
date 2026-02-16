@@ -11,7 +11,7 @@ import { cn } from "@/utils/cn";
 import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteAppointment from "@/hooks/useDeleteAppointment";
 
-interface EditMeetingDrawerProps {
+interface EditAppointmentDrawerProps {
   appointmentId: string;
   initialName: string;
   initialDueDate: Date;
@@ -24,13 +24,13 @@ interface FormValues {
   deadline: Date;
 }
 
-const EditMeetingDrawer = ({
+const EditAppointmentDrawer = ({
   appointmentId,
   initialName,
   initialDueDate,
   open,
   setOpen,
-}: EditMeetingDrawerProps) => {
+}: EditAppointmentDrawerProps) => {
   const router = useRouter();
   const confirm = useConfirm();
 
@@ -196,4 +196,4 @@ const EditMeetingDrawer = ({
   );
 };
 
-export default EditMeetingDrawer;
+export default EditAppointmentDrawer;

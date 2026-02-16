@@ -15,9 +15,9 @@ export function initiateKakao() {
   window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
 }
 
-export function shareMeetingOnKakaoTalk(
-  meetingId: string,
-  meetingName: string,
+export function shareAppointmentOnKakaoTalk(
+  appointmentId: string,
+  appointmentName: string,
   templateId: number,
 ) {
   if (typeof window === "undefined") {
@@ -27,8 +27,8 @@ export function shareMeetingOnKakaoTalk(
   window.Kakao.Share.sendCustom({
     templateId: templateId,
     templateArgs: {
-      meeting_id: meetingId,
-      meeting_name: meetingName,
+      meeting_id: appointmentId,
+      meeting_name: appointmentName,
     },
   });
 }

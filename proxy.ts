@@ -16,7 +16,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/setup-meeting", "/appointments", "/meeting/:path*"],
+  matcher: ["/setup-meeting", "/appointments", "/appointment/:path*"],
 };
 
 async function isAuthenticated(request: NextRequest): Promise<boolean> {

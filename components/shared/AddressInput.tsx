@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import PlaceIcon from "../meeting/icons/PlaceIcon";
+import PlaceIcon from "../appointment/icons/PlaceIcon";
 import PostcodePopup from "./PostcodePopup";
 import { Address } from "@/types/daum";
 import { Place } from "@/types/shared";

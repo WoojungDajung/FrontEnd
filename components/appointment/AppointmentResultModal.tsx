@@ -20,7 +20,7 @@ import {
 import { Appointment, ConfirmedResult } from "@/types/apiResponse";
 import dayjs from "dayjs";
 
-interface MeetingResultModalProps {
+interface AppointmentResultModalProps {
   open?: boolean;
   setOpen?: (open: boolean) => void;
   appointment: Appointment;
@@ -28,13 +28,13 @@ interface MeetingResultModalProps {
   result: ConfirmedResult;
 }
 
-const MeetingResultModal = ({
+const AppointmentResultModal = ({
   open,
   setOpen,
   appointment,
   appointmentUserCount,
   result,
-}: MeetingResultModalProps) => {
+}: AppointmentResultModalProps) => {
   const confirmedDateStr = useMemo(() => {
     const date = dayjs(result.confirmedDate).toDate();
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${WEEKDAYS_KO[date.getDay()]}요일`;
@@ -48,7 +48,7 @@ const MeetingResultModal = ({
   const [showPlaceReason, setShowPlaceReason] = useState(false);
 
   /* 결과 공유 */
-  const link = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${appointment.appointmentId}`;
+  const link = `${process.env.NEXT_PUBLIC_BASE_URL}/appointment/${appointment.appointmentId}`;
 
   const showMoreShare = () => {
     navigator.share({ url: link });
@@ -388,4 +388,4 @@ const MeetingResultModal = ({
   );
 };
 
-export default MeetingResultModal;
+export default AppointmentResultModal;

@@ -3,20 +3,20 @@
 import Image from "next/image";
 import Button from "../shared/Button";
 import { useEffect, useState } from "react";
-import MeetingResultModal from "./MeetingResultModal";
+import AppointmentResultModal from "./AppointmentResultModal";
 import { Appointment, ConfirmedResult } from "@/types/apiResponse";
 
-interface MeetingSettledSectionProps {
+interface AppointmentSettledSectionProps {
   appointment: Appointment;
   appointmentUserCount: number;
   result: ConfirmedResult;
 }
 
-const MeetingSettledSection = ({
+const AppointmentSettledSection = ({
   appointment,
   appointmentUserCount,
   result,
-}: MeetingSettledSectionProps) => {
+}: AppointmentSettledSectionProps) => {
   const [resultModalOpen, setResultModalOpen] = useState(false);
 
   // 모달이 열려져 있도록 하기 위한 작업
@@ -54,7 +54,7 @@ const MeetingSettledSection = ({
       </p>
 
       {/* 확정 결과 모달 */}
-      <MeetingResultModal
+      <AppointmentResultModal
         open={resultModalOpen}
         setOpen={setResultModalOpen}
         appointment={appointment}
@@ -65,4 +65,4 @@ const MeetingSettledSection = ({
   );
 };
 
-export default MeetingSettledSection;
+export default AppointmentSettledSection;

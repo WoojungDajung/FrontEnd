@@ -1,4 +1,4 @@
-import JoinAppointmentForm from "@/components/meeting/JoinAppointmentForm";
+import JoinAppointmentForm from "@/components/appointment/JoinAppointmentForm";
 
 const Page = async ({
   params,

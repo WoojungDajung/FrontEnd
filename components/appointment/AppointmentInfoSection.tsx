@@ -5,7 +5,7 @@ import Button from "../shared/Button";
 import PencilIcon from "./icons/PencilIcon";
 import SmilingFaceIcon from "./icons/SmilngFaceIcon";
 import EditProfileDrawer from "./EditProfileDrawer";
-import EditMeetingDrawer from "./EditMeetingDrawer";
+import EditAppointmentDrawer from "./EditAppointmentDrawer";
 import PlusIcon from "./icons/PlusIcon";
 import ParticipantList from "./ParticipantList";
 import ShareModal from "./ShareModal";
@@ -13,13 +13,13 @@ import useAppointmentQuery from "@/hooks/useAppointmentQuery";
 import dayjs from "dayjs";
 import useAppointmentUserProfileQuery from "@/hooks/useAppointmentUserProfileQuery";
 
-interface MeetingInfoSectionProps {
+interface AppointmentInfoSectionProps {
   appointmentId: string;
 }
 
-const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
+const AppointmentInfoSection = ({ appointmentId }: AppointmentInfoSectionProps) => {
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
-  const [meetingDrawerOpen, setMeetingDrawerOpen] = useState(false);
+  const [appointmentDrawerOpen, setAppointmentDrawerOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const { data: appointmentData } = useAppointmentQuery({ appointmentId });
@@ -50,7 +50,7 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
           {isMyAppointment && (
             <button
               className="absolute top-0 right-0 border border-gray-100 bg-white w-32 h-32 rounded-[12px] cursor-pointer"
-              onClick={() => setMeetingDrawerOpen(true)}
+              onClick={() => setAppointmentDrawerOpen(true)}
             >
               <PencilIcon />
             </button>
@@ -116,21 +116,23 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
       )}
 
       {/* Drawer */}
-      {profileData && <EditProfileDrawer
-        appointmentId={appointmentId}
-        appointmentHostId={appointmentData.appointment.appointmentUserId}
-        initialProfile={profileData}
-        open={profileDrawerOpen}
-        setOpen={setProfileDrawerOpen}
-      />}
-      <EditMeetingDrawer
+      {profileData && (
+        <EditProfileDrawer
+          appointmentId={appointmentId}
+          appointmentHostId={appointmentData.appointment.appointmentUserId}
+          initialProfile={profileData}
+          open={profileDrawerOpen}
+          setOpen={setProfileDrawerOpen}
+        />
+      )}
+      <EditAppointmentDrawer
         appointmentId={appointmentId}
         initialName={appointmentData.appointment.appointmentName}
         initialDueDate={dayjs(
           appointmentData.appointment.appointmentDueDate,
         ).toDate()}
-        open={meetingDrawerOpen}
-        setOpen={setMeetingDrawerOpen}
+        open={appointmentDrawerOpen}
+        setOpen={setAppointmentDrawerOpen}
       />
       {/* Modal */}
       <ShareModal
@@ -143,4 +145,4 @@ const MeetingInfoSection = ({ appointmentId }: MeetingInfoSectionProps) => {
   );
 };
 
-export default MeetingInfoSection;
+export default AppointmentInfoSection;

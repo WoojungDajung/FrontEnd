@@ -1,9 +1,9 @@
 import { getAppointment } from "@/api/appointment";
-import DateVoteSection from "@/components/meeting/DateVoteSection";
-import HomeButton from "@/components/meeting/HomeButton";
-import MeetingInfoSection from "@/components/meeting/MeetingInfoSection";
-import MeetingSettledSection from "@/components/meeting/MeetingSettledSection";
-import PlaceVoteSection from "@/components/meeting/PlaceVoteSection";
+import DateVoteSection from "@/components/appointment/DateVoteSection";
+import HomeButton from "@/components/appointment/HomeButton";
+import AppointmentInfoSection from "@/components/appointment/AppointmentInfoSection";
+import AppointmentSettledSection from "@/components/appointment/AppointmentSettledSection";
+import PlaceVoteSection from "@/components/appointment/PlaceVoteSection";
 import { ERROR_MESSAGE } from "@/constants/error-message";
 import { AppointmentPageProvider } from "@/context/AppointmentContext";
 import { getQueryClient } from "@/lib/react-query/get-query-client";
@@ -20,8 +20,12 @@ async function getAppointmentServer(appointmentId: string) {
   });
 }
 
-const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
-  const { meetingId } = await params;
+const Page = async ({
+  params,
+}: {
+  params: Promise<{ appointmentId: string }>;
+}) => {
+  const { appointmentId } = await params;
 
   const queryClient = getQueryClient();
 
@@ -29,7 +33,7 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
 
   try {
     appointmentInfo = await queryClient.fetchQuery({
-      queryKey: ["appointment", meetingId],
+      queryKey: ["appointment", appointmentId],
       queryFn: async ({ queryKey }) => getAppointmentServer(queryKey[1]),
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,7 +53,7 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
 
         <div className="flex flex-col gap-24">
           {isSettled && appointmentInfo.confirmedResult !== null && (
-            <MeetingSettledSection
+            <AppointmentSettledSection
               appointment={appointmentInfo.appointment}
               appointmentUserCount={appointmentInfo.appointmentUserList.length}
               result={appointmentInfo.confirmedResult}
@@ -57,10 +61,13 @@ const Page = async ({ params }: { params: Promise<{ meetingId: string }> }) => {
           )}
           <AppointmentPageProvider>
             <div className="flex flex-col gap-16">
-              <MeetingInfoSection appointmentId={meetingId} />
-              <DateVoteSection appointmentId={meetingId} canVote={!isSettled} />
+              <AppointmentInfoSection appointmentId={appointmentId} />
+              <DateVoteSection
+                appointmentId={appointmentId}
+                canVote={!isSettled}
+              />
               <PlaceVoteSection
-                appointmentId={meetingId}
+                appointmentId={appointmentId}
                 isAppointmentSettled={isSettled}
               />
             </div>

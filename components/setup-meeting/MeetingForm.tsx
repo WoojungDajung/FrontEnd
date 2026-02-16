@@ -25,7 +25,7 @@ const MeetingForm = () => {
       {
         onSuccess: ({ appointment }) => {
           // 약속 페이지로 이동
-          router.push(`/meeting/${appointment.appointmentId}`);
+          router.push(`/appointment/${appointment.appointmentId}`);
         },
         onError: () => {
           // 에러 페이지로 전환?

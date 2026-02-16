@@ -34,7 +34,7 @@ const AppointmentList = () => {
       {appointmentList.map((appointment) => (
         <li key={appointment.appointmentId}>
           <Link
-            href={`/meeting/${appointment.appointmentId}`}
+            href={`/appointment/${appointment.appointmentId}`}
             className="p-16 flex flex-col gap-4 bg-gray-25 inset-ring-1 inset-ring-gray-200 rounded-[16px]"
           >
             <p className="typo-16-semibold text-gray-800">

@@ -83,7 +83,7 @@ const CreateAppointmentForm = () => {
         onSuccess: (appointmentId) => {
           // 약속 페이지로 이동
           queryClient.invalidateQueries({ queryKey: ["member-appointments"] });
-          router.push(`/meeting/${appointmentId}`);
+          router.push(`/appointment/${appointmentId}`);
         },
         onError: () => {
           alert("약속 생성에 실패하였습니다. 잠시 후 다시 시도해주세요.");
