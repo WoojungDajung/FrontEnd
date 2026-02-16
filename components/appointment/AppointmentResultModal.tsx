@@ -15,7 +15,7 @@ import Script from "next/script";
 import {
   initiateKakao,
   MESSAGE_TEMPLATE_ID,
-  shareMeetingOnKakaoTalk,
+  shareAppointmentOnKakaoTalk,
 } from "@/lib/kakao-share/utils";
 import { Appointment, ConfirmedResult } from "@/types/apiResponse";
 import dayjs from "dayjs";
@@ -59,7 +59,7 @@ const AppointmentResultModal = ({
   };
 
   const shareOnKakaoTalk = () => {
-    shareMeetingOnKakaoTalk(
+    shareAppointmentOnKakaoTalk(
       appointment.appointmentId,
       appointment.appointmentName,
       MESSAGE_TEMPLATE_ID.SHARE_RESULT,
