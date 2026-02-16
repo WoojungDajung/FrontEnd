@@ -6,6 +6,10 @@ import { Place } from "@/types/shared";
 import FormField from "../shared/FormField";
 import AddressInput from "../shared/AddressInput";
 import { cn } from "@/utils/cn";
+import useJoinAppointment from "@/hooks/useJoinAppointment";
+import { useRouter } from "next/navigation";
+import { createPortal } from "react-dom";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 interface JoinAppointmentFormProps {
   appointmentId: string;
@@ -17,6 +21,8 @@ interface FormValues {
 }
 
 const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
+  const router = useRouter();
+
   const {
     register,
     control,
@@ -24,9 +30,26 @@ const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
     formState: { isValid, errors },
   } = useForm<FormValues>({ mode: "onChange" });
 
+  const { mutate, isPending, isSuccess, reset } =
+    useJoinAppointment(appointmentId);
+
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const { nickName, departureLocation } = data;
-    // join
+
+    mutate(
+      { nickName, startingPlace: departureLocation },
+      {
+        onSuccess: (appointmentId) => {
+          router.push(`/appointment/${appointmentId}`);
+        },
+        onError: () => {
+          alert(
+            "약속방을 참여하는 과정에서 문제가 생겼습니다. 잠시후 다시 시도해주세요.",
+          );
+          reset();
+        },
+      },
+    );
   };
 
   return (
@@ -76,6 +99,18 @@ const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
       >
         약속 함께하기
       </Button>
+
+      {(isPending || isSuccess) &&
+        createPortal(
+          <div className="absolute w-dvw h-dvh grid place-items-center">
+            <LoadingSpinner
+              size={40}
+              open={isPending || isSuccess}
+              success={isSuccess}
+            />
+          </div>,
+          document.getElementById("popup")!,
+        )}
     </form>
   );
 };

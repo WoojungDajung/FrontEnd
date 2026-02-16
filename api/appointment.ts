@@ -110,9 +110,26 @@ export async function editAppointment(
 /* 약속 방 참여 */
 export async function joinAppointment(
   appointmentId: string,
+  nickName: string,
+  startingPlace: {
+    address: string;
+    startingPlace: string;
+    latitude: string;
+    longitude: string;
+  } | null,
 ): Promise<TAppointmentResponse> {
   const res = await fetch(`/auth-api/appointment/join/${appointmentId}`, {
     method: "POST",
+    body: JSON.stringify({
+      nickName: nickName,
+      address: startingPlace?.address ?? "",
+      startingPlace: startingPlace?.startingPlace ?? "",
+      latitude: startingPlace?.latitude ?? "",
+      longitude: startingPlace?.longitude ?? "",
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   const resBody = await res.json();
