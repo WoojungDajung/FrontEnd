@@ -29,6 +29,12 @@ const Page = async ({
   }
 
   const { appointment } = appointmentInfo;
+
+  if (appointment.profileYn === "Y") {
+    // 이미 참여 상태인 경우
+    redirect(`/appointment/${appointmentId}`);
+  }
+
   const dueDateStr = dayjs(appointment.appointmentDueDate).format("YYYY.MM.DD");
 
   return (
