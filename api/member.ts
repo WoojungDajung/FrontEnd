@@ -1,3 +1,4 @@
+import { ERROR_MESSAGE } from "@/constants/error-message";
 import {
   MemberProfile,
   TMemberAppointments,
@@ -19,12 +20,15 @@ export async function getMemberProfile(
   if (!res.ok || status_code !== 200) {
     if (status_code === 400) {
       // 해당 방에 유저 참여 정보가 없음 (=아직 프로필 등록 안한 사용자)
+      throw new Error(ERROR_MESSAGE.NOT_JOINED_APPOINTMENT);
     }
     if (status_code === 401 || res.status === 401) {
       // 토큰 만료
+      throw new Error(ERROR_MESSAGE.LOGIN_REQUIRED);
     }
     if (status_code === 404) {
       // 방이 존재하지 않음
+      throw new Error(ERROR_MESSAGE.APPOINTMENT_NOT_EXIST);
     }
     throw new Error(`${status_code}: ${message}`);
   }

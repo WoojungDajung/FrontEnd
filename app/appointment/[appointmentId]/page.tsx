@@ -10,6 +10,7 @@ import { getQueryClient } from "@/lib/react-query/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
+import { getMemberProfile } from "@/api/member";
 
 async function getAppointmentServer(appointmentId: string) {
   const cookieStore = await cookies();
@@ -20,12 +21,39 @@ async function getAppointmentServer(appointmentId: string) {
   });
 }
 
+async function checkJoin(appointmentId: string) {
+  let redirectUrl = "/error";
+  const joinUrl = `/appointment/${appointmentId}/join`;
+
+  try {
+    const profile = await getMemberProfile(appointmentId);
+    if (profile.memberNickName === null) {
+      redirectUrl = joinUrl;
+    } else {
+      return;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.message === ERROR_MESSAGE.APPOINTMENT_NOT_EXIST) {
+      notFound();
+    } else if (error.message === ERROR_MESSAGE.LOGIN_REQUIRED) {
+      redirectUrl = "/"; // 로그인 페이지로 이동
+    } else if (error.message === ERROR_MESSAGE.NOT_JOINED_APPOINTMENT) {
+      redirectUrl = joinUrl;
+    }
+  }
+  redirect(redirectUrl);
+}
+
 const Page = async ({
   params,
 }: {
   params: Promise<{ appointmentId: string }>;
 }) => {
   const { appointmentId } = await params;
+
+  // 해당 방 참여 여부 확인 및 처리
+  await checkJoin(appointmentId);
 
   const queryClient = getQueryClient();
 
