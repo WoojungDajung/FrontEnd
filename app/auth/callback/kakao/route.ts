@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
         );
       } else {
         return NextResponse.redirect(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/setup-meeting`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/appointments`,
         );
       }
     } catch (err) {

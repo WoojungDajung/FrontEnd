@@ -6,6 +6,7 @@ import useLocationInfoQuery from "@/hooks/useLocationInfoQuery";
 import Link from "next/link";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { useEffect, useRef } from "react";
+import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteLocation from "@/hooks/useDeleteLocation";
 
 interface PlaceInfoDrawerProps {
@@ -69,28 +70,12 @@ const PlaceInfoDrawerContent = ({
   closeModal,
   deletable,
 }: PlaceInfoDrawerContentProps) => {
+  const confirm = useConfirm();
+
   const { data } = useLocationInfoQuery({
     appointmentId,
     placeId,
   });
-
-  const { mutate, isPending, isSuccess, reset } = useDeleteLocation(
-    appointmentId,
-    placeId,
-  );
-
-  const deletePlace = async () => {
-    if (confirm("정말 삭제하시겠습니까?")) {
-      mutate(undefined, {
-        onSuccess: () => {
-          closeModal();
-        },
-        onError: () => {
-          alert("장소 삭제에 실패했습니다. 잠시후 다시 시도해주세요.");
-        },
-      });
-    }
-  };
 
   /* 지도 표시 */
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -111,6 +96,38 @@ const PlaceInfoDrawerContent = ({
     });
     marker.setMap(map);
   }, [data]);
+
+  /* 삭제하기 */
+  const { mutate, isPending, isSuccess, reset } = useDeleteLocation(
+    appointmentId,
+    placeId,
+  );
+
+  const deletePlace = async () => {
+    const result = await confirm({
+      title: "삭제하기",
+      message: (
+        <>
+          정말 삭제하실 건가요?
+          <br />
+          삭제된 정보는 되돌릴 수 없어요.
+        </>
+      ),
+      confirmText: "삭제하기",
+      cancelText: "닫기",
+    });
+
+    if (result) {
+      mutate(undefined, {
+        onSuccess: () => {
+          closeModal();
+        },
+        onError: () => {
+          alert("장소 삭제에 실패했습니다. 잠시후 다시 시도해주세요.");
+        },
+      });
+    }
+  };
 
   return (
     <DefaultDrawerLayout

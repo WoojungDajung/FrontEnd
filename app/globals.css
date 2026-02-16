@@ -149,7 +149,7 @@
   /* size */
   .button--lg {
     width: 342px;
-    height: 64px;
+    height: 56px;
     border-radius: 16px;
   }
   .button--md {
@@ -198,7 +198,7 @@
     }
   }
   .button--gray {
-    background-color: white;
+    background-color: var(--color-gray-100);
     color: var(--color-gray-800);
 
     &:active {
@@ -227,6 +227,15 @@
     &:focus-within,
     &[data-focus="true"] {
       border-color: var(--color-primary-400);
+    }
+  }
+
+  .input-container--error {
+    border-color: var(--color-error-500);
+
+    &:focus-within,
+    &[data-focus="true"] {
+      border-color: var(--color-error-500);
     }
   }
 

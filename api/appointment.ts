@@ -2,6 +2,57 @@ import { ERROR_MESSAGE } from "@/constants/error-message";
 import { TAppointmentResponse } from "@/types/apiResponse";
 import dayjs from "dayjs";
 
+/**
+ * 약속방 생성
+ * @param appointmentName
+ * @param deadline YYYY-MM-DD 형식의 문자열
+ * @returns
+ */
+export async function createAppointment(
+  appointmentName: string,
+  deadline: string,
+  nickName: string,
+  startingPlace: {
+    address: string;
+    startingPlace: string;
+    latitude: string;
+    longitude: string;
+  } | null,
+): Promise<TAppointmentResponse> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/appointment`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        appointmentName,
+        appointmentDueDate: deadline,
+        appointmentUserProfile: {
+          nickName: nickName,
+          address: startingPlace?.address ?? "",
+          startingPlace: startingPlace?.startingPlace ?? "",
+          latitude: startingPlace?.latitude ?? "",
+          longitude: startingPlace?.longitude ?? "",
+        },
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 400) {
+      // 유저가 존재하지 않음
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+  return resBody.data as TAppointmentResponse;
+}
+
 export async function getAppointment(
   appointmentId: string,
   init?: RequestInit,
@@ -59,9 +110,26 @@ export async function editAppointment(
 /* 약속 방 참여 */
 export async function joinAppointment(
   appointmentId: string,
+  nickName: string,
+  startingPlace: {
+    address: string;
+    startingPlace: string;
+    latitude: string;
+    longitude: string;
+  } | null,
 ): Promise<TAppointmentResponse> {
   const res = await fetch(`/auth-api/appointment/join/${appointmentId}`, {
     method: "POST",
+    body: JSON.stringify({
+      nickName: nickName,
+      address: startingPlace?.address ?? "",
+      startingPlace: startingPlace?.startingPlace ?? "",
+      latitude: startingPlace?.latitude ?? "",
+      longitude: startingPlace?.longitude ?? "",
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   const resBody = await res.json();

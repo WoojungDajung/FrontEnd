@@ -1,5 +1,4 @@
 import { Address, Postcode } from "@/types/daum";
-import { cn } from "@/utils/cn";
 import { lockBodyScroll } from "@/utils/lockBodyScroll";
 import Script from "next/script";
 import { useCallback, useEffect, useRef } from "react";
@@ -37,13 +36,15 @@ const PostcodePopup = ({ onComplete, open, setOpen }: PostcodePopupProps) => {
   }, [createPostcodeInstance]);
 
   useEffect(() => {
+    // 검색창 임베딩
     if (open) {
       if (!postcode.current || !ref.current) return;
-      postcode.current.embed(ref.current); // 검색창 임베딩
-      lockBodyScroll(true);
-    } else {
-      lockBodyScroll(false);
+      postcode.current.embed(ref.current);
     }
+
+    if (!open) return;
+    lockBodyScroll(true);
+    return () => lockBodyScroll(false);
   }, [open]);
 
   const onScriptLoaded = () => {

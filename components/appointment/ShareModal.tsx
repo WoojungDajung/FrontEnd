@@ -7,7 +7,7 @@ import MoreIcon from "./icons/MoreIcon";
 import {
   initiateKakao,
   MESSAGE_TEMPLATE_ID,
-  shareMeetingOnKakaoTalk,
+  shareAppointmentOnKakaoTalk,
 } from "@/lib/kakao-share/utils";
 
 interface ShareModalProps {
@@ -23,7 +23,7 @@ const ShareModal = ({
   open,
   setOpen,
 }: ShareModalProps) => {
-  const link = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${appointmentId}`;
+  const link = `${process.env.NEXT_PUBLIC_BASE_URL}/appointment/${appointmentId}`;
 
   const showMoreShare = () => {
     navigator.share({ url: link });
@@ -34,7 +34,7 @@ const ShareModal = ({
   };
 
   const shareOnKakaoTalk = () => {
-    shareMeetingOnKakaoTalk(
+    shareAppointmentOnKakaoTalk(
       appointmentId,
       appointmentName,
       MESSAGE_TEMPLATE_ID.INVITE,

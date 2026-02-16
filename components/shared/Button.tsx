@@ -1,22 +1,17 @@
 import { cn } from "@/utils/cn";
-import { ReactNode } from "react";
+import { ComponentProps } from "react";
 
-interface ButtonProps {
+interface ButtonProps extends ComponentProps<"button"> {
   size?: "Large" | "Medium" | "Small";
   color?: "Primary" | "White" | "Danger" | "Gray";
-  disabled?: boolean;
-  onClick?: () => void;
-  className?: string;
-  children: ReactNode;
 }
 
 const Button = ({
   size,
   color = "Primary",
-  disabled,
-  onClick,
-  className,
   children,
+  className,
+  ...otherProps
 }: ButtonProps) => {
   function getFontSize() {
     if (color === "Primary") {
@@ -38,22 +33,21 @@ const Button = ({
         size === "Large"
           ? "button--lg"
           : size === "Medium"
-          ? "button--md"
-          : size === "Small"
-          ? "button--sm"
-          : undefined,
+            ? "button--md"
+            : size === "Small"
+              ? "button--sm"
+              : undefined,
         color === "Primary"
           ? "button--primary"
           : color === "White"
-          ? "button--white"
-          : color === "Danger"
-          ? "button--danger"
-          : "button--gray",
+            ? "button--white"
+            : color === "Danger"
+              ? "button--danger"
+              : "button--gray",
         getFontSize(),
-        className
+        className,
       )}
-      disabled={disabled}
-      onClick={onClick}
+      {...otherProps}
     >
       {children}
     </button>
