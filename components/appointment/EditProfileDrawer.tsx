@@ -15,6 +15,7 @@ import { cn } from "@/utils/cn";
 import { useEffect, useEffectEvent } from "react";
 import useLeaveAppointment from "@/hooks/useLeaveAppointment";
 import { useConfirm } from "@/context/ConfirmContext";
+import { useToast } from "@/context/ToastContext";
 
 async function transformPlace(place: Place): Promise<{
   address: string;
@@ -67,6 +68,7 @@ const EditProfileDrawer = ({
   const queryClient = useQueryClient();
 
   const confirm = useConfirm();
+  const { toast } = useToast();
 
   const {
     register,
@@ -114,17 +116,17 @@ const EditProfileDrawer = ({
       { nickName, startingPlace: placeVal },
       {
         onSuccess: async () => {
+          toast({ message: "저장이 완료됐어요." });
+
           await queryClient.invalidateQueries({
             queryKey: ["appointment-user-profile", appointmentId],
           });
           await queryClient.invalidateQueries({
             queryKey: ["appointment", appointmentId],
           });
-
-          // closeModal();
         },
         onError: () => {
-          alert("프로필 수정에 실패하였습니다. 잠시후 다시 시도해주세요.");
+          toast({ message: "저장에 실패했어요. 잠시후 다시 시도해주세요." });
         },
       },
     );
@@ -154,7 +156,9 @@ const EditProfileDrawer = ({
           router.push("/appointments");
         },
         onError: () => {
-          alert("약속 나가기에 실패했습니다. 잠시후 다시 시도해주세요.");
+          toast({
+            message: "약속나가기에 실패했어요. 잠시후 다시 시도해주세요.",
+          });
         },
       });
     }
