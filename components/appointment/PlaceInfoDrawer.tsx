@@ -8,6 +8,7 @@ import LoadingSpinner from "../shared/LoadingSpinner";
 import { useEffect, useRef } from "react";
 import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteLocation from "@/hooks/useDeleteLocation";
+import { useToast } from "@/context/ToastContext";
 
 interface PlaceInfoDrawerProps {
   appointmentId: string;
@@ -71,6 +72,7 @@ const PlaceInfoDrawerContent = ({
   deletable,
 }: PlaceInfoDrawerContentProps) => {
   const confirm = useConfirm();
+  const { toast } = useToast();
 
   const { data } = useLocationInfoQuery({
     appointmentId,
@@ -120,10 +122,11 @@ const PlaceInfoDrawerContent = ({
     if (result) {
       mutate(undefined, {
         onSuccess: () => {
+          toast({ message: "삭제가 완료됐어요." });
           closeModal();
         },
         onError: () => {
-          alert("장소 삭제에 실패했습니다. 잠시후 다시 시도해주세요.");
+          toast({ message: "삭제에 실패했어요. 잠시후 다시 시도해주세요." });
         },
       });
     }
