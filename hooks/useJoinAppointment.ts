@@ -30,9 +30,12 @@ const useJoinAppointment = (appointmentId: string) => {
       const appointment = await joinAppointment(appointmentId, nickName, place);
       return appointment.appointment.appointmentId;
     },
-    onSuccess: async () => {
+    onSuccess: async (appointmentId) => {
       await queryClient.invalidateQueries({
         queryKey: ["member-appointments"],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["appointment", appointmentId],
       });
     },
   });
