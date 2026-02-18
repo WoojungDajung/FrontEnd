@@ -9,6 +9,7 @@ import {
   MESSAGE_TEMPLATE_ID,
   shareAppointmentOnKakaoTalk,
 } from "@/lib/kakao-share/utils";
+import { useToast } from "@/context/ToastContext";
 
 interface ShareModalProps {
   appointmentId: string;
@@ -23,6 +24,8 @@ const ShareModal = ({
   open,
   setOpen,
 }: ShareModalProps) => {
+  const { toast } = useToast();
+
   const link = `${process.env.NEXT_PUBLIC_BASE_URL}/appointment/${appointmentId}`;
 
   const showMoreShare = () => {
@@ -30,7 +33,9 @@ const ShareModal = ({
   };
 
   const copyLink = () => {
-    navigator.clipboard.writeText(link);
+    navigator.clipboard.writeText(link).then(() => {
+      toast({ message: "복사가 완료됐어요." });
+    });
   };
 
   const shareOnKakaoTalk = () => {

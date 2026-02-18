@@ -4,6 +4,7 @@ import Button from "../shared/Button";
 import useVoteLocation from "@/hooks/useVoteLocation";
 import { useState } from "react";
 import LoadingSpinner from "../shared/LoadingSpinner";
+import { useToast } from "@/context/ToastContext";
 
 interface VotePlaceFormProps {
   places: Location[];
@@ -20,6 +21,8 @@ const VotePlaceForm = ({
   appointmentId,
   onCompleteVote,
 }: VotePlaceFormProps) => {
+  const { toast } = useToast();
+
   const [selected, setSelected] = useState<number[]>(myVoteLocationIds);
 
   const onClickItem = (placeId: number) => {
@@ -43,9 +46,10 @@ const VotePlaceForm = ({
       { placeIdList: selected },
       {
         onError: () => {
-          alert("투표 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
+          toast({ message: "투표에 실패했습니다. 잠시 후 다시 시도해주세요." });
         },
         onSettled: () => {
+          toast({ message: "투표가 완료됐어요." });
           onCompleteVote();
         },
       },

@@ -10,6 +10,7 @@ import useJoinAppointment from "@/hooks/useJoinAppointment";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import LoadingSpinner from "../shared/LoadingSpinner";
+import { useToast } from "@/context/ToastContext";
 
 interface JoinAppointmentFormProps {
   appointmentId: string;
@@ -22,6 +23,7 @@ interface FormValues {
 
 const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
   const router = useRouter();
+  const { toast } = useToast();
 
   const {
     register,
@@ -43,9 +45,10 @@ const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
           router.push(`/appointment/${appointmentId}`);
         },
         onError: () => {
-          alert(
-            "약속방을 참여하는 과정에서 문제가 생겼습니다. 잠시후 다시 시도해주세요.",
-          );
+          toast({
+            message:
+              "약속방을 참여하는 과정에서 문제가 생겼습니다. 잠시후 다시 시도해주세요.",
+          });
           reset();
         },
       },

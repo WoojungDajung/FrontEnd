@@ -10,6 +10,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { cn } from "@/utils/cn";
 import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteAppointment from "@/hooks/useDeleteAppointment";
+import { useToast } from "@/context/ToastContext";
 
 interface EditAppointmentDrawerProps {
   appointmentId: string;
@@ -33,6 +34,7 @@ const EditAppointmentDrawer = ({
 }: EditAppointmentDrawerProps) => {
   const router = useRouter();
   const confirm = useConfirm();
+  const { toast } = useToast();
 
   const {
     register,
@@ -59,12 +61,11 @@ const EditAppointmentDrawer = ({
       { appointmentName, appointmentDueDate: deadline },
       {
         onSuccess: () => {
-          // closeModal
+          toast({ message: "저장이 완료됐어요." });
         },
         onError: (error) => {
-          alert(
-            `약속 정보 수정에 실패하였습니다. 잠시후 다시 시도해 주세요. (${error.message})`,
-          );
+          console.log("약속 정보 수정 실패:", error);
+          toast({ message: "저장에 실패했어요. 잠시후 다시 시도해주세요." });
         },
       },
     );
@@ -90,10 +91,11 @@ const EditAppointmentDrawer = ({
     if (result) {
       deleteMutation.mutate(undefined, {
         onSuccess: () => {
+          toast({ message: "삭제가 완료됐어요." });
           router.push("/appointments");
         },
         onError: () => {
-          alert("약속 삭제에 실패했습니다. 잠시후 다시 시도해주세요.");
+          toast({ message: "삭제에 실패했어요. 잠시후 다시 시도해주세요." });
         },
       });
     }

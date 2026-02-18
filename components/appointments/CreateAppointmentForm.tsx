@@ -11,6 +11,7 @@ import { createPortal } from "react-dom";
 import { cn } from "@/utils/cn";
 import { Place } from "@/types/shared";
 import useCreateAppointment from "@/hooks/useCreateAppointment";
+import { useToast } from "@/context/ToastContext";
 
 interface FormValues {
   appointmentName: string;
@@ -21,6 +22,7 @@ interface FormValues {
 
 const CreateAppointmentForm = () => {
   const router = useRouter();
+  const { toast } = useToast();
 
   const {
     register,
@@ -30,7 +32,7 @@ const CreateAppointmentForm = () => {
   } = useForm<FormValues>({ mode: "onChange" });
 
   /* 약속방 생성 및 프로필 등록 */
-  const { mutate, isPending, reset } = useCreateAppointment()
+  const { mutate, isPending, reset } = useCreateAppointment();
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const { appointmentName, deadline, nickName, startingPlace } = data;
@@ -42,7 +44,7 @@ const CreateAppointmentForm = () => {
           router.push(`/appointment/${appointmentId}`);
         },
         onError: () => {
-          alert("약속 생성에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+          toast({ message: "생성에 실패했어요. 잠시 후 다시 시도해주세요." });
           reset();
         },
       },

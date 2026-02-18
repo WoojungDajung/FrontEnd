@@ -15,6 +15,7 @@ import PlaceInfoDrawer from "./PlaceInfoDrawer";
 import useLocationsQuery from "@/hooks/useLocationsQuery";
 import VotePlaceForm from "./VotePlaceForm";
 import useAppointmentUserProfileQuery from "@/hooks/useAppointmentUserProfileQuery";
+import { useToast } from "@/context/ToastContext";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
@@ -22,8 +23,9 @@ interface PlaceVoteCardProps {
 }
 
 const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
-  const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
+  const { toast } = useToast();
 
+  const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
 
   // 사용자의 프로필 (프로필 입력 전엔 nickName, startingPlace가 null, id는 부여됨)
@@ -73,8 +75,11 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
     mutate(
       { address },
       {
+        onSuccess: () => {
+          toast({ message: "등록이 완료됐어요." });
+        },
         onError: () => {
-          alert("장소 등록에 실패했습니다. 잠시 후 다시 시도해주세요.");
+          toast({ message: "등록에 실패했습니다. 잠시 후 다시 시도해주세요." });
         },
       },
     );

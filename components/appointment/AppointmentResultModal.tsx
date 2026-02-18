@@ -19,6 +19,7 @@ import {
 } from "@/lib/kakao-share/utils";
 import { Appointment, ConfirmedResult } from "@/types/apiResponse";
 import dayjs from "dayjs";
+import { useToast } from "@/context/ToastContext";
 
 interface AppointmentResultModalProps {
   open?: boolean;
@@ -35,6 +36,8 @@ const AppointmentResultModal = ({
   appointmentUserCount,
   result,
 }: AppointmentResultModalProps) => {
+  const { toast } = useToast();
+
   const confirmedDateStr = useMemo(() => {
     const date = dayjs(result.confirmedDate).toDate();
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${WEEKDAYS_KO[date.getDay()]}요일`;
@@ -55,7 +58,11 @@ const AppointmentResultModal = ({
   };
 
   const copyLink = () => {
-    navigator.clipboard.writeText(link);
+    navigator.clipboard.writeText(link).then(() => {
+      toast({
+        message: "복사가 완료됐어요.",
+      });
+    });
   };
 
   const shareOnKakaoTalk = () => {
@@ -67,7 +74,11 @@ const AppointmentResultModal = ({
   };
 
   const copyAddress = () => {
-    navigator.clipboard.writeText(result.confirmedPlaceAddress);
+    navigator.clipboard.writeText(result.confirmedPlaceAddress).then(() => {
+      toast({
+        message: "복사가 완료됐어요.",
+      });
+    });
   };
 
   return (
