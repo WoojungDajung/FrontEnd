@@ -7,6 +7,7 @@ import { addDays, dateToString } from "@/utils/calendar";
 import useVoteDate from "@/hooks/useVoteDate";
 import useDateVoteStatusByUserQuery from "@/hooks/useDateVoteStatusByUserQuery";
 import LoadingSpinner from "../shared/LoadingSpinner";
+import { useToast } from "@/context/ToastContext";
 
 type VoteStatus = {
   possible: Set<string>; // YYYY-MM-DD 형식의 문자열
@@ -24,6 +25,8 @@ const VoteDateForm = ({
   appointmentId,
   userId,
 }: VoteDateFormProps) => {
+  const { toast } = useToast();
+
   const [status, setStatus] = useState<VoteStatus>({
     possible: new Set(),
     uncertain: new Set(),
@@ -139,10 +142,11 @@ const VoteDateForm = ({
         { votes },
         {
           onSuccess: () => {
+            toast({ message: "투표가 완료됐어요." });
             onSubmit();
           },
           onError: () => {
-            alert("투표 제출에 실패했습니다. 잠시 후 다시 시도해주세요.");
+            toast({ message: "투표에 실패했습니다. 잠시 후 다시 시도해주세요." });
           },
         },
       );
