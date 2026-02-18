@@ -17,7 +17,9 @@ interface AppointmentInfoSectionProps {
   appointmentId: string;
 }
 
-const AppointmentInfoSection = ({ appointmentId }: AppointmentInfoSectionProps) => {
+const AppointmentInfoSection = ({
+  appointmentId,
+}: AppointmentInfoSectionProps) => {
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
   const [appointmentDrawerOpen, setAppointmentDrawerOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
@@ -33,8 +35,7 @@ const AppointmentInfoSection = ({ appointmentId }: AppointmentInfoSectionProps) 
     return <></>;
   }
 
-  const isMyAppointment =
-    appointmentData.appointment.appointmentUserId === profileData?.id;
+  const isHost = appointmentData.appointment.hostYn === "Y";
   const hasRegistered = appointmentData.appointment.profileYn === "Y";
   const dueDateStr = dayjs(
     appointmentData.appointment.appointmentDueDate,
@@ -47,7 +48,7 @@ const AppointmentInfoSection = ({ appointmentId }: AppointmentInfoSectionProps) 
           <p className="typo-20-bold text-gray-800">
             {appointmentData.appointment.appointmentName}
           </p>
-          {isMyAppointment && (
+          {isHost && (
             <button
               className="absolute top-0 right-0 border border-gray-100 bg-white w-32 h-32 rounded-[12px] cursor-pointer"
               onClick={() => setAppointmentDrawerOpen(true)}
@@ -68,8 +69,8 @@ const AppointmentInfoSection = ({ appointmentId }: AppointmentInfoSectionProps) 
       {appointmentData.appointmentUserList.length > 0 && (
         <ParticipantList
           appointmentId={appointmentId}
-          appointmentHostId={appointmentData.appointment.appointmentUserId}
           myProfile={profileData}
+          isHost={isHost}
           participants={appointmentData.appointmentUserList}
         />
       )}
@@ -89,7 +90,7 @@ const AppointmentInfoSection = ({ appointmentId }: AppointmentInfoSectionProps) 
             </Button>
           </div>
         </>
-      ) : isMyAppointment ? (
+      ) : isHost ? (
         <>
           <div className="flex justify-center">
             <SmilingFaceIcon />
@@ -119,8 +120,8 @@ const AppointmentInfoSection = ({ appointmentId }: AppointmentInfoSectionProps) 
       {profileData && (
         <EditProfileDrawer
           appointmentId={appointmentId}
-          appointmentHostId={appointmentData.appointment.appointmentUserId}
           initialProfile={profileData}
+          canLeaveAppointment={!isHost}
           open={profileDrawerOpen}
           setOpen={setProfileDrawerOpen}
         />

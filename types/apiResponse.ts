@@ -14,6 +14,7 @@ export type Appointment = {
   appointmentDueDate: string;
   confirmYn: Yn;
   profileYn: Yn;
+  hostYn: Yn;
   dday: string;
   appointmentUserId: number;
 };
