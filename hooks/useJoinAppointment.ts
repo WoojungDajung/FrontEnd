@@ -1,5 +1,5 @@
+import { getAddressLngLat } from "@/api/address";
 import { joinAppointment } from "@/api/appointment";
-import { getAddressLngLat } from "@/api/kakao-local";
 import { Place } from "@/types/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 

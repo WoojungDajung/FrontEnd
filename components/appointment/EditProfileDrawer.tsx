@@ -3,7 +3,6 @@ import Button from "../shared/Button";
 import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
 import FormField from "../shared/FormField";
 import { MemberProfile } from "@/types/apiResponse";
-import { getAddressLngLat } from "@/api/kakao-local";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateMemberProfile } from "@/api/member";
 import { useRouter } from "next/navigation";
@@ -16,6 +15,7 @@ import { useEffect, useEffectEvent } from "react";
 import useLeaveAppointment from "@/hooks/useLeaveAppointment";
 import { useConfirm } from "@/context/ConfirmContext";
 import { useToast } from "@/context/ToastContext";
+import { getAddressLngLat } from "@/api/address";
 
 async function transformPlace(place: Place): Promise<{
   address: string;

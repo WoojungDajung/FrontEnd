@@ -1,4 +1,4 @@
-import { getAddressLngLat } from "@/api/kakao-local";
+import { getAddressLngLat } from "@/api/address";
 import { registerLocation } from "@/api/location";
 import { Address } from "@/types/daum";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
