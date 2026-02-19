@@ -16,7 +16,7 @@ import {
   initiateKakao,
   MESSAGE_TEMPLATE_ID,
   shareAppointmentOnKakaoTalk,
-} from "@/lib/kakao-share/utils";
+} from "@/lib/kakao/kakao-share";
 import { Appointment, ConfirmedResult } from "@/types/apiResponse";
 import dayjs from "dayjs";
 import { useToast } from "@/context/ToastContext";

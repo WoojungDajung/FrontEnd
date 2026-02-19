@@ -8,7 +8,7 @@ import {
   initiateKakao,
   MESSAGE_TEMPLATE_ID,
   shareAppointmentOnKakaoTalk,
-} from "@/lib/kakao-share/utils";
+} from "@/lib/kakao/kakao-share";
 import { useToast } from "@/context/ToastContext";
 
 interface ShareModalProps {
