@@ -1,5 +1,8 @@
 import { ERROR_MESSAGE } from "@/constants/error-message";
-import { TAppointmentResponse } from "@/types/apiResponse";
+import {
+  TAppointmentPreviewResponse,
+  TAppointmentResponse,
+} from "@/types/apiResponse";
 import dayjs from "dayjs";
 
 /**
@@ -53,6 +56,12 @@ export async function createAppointment(
   return resBody.data as TAppointmentResponse;
 }
 
+/**
+ * 현재 로그인된 유저의 정보를 포함한 전체적인 약속 정보를 가져오는 함수
+ * @param appointmentId
+ * @param init
+ * @returns
+ */
 export async function getAppointment(
   appointmentId: string,
   init?: RequestInit,
@@ -196,4 +205,34 @@ export async function deleteAppointment(appointmentId: string) {
   }
 
   return;
+}
+
+/**
+ * 참여여부와 관계없이, 간소화된 약속 정보를 가져오는 함수
+ * /appointment/[appointmentId]/join 페이지에서 사용됨
+ * @param appointmentId
+ * @param init
+ * @returns
+ */
+export async function getAppointmentPreviewInfo(
+  appointmentId: string,
+  init?: RequestInit,
+): Promise<TAppointmentPreviewResponse> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/appointment/info/${appointmentId}`,
+    { method: "GET", ...init },
+  );
+
+  const resBody = await res.json();
+  console.log(resBody);
+  const { status_code, message } = resBody;
+
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 404) {
+      //해당 방이 존재하지 않음
+      throw new Error(ERROR_MESSAGE.APPOINTMENT_NOT_EXIST);
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+  return resBody.data as TAppointmentPreviewResponse;
 }

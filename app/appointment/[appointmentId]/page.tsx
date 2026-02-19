@@ -27,11 +27,7 @@ async function checkJoin(appointmentId: string) {
 
   try {
     const profile = await getMemberProfile(appointmentId);
-    if (profile.memberNickName === null) {
-      redirectUrl = joinUrl;
-    } else {
-      return;
-    }
+    return
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.message === ERROR_MESSAGE.APPOINTMENT_NOT_EXIST) {
@@ -58,7 +54,6 @@ const Page = async ({
   const queryClient = getQueryClient();
 
   let appointmentInfo;
-
   try {
     appointmentInfo = await queryClient.fetchQuery({
       queryKey: ["appointment", appointmentId],

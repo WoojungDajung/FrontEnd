@@ -45,6 +45,10 @@ const FeatureSwiper = () => {
     [selectedFeatureId],
   );
 
+  const onSlideChange = (swiper: SwiperClass) => {
+    setSelectedFeatureId(features[swiper.activeIndex].id);
+  };
+
   return (
     <div className="flex flex-col gap-16" ref={rootRef}>
       <div className="flex flex-row border-b border-gray-200">
@@ -65,7 +69,7 @@ const FeatureSwiper = () => {
         ))}
       </div>
 
-      <Swiper className="w-full">
+      <Swiper className="w-full" onSlideChange={onSlideChange}>
         <SwiperSlide>
           <CreateAppointmentForm />
         </SwiperSlide>

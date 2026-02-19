@@ -117,6 +117,7 @@ const PlaceInfoDrawerContent = ({
       ),
       confirmText: "삭제하기",
       cancelText: "닫기",
+      variant: "danger",
     });
 
     if (result) {

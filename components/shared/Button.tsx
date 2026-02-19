@@ -1,9 +1,11 @@
 import { cn } from "@/utils/cn";
 import { ComponentProps } from "react";
 
+export type ButtonVariant = "Primary" | "White" | "Danger" | "Gray";
+
 interface ButtonProps extends ComponentProps<"button"> {
   size?: "Large" | "Medium" | "Small";
-  color?: "Primary" | "White" | "Danger" | "Gray";
+  color?: ButtonVariant;
 }
 
 const Button = ({

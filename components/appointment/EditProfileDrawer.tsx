@@ -46,8 +46,8 @@ function profileToFormValue(profile: MemberProfile): FormValue {
 
 interface EditProfileDrawerProps {
   appointmentId: string;
-  appointmentHostId: number;
   initialProfile: MemberProfile;
+  canLeaveAppointment: boolean;
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
@@ -59,8 +59,8 @@ interface FormValue {
 
 const EditProfileDrawer = ({
   appointmentId,
-  appointmentHostId,
   initialProfile,
+  canLeaveAppointment,
   open,
   setOpen,
 }: EditProfileDrawerProps) => {
@@ -133,7 +133,6 @@ const EditProfileDrawer = ({
   };
 
   /* 약속 나가기 */
-  const canLeave = initialProfile.id !== appointmentHostId;
   const leaveMutation = useLeaveAppointment(appointmentId);
 
   const leaveAppointment = async () => {
@@ -148,6 +147,7 @@ const EditProfileDrawer = ({
       ),
       confirmText: "나가기",
       cancelText: "닫기",
+      variant: "danger",
     });
 
     if (result) {
@@ -180,7 +180,7 @@ const EditProfileDrawer = ({
         <DefaultDrawerLayout
           title="내 정보"
           secondaryAction={
-            canLeave
+            canLeaveAppointment
               ? { label: "약속 나가기", onClick: leaveAppointment }
               : undefined
           }

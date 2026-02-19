@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/components/shared/Button";
+import Button, { ButtonVariant } from "@/components/shared/Button";
 import {
   createContext,
   useContext,
@@ -10,11 +10,14 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
+type ConfirmVariant = "primary" | "danger";
+
 interface ConfirmOptions {
   title?: string;
   message: string | ReactNode;
   confirmText?: string;
   cancelText?: string;
+  variant?: ConfirmVariant;
 }
 
 interface ConfirmContextValue {
@@ -48,6 +51,16 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
     setConfirmState(null);
   };
 
+  const getConfirmButtonColor = (
+    variant: ConfirmVariant = "primary",
+  ): ButtonVariant => {
+    const variantColor: Record<string, ButtonVariant> = {
+      primary: "Primary",
+      danger: "Danger",
+    };
+    return variantColor[variant];
+  };
+
   return (
     <ConfirmContext.Provider value={{ confirm }}>
       {children}
@@ -75,7 +88,11 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                 <Button size="Small" color="Gray" onClick={handleCancel}>
                   {confirmState.options.cancelText || "닫기"}
                 </Button>
-                <Button size="Small" color="Danger" onClick={handleConfirm}>
+                <Button
+                  size="Small"
+                  color={getConfirmButtonColor(confirmState.options.variant)}
+                  onClick={handleConfirm}
+                >
                   {confirmState.options.confirmText || "확인"}
                 </Button>
               </div>

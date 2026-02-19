@@ -1,7 +1,6 @@
-import { getAppointment } from "@/api/appointment";
+import { getAppointmentPreviewInfo } from "@/api/appointment";
 import JoinAppointmentForm from "@/components/appointment/JoinAppointmentForm";
 import { ERROR_MESSAGE } from "@/constants/error-message";
-import dayjs from "dayjs";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
@@ -15,7 +14,7 @@ const Page = async ({
   let appointmentInfo;
   try {
     const cookieStore = await cookies();
-    appointmentInfo = await getAppointment(appointmentId, {
+    appointmentInfo = await getAppointmentPreviewInfo(appointmentId, {
       headers: {
         cookie: cookieStore.toString(),
       },
@@ -28,28 +27,19 @@ const Page = async ({
     redirect("/error");
   }
 
-  const { appointment } = appointmentInfo;
-
-  if (appointment.profileYn === "Y") {
-    // 이미 참여 상태인 경우
-    redirect(`/appointment/${appointmentId}`);
-  }
-
-  const dueDateStr = dayjs(appointment.appointmentDueDate).format("YYYY.MM.DD");
-
   return (
     <main>
       <div className="flex flex-col gap-40">
         <div className="flex flex-col items-center">
           <p className="typo-20-bold text-gray-800">
-            {appointment.appointmentName}
+            {appointmentInfo.appointmentName}
           </p>
           <div className="flex flex-row gap-8">
             <p className="typo-16-regular text-gray-600">
-              {`투표 마감일 ${dueDateStr}`}
+              {`투표 마감일 ${appointmentInfo.appointmentDueDate}`}
             </p>
             <div className="w-fit h-fit bg-primary-25 px-8 py-4 text-primary-400 typo-12-regular rounded-[40px]">
-              {appointment.dday}
+              {appointmentInfo.dday}
             </div>
           </div>
         </div>

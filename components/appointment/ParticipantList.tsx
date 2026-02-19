@@ -15,14 +15,14 @@ import { useAppointmentPage } from "@/context/AppointmentContext";
 
 interface ParticipantListProps {
   appointmentId: string;
-  appointmentHostId: number;
-  myProfile: MemberProfile | null | undefined;
+  isHost: boolean;
+  myProfile: MemberProfile | undefined;
   participants: AppointmentUser[];
 }
 
 const ParticipantList = ({
   appointmentId,
-  appointmentHostId,
+  isHost,
   myProfile,
   participants,
 }: ParticipantListProps) => {
@@ -164,8 +164,8 @@ const ParticipantList = ({
       {me && myProfile && (
         <EditProfileDrawer
           appointmentId={appointmentId}
-          appointmentHostId={appointmentHostId}
           initialProfile={myProfile}
+          canLeaveAppointment={!isHost}
           open={profileDrawerOpen}
           setOpen={setProfileDrawerOpen}
         />
