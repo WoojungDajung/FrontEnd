@@ -25,8 +25,6 @@ const AppointmentInfoSection = ({
   const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const { data: appointmentData } = useAppointmentQuery({ appointmentId });
-
-  // 사용자의 프로필 (프로필 입력 전엔 nickName, startingPlace가 null, id는 부여됨)
   const { data: profileData } = useAppointmentUserProfileQuery({
     appointmentId,
   });

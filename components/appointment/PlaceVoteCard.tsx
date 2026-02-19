@@ -28,18 +28,12 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
   const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
 
-  // 사용자의 프로필 (프로필 입력 전엔 nickName, startingPlace가 null, id는 부여됨)
   const { data: profileData } = useAppointmentUserProfileQuery({
     appointmentId,
   });
 
-  const isRegistered =
-    profileData !== undefined &&
-    profileData !== null &&
-    profileData?.memberNickName !== null;
-
-  const canVote = isRegistered && !disabled;
-  const canAddPlace = isRegistered && !disabled;
+  const canVote = profileData !== undefined && !disabled;
+  const canAddPlace = profileData !== undefined && !disabled;
 
   // 장소 목록 및 투표 현황
   const { data, isFetching } = useLocationsQuery({

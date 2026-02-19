@@ -41,7 +41,7 @@ export type TAppointmentPreviewResponse = {
 // 방을 생성한 사용자는 처음엔 id만 부여됨
 export type MemberProfile = {
   id: number;
-  memberNickName: string | null;
+  memberNickName: string;
   startingPlace: string | null;
 };
 
