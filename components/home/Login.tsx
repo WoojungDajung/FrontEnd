@@ -1,30 +1,22 @@
-"use client";
-
 import { getAuthorizationUrl } from "@/lib/auth/kakao";
-import Button from "../shared/Button";
 import KakaoIcon from "../shared/icons/KakaoIcon";
-import { useSearchParams } from "next/navigation";
 
-const Login = () => {
-  const searchParams = useSearchParams();
-  const next = searchParams.get("next");
+interface LoginProps {
+  next?: string; // 로그인 후 돌아갈 경로
+}
 
-  const handleLogin = () => {
-    window.location.href = getAuthorizationUrl(next ?? undefined);
-  };
-
+const Login = ({ next }: LoginProps) => {
   return (
     <div>
-      <Button
-        size="Large"
-        className="bg-[#FEE500] text-[rgba(0,0,0,0.85)]"
-        onClick={handleLogin}
+      <a
+        href={getAuthorizationUrl(next)}
+        className="button button--lg bg-[#FEE500] text-black/85 typo-18-semibold"
       >
         <div className="flex gap-16 w-fit">
           <KakaoIcon width={20} height={20} />
           <span>3초만에 카카오로 시작하기</span>
         </div>
-      </Button>
+      </a>
     </div>
   );
 };
