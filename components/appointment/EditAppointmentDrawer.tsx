@@ -86,6 +86,7 @@ const EditAppointmentDrawer = ({
       ),
       confirmText: "없애기",
       cancelText: "닫기",
+      variant: "danger",
     });
 
     if (result) {

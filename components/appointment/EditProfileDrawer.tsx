@@ -147,6 +147,7 @@ const EditProfileDrawer = ({
       ),
       confirmText: "나가기",
       cancelText: "닫기",
+      variant: "danger",
     });
 
     if (result) {
