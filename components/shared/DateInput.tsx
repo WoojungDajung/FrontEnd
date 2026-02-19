@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState, useCallback, useEffect } from "react";
 import CalendarIcon from "./icons/CalendarIcon";
 import DatePicker from "./DatePicker";
 import { createPortal } from "react-dom";
@@ -19,16 +19,34 @@ const DateInput = ({ value, onValueChange, id, name }: DateInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
 
+  const updatePosition = useCallback(() => {
+    if (!containerRef.current || !datePickerRef.current) return;
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const pickerRect = datePickerRef.current.getBoundingClientRect();
+  
+    const top = containerRect.top - pickerRect.height;
+    datePickerRef.current.style.top = `${top}px`;
+    datePickerRef.current.style.left = `${containerRect.left}px`;
+  }, []);
+
   useLayoutEffect(() => {
     if (datePickerOpened) {
-      if (!containerRef.current || !datePickerRef.current) return;
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const pickerRect = datePickerRef.current.getBoundingClientRect();
-      const top = containerRect.y - pickerRect.height;
-      datePickerRef.current.style.top = `${top}px`;
-      datePickerRef.current.style.left = `${containerRect.x}px`;
+      updatePosition();
     }
-  }, [datePickerOpened]);
+  }, [datePickerOpened, updatePosition]);
+
+  useEffect(() => {
+    if (!datePickerOpened) return;
+
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [datePickerOpened, updatePosition]);
 
   const onSelect = (selected: Date | undefined) => {
     onValueChange?.(selected);
@@ -62,7 +80,7 @@ const DateInput = ({ value, onValueChange, id, name }: DateInputProps) => {
 
       {datePickerOpened &&
         createPortal(
-          <div ref={datePickerRef} className="absolute">
+          <div ref={datePickerRef} className="fixed">
             <DatePicker selected={value} onSelect={onSelect} />
           </div>,
           document.getElementById("popup")!,
