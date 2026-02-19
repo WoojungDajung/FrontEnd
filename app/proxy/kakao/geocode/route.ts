@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     )}`,
     {
       headers: {
-        Authorization: `KakaoAK ${process.env.NEXT_KAKAO_REST_API_KEY}`,
+        Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}`,
       },
     },
   );
