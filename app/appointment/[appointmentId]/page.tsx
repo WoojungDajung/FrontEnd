@@ -26,8 +26,13 @@ async function checkJoin(appointmentId: string) {
   const joinUrl = `/appointment/${appointmentId}/join`;
 
   try {
-    const profile = await getMemberProfile(appointmentId);
-    return
+    const cookieStore = await cookies();
+    const profile = await getMemberProfile(appointmentId, {
+      headers: {
+        cookie: cookieStore.toString(),
+      },
+    });
+    return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.message === ERROR_MESSAGE.APPOINTMENT_NOT_EXIST) {
