@@ -3,11 +3,12 @@ import {
   TLocationResponse,
   TMyVoteLocationResponse,
 } from "@/types/apiResponse";
+import { buildAuthUrl } from "./utils";
 
 /* 장소 목록 조회 */
-export async function getLocations(appointmentId: string) {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/${appointmentId}`;
-  const res = await fetch(url, {
+export async function getLocations(appointmentId: string, init?: RequestInit) {
+  const res = await fetch(buildAuthUrl(`/location/${appointmentId}`), {
+    ...init,
     method: "GET",
   });
 
@@ -36,11 +37,13 @@ export async function registerLocation(
   address: string,
   latitude: string,
   longitude: string,
+  init?: RequestInit,
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/${appointmentId}`;
-  const res = await fetch(url, {
+  const res = await fetch(buildAuthUrl(`/location/${appointmentId}`), {
+    ...init,
     method: "POST",
     headers: {
+      ...(init?.headers ?? {}),
       "content-type": "application/json",
     },
     body: JSON.stringify({
@@ -69,11 +72,18 @@ export async function registerLocation(
 }
 
 /* 특정 장소 조회 */
-export async function getLocation(appointmentId: string, placeId: number) {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/specify/${appointmentId}/${placeId}`;
-  const res = await fetch(url, {
-    method: "GET",
-  });
+export async function getLocation(
+  appointmentId: string,
+  placeId: number,
+  init?: RequestInit,
+) {
+  const res = await fetch(
+    buildAuthUrl(`/location/specify/${appointmentId}/${placeId}`),
+    {
+      ...init,
+      method: "GET",
+    },
+  );
 
   const resBody = await res.json();
   console.log(resBody);
@@ -90,11 +100,18 @@ export async function getLocation(appointmentId: string, placeId: number) {
 }
 
 /* 장소 삭제 */
-export async function deleteLocation(appointmentId: string, placeId: number) {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/${appointmentId}/${placeId}`;
-  const res = await fetch(url, {
-    method: "DELETE",
-  });
+export async function deleteLocation(
+  appointmentId: string,
+  placeId: number,
+  init?: RequestInit,
+) {
+  const res = await fetch(
+    buildAuthUrl(`/location/${appointmentId}/${placeId}`),
+    {
+      ...init,
+      method: "DELETE",
+    },
+  );
 
   const resBody = await res.json();
   console.log(resBody);
@@ -114,9 +131,12 @@ export async function deleteLocation(appointmentId: string, placeId: number) {
 }
 
 /* 내 장소 투표 현황 */
-export async function getMyVoteLocation(appointmentId: string) {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/myvote/${appointmentId}`;
-  const res = await fetch(url, {
+export async function getMyVoteLocation(
+  appointmentId: string,
+  init?: RequestInit,
+) {
+  const res = await fetch(buildAuthUrl(`/location/myvote/${appointmentId}`), {
+    ...init,
     method: "GET",
   });
 
@@ -141,14 +161,16 @@ export async function getMyVoteLocation(appointmentId: string) {
 export async function voteLocation(
   appointmentId: string,
   placeIdList: number[],
+  init?: RequestInit,
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/location/vote/${appointmentId}`;
-  const res = await fetch(url, {
+  const res = await fetch(buildAuthUrl(`/location/vote/${appointmentId}`), {
+    ...init,
     method: "POST",
     body: JSON.stringify({
       placeList: placeIdList,
     }),
     headers: {
+      ...(init?.headers ?? {}),
       "Content-Type": "application/json",
     },
   });

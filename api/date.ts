@@ -4,10 +4,11 @@ import {
   TDateVoteByYMDResponse,
   TDateVoteResponse,
 } from "@/types/apiResponse";
+import { buildAuthUrl } from "./utils";
 
-export async function getVoteStatus(appointmentId: string) {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/date/vote/${appointmentId}`;
-  const res = await fetch(url, {
+export async function getVoteStatus(appointmentId: string, init?: RequestInit) {
+  const res = await fetch(buildAuthUrl(`/date/vote/${appointmentId}`), {
+    ...init,
     method: "GET",
   });
 
@@ -22,12 +23,19 @@ export async function getVoteStatus(appointmentId: string) {
   return resBody.data as TDateVoteResponse;
 }
 
-export async function getVoteStatusByMonth(appointmentId: string, ym: string) {
+export async function getVoteStatusByMonth(
+  appointmentId: string,
+  ym: string,
+  init?: RequestInit,
+) {
   const searchParams = new URLSearchParams({ ym });
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/date/${appointmentId}?${searchParams.toString()}`;
-  const res = await fetch(url, {
-    method: "GET",
-  });
+  const res = await fetch(
+    buildAuthUrl(`/date/${appointmentId}?${searchParams.toString()}`),
+    {
+      ...init,
+      method: "GET",
+    },
+  );
 
   const resBody = await res.json();
   console.log(resBody);
@@ -48,12 +56,19 @@ export async function getVoteStatusByMonth(appointmentId: string, ym: string) {
  * @param appointmentId
  * @param ymd YYYY-MM-DD 형식의 문자열
  */
-export async function getVoteStatusByYMD(appointmentId: string, ymd: string) {
+export async function getVoteStatusByYMD(
+  appointmentId: string,
+  ymd: string,
+  init?: RequestInit,
+) {
   const searchParams = new URLSearchParams({ ymd });
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/date/specify/${appointmentId}?${searchParams.toString()}`;
-  const res = await fetch(url, {
-    method: "GET",
-  });
+  const res = await fetch(
+    buildAuthUrl(`/date/specify/${appointmentId}?${searchParams.toString()}`),
+    {
+      ...init,
+      method: "GET",
+    },
+  );
 
   const resBody = await res.json();
   console.log(resBody);
@@ -72,6 +87,7 @@ export async function voteDate(
     date: string; // YYYY-MM-DD 형식의 문자열
     type: "POSSIBLE" | "IMPOSSIBLE" | "UNCERTAIN";
   }[],
+  init?: RequestInit,
 ) {
   const availability = {
     IMPOSSIBLE: 0,
@@ -83,10 +99,11 @@ export async function voteDate(
     return { ymd: vote.date, availability: availability[vote.type] };
   });
 
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/date/vote/${appointmentId}`;
-  const res = await fetch(url, {
+  const res = await fetch(buildAuthUrl(`/date/vote/${appointmentId}`), {
+    ...init,
     method: "POST",
     headers: {
+      ...(init?.headers ?? {}),
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ dateList }),
@@ -106,9 +123,10 @@ export async function voteDate(
 export async function getVoteStatusByUser(
   appointmentId: string,
   userId: number,
+  init?: RequestInit,
 ) {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/date/${appointmentId}/${userId}`;
-  const res = await fetch(url, {
+  const res = await fetch(buildAuthUrl(`/date/${appointmentId}/${userId}`), {
+    ...init,
     method: "GET",
   });
 

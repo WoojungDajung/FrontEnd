@@ -4,6 +4,7 @@ import {
   TAppointmentResponse,
 } from "@/types/apiResponse";
 import dayjs from "dayjs";
+import { buildAuthUrl } from "./utils";
 
 /**
  * 약속방 생성
@@ -21,27 +22,27 @@ export async function createAppointment(
     latitude: string;
     longitude: string;
   } | null,
+  init?: RequestInit,
 ): Promise<TAppointmentResponse> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/appointment`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        appointmentName,
-        appointmentDueDate: deadline,
-        appointmentUserProfile: {
-          nickName: nickName,
-          address: startingPlace?.address ?? "",
-          startingPlace: startingPlace?.startingPlace ?? "",
-          latitude: startingPlace?.latitude ?? "",
-          longitude: startingPlace?.longitude ?? "",
-        },
-      }),
-      headers: {
-        "Content-Type": "application/json",
+  const res = await fetch(buildAuthUrl("/appointment"), {
+    ...init,
+    method: "POST",
+    body: JSON.stringify({
+      appointmentName,
+      appointmentDueDate: deadline,
+      appointmentUserProfile: {
+        nickName: nickName,
+        address: startingPlace?.address ?? "",
+        startingPlace: startingPlace?.startingPlace ?? "",
+        latitude: startingPlace?.latitude ?? "",
+        longitude: startingPlace?.longitude ?? "",
       },
+    }),
+    headers: {
+      ...(init?.headers ?? {}),
+      "Content-Type": "application/json",
     },
-  );
+  });
 
   const resBody = await res.json();
   console.log(resBody);
@@ -66,10 +67,10 @@ export async function getAppointment(
   appointmentId: string,
   init?: RequestInit,
 ) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/appointment/${appointmentId}`,
-    { method: "GET", ...init },
-  );
+  const res = await fetch(buildAuthUrl(`/appointment/${appointmentId}`), {
+    ...init,
+    method: "GET",
+  });
 
   const resBody = await res.json();
   console.log(resBody);
@@ -89,16 +90,19 @@ export async function editAppointment(
   appointmentId: string,
   appointmentName: string,
   appointmentDueDate: Date,
+  init?: RequestInit,
 ) {
   const dueDateStr = dayjs(appointmentDueDate).format("YYYY-MM-DD");
 
-  const res = await fetch(`/auth-api/appointment/${appointmentId}`, {
+  const res = await fetch(buildAuthUrl(`/appointment/${appointmentId}`), {
+    ...init,
     method: "PUT",
     body: JSON.stringify({
       appointmentName,
       appointmentDueDate: dueDateStr,
     }),
     headers: {
+      ...(init?.headers ?? {}),
       "Content-Type": "application/json",
     },
   });
@@ -126,8 +130,10 @@ export async function joinAppointment(
     latitude: string;
     longitude: string;
   } | null,
+  init?: RequestInit,
 ): Promise<TAppointmentResponse> {
-  const res = await fetch(`/auth-api/appointment/join/${appointmentId}`, {
+  const res = await fetch(buildAuthUrl(`/appointment/join/${appointmentId}`), {
+    ...init,
     method: "POST",
     body: JSON.stringify({
       nickName: nickName,
@@ -137,6 +143,7 @@ export async function joinAppointment(
       longitude: startingPlace?.longitude ?? "",
     }),
     headers: {
+      ...(init?.headers ?? {}),
       "Content-Type": "application/json",
     },
   });
@@ -156,10 +163,14 @@ export async function joinAppointment(
 }
 
 /* 약속 나가기 */
-export async function leaveAppointment(appointmentId: string) {
+export async function leaveAppointment(
+  appointmentId: string,
+  init?: RequestInit,
+) {
   const res = await fetch(
-    `/auth-api/appointment/participant/${appointmentId}`,
+    buildAuthUrl(`/appointment/participant/${appointmentId}`),
     {
+      ...init,
       method: "DELETE",
     },
   );
@@ -185,8 +196,12 @@ export async function leaveAppointment(appointmentId: string) {
  * 약속 방 삭제
  * @param appointmentId
  */
-export async function deleteAppointment(appointmentId: string) {
-  const res = await fetch(`/auth-api/appointment/${appointmentId}`, {
+export async function deleteAppointment(
+  appointmentId: string,
+  init?: RequestInit,
+) {
+  const res = await fetch(buildAuthUrl(`/appointment/${appointmentId}`), {
+    ...init,
     method: "DELETE",
   });
 
@@ -218,10 +233,10 @@ export async function getAppointmentPreviewInfo(
   appointmentId: string,
   init?: RequestInit,
 ): Promise<TAppointmentPreviewResponse> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/appointment/info/${appointmentId}`,
-    { method: "GET", ...init },
-  );
+  const res = await fetch(buildAuthUrl(`/appointment/info/${appointmentId}`), {
+    ...init,
+    method: "GET",
+  });
 
   const resBody = await res.json();
   console.log(resBody);

@@ -4,12 +4,14 @@ import {
   TMemberAppointments,
   TRegisterMemberProfileResponse,
 } from "@/types/apiResponse";
+import { buildAuthUrl } from "./utils";
 
 export async function getMemberProfile(
   appointmentId: string,
+  init?: RequestInit,
 ): Promise<MemberProfile> {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/member/${appointmentId}`;
-  const res = await fetch(url, {
+  const res = await fetch(buildAuthUrl(`/member/${appointmentId}`), {
+    ...init,
     method: "GET",
   });
 
@@ -49,6 +51,7 @@ export async function updateMemberProfile(
     latitude: string;
     longitude: string;
   } | null,
+  init?: RequestInit,
 ): Promise<TRegisterMemberProfileResponse> {
   const body =
     place === undefined
@@ -61,16 +64,15 @@ export async function updateMemberProfile(
           longitude: place?.longitude ?? "",
         };
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/member/${appointmentId}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+  const res = await fetch(buildAuthUrl(`/member/${appointmentId}`), {
+    ...init,
+    method: "PUT",
+    headers: {
+      ...(init?.headers ?? {}),
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify(body),
+  });
 
   const resBody = await res.json();
   console.log(resBody);
@@ -89,9 +91,9 @@ export async function updateMemberProfile(
   return resBody.data as TRegisterMemberProfileResponse;
 }
 
-export async function getMemberAppointments(): Promise<TMemberAppointments> {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/auth-api/member/appointments`;
-  const res = await fetch(url, {
+export async function getMemberAppointments(init?:RequestInit): Promise<TMemberAppointments> {
+  const res = await fetch(buildAuthUrl(`/member/appointments`), {
+    ...init,
     method: "GET",
   });
 
