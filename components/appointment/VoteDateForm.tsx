@@ -7,6 +7,7 @@ import { addDays, dateToString } from "@/utils/calendar";
 import useVoteDate from "@/hooks/useVoteDate";
 import useDateVoteStatusByUserQuery from "@/hooks/useDateVoteStatusByUserQuery";
 import LoadingSpinner from "../shared/LoadingSpinner";
+import { useConfirm } from "@/context/ConfirmContext";
 import { useToast } from "@/context/ToastContext";
 
 type VoteStatus = {
@@ -25,6 +26,7 @@ const VoteDateForm = ({
   appointmentId,
   userId,
 }: VoteDateFormProps) => {
+  const confirm = useConfirm();
   const { toast } = useToast();
 
   const [status, setStatus] = useState<VoteStatus>({
@@ -81,8 +83,12 @@ const VoteDateForm = ({
   /* 투표 제출 */
   const { mutate } = useVoteDate(appointmentId, userId);
 
-  const submit = () => {
-    if (confirm("투표를 저장하시겠습니까?")) {
+  const submit = async () => {
+    const result = await confirm({
+      title: "저장하기",
+      message: "투표를 저장하시겠습니까?",
+    });
+    if (result) {
       const votes: {
         date: string;
         type: "POSSIBLE" | "IMPOSSIBLE" | "UNCERTAIN";
