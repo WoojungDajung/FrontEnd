@@ -4,7 +4,7 @@ import ErrorUI from "@/components/shared/ErrorUI";
 
 const Page = () => {
   return (
-    <div className="flex flex-col gap-96 items-center">
+    <div className="flex-1 flex flex-col gap-96 items-center">
       <ErrorUI
         mainMessage={"일시적인 오류가 발생했어요..."}
         subMessage={
