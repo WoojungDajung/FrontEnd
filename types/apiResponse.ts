@@ -31,6 +31,13 @@ export type TAppointmentResponse = {
   confirmedResult: ConfirmedResult | null;
 };
 
+export type TAppointmentPreviewResponse = {
+  appointmentId: string;
+  appointmentName: string;
+  appointmentDueDate: string;
+  dday: string;
+};
+
 // 방을 생성한 사용자는 처음엔 id만 부여됨
 export type MemberProfile = {
   id: number;
