@@ -3,9 +3,11 @@ type Yn = "Y" | "N";
 export type ConfirmedResult = {
   confirmedDate: string; // YYYY-MM-DD
   dateVotedList: string[]; // 참여자 nickName
+  dateSelectedReasonList: string[];
   confirmedPlaceName: string;
   confirmedPlaceAddress: string;
   placeVotedList: string[];
+  placeSelectedReasonList: string[];
 };
 
 export type Appointment = {

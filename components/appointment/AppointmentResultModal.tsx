@@ -43,9 +43,8 @@ const AppointmentResultModal = ({
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${WEEKDAYS_KO[date.getDay()]}요일`;
   }, [result]);
 
-  // TODO: 결과 동룔 여부에 따른 다른 메시지 표시
-  const isDateTie = false; // 날짜 결과 동률 여부
-  const isPlaceTie = false; // 장소 결과 동률 여부
+  const isDateRecommended = result.dateSelectedReasonList.length > 0; // 날짜 결과 동률 여부
+  const isPlaceRecommended = result.placeSelectedReasonList.length > 0; // 장소 결과 동률 여부
   // 결과 선정 이유 표시
   const [showDateReason, setShowDateReason] = useState(false);
   const [showPlaceReason, setShowPlaceReason] = useState(false);
@@ -101,7 +100,7 @@ const AppointmentResultModal = ({
                 <div className="w-fit typo-12-regular bg-primary-25 text-primary-400 px-8 py-4 rounded-[100px]">
                   ✨ 만나는 날짜, 우리 정했어요! ✨
                 </div>
-                {isDateTie || isPlaceTie ? (
+                {isDateRecommended || isPlaceRecommended ? (
                   <>
                     <p className="typo-18-semibold text-gray-800 text-center">
                       투표 결과가 동일해
@@ -131,7 +130,7 @@ const AppointmentResultModal = ({
                 <div className="flex flex-col gap-8">
                   <div className="flex flex-col gap-4">
                     <div className="flex items-center">
-                      {isDateTie ? (
+                      {isDateRecommended ? (
                         <>
                           <ShineIcon
                             width={16}
@@ -160,7 +159,7 @@ const AppointmentResultModal = ({
                     </p>
                   </div>
                   {/* 추천 이유 */}
-                  {isDateTie && (
+                  {isDateRecommended && (
                     <div className="flex flex-col gap-8">
                       <div className="flex justify-between items-center">
                         <p className="typo-14-regular text-gray-400">
@@ -195,8 +194,9 @@ const AppointmentResultModal = ({
                         <div className="flex flex-col gap-8">
                           {/* 이유 */}
                           <ul className="list-disc list-inside typo-14-regular text-gray-500">
-                            <li>모두가 가장 선호하는 요일이에요.</li>
-                            <li>후보 장소들이 운영하는 날이에요.</li>
+                            {result.dateSelectedReasonList.map((reason) => (
+                              <li key={reason}>{reason}</li>
+                            ))}
                           </ul>
                           {/* 선택한 사람 */}
                           <div className="flex flex-col gap-8">
@@ -239,7 +239,7 @@ const AppointmentResultModal = ({
                 <div className="flex flex-col gap-8">
                   <div className="flex flex-col gap-4">
                     <div className="flex items-center">
-                      {isPlaceTie ? (
+                      {isPlaceRecommended ? (
                         <>
                           <ShineIcon
                             width={16}
@@ -282,7 +282,7 @@ const AppointmentResultModal = ({
                     </div>
                   </div>
                   {/* 추천 이유 */}
-                  {isPlaceTie && (
+                  {isPlaceRecommended && (
                     <div className="flex flex-col gap-8">
                       <div className="flex justify-between items-center">
                         <p className="typo-14-regular text-gray-400">
@@ -317,8 +317,9 @@ const AppointmentResultModal = ({
                         <div className="flex flex-col gap-8">
                           {/* 이유 */}
                           <ul className="list-disc list-inside typo-14-regular text-gray-500">
-                            <li>운영 중인 후보 중 인기가 가장 많아요.</li>
-                            <li>모두의 위치에서 이동 부담이 적어요.</li>
+                            {result.placeSelectedReasonList.map((reason) => (
+                              <li key={reason}>{reason}</li>
+                            ))}
                           </ul>
                           {/* 선택한 사람 */}
                           <div className="flex flex-col gap-8">
