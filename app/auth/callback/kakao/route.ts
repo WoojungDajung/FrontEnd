@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       return response;
     } catch (err) {
       // 에러 처리
-      console.log(`에러 캐치:`, err);
+      console.log(`카카오 토큰 처리 중 에러 캐치:`, err);
 
       const urlSearchParams = new URLSearchParams({
         code: ERROR_CODE.AUTH_UNKNOWN_ERROR,
@@ -75,8 +75,11 @@ export async function GET(request: NextRequest) {
   if (error === "access_denied") {
     // 로그인 취소
     if (state) {
+      const urlSearchParams = new URLSearchParams({
+        next: state,
+      });
       return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_BASE_URL}?next=${state}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}?${urlSearchParams.toString()}`,
       );
     } else {
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}`);
