@@ -6,7 +6,13 @@ export async function proxy(request: NextRequest) {
   const athenticated = await isAuthenticated(request);
   if (!athenticated) {
     // 로그인 페이지로 이동
-    return NextResponse.redirect(new URL("/", request.url));
+    const pathname = request.nextUrl.pathname;
+    const searchParams = new URLSearchParams({
+      next: pathname,
+    });
+    return NextResponse.redirect(
+      new URL(`/?${searchParams.toString()}`, request.url),
+    );
   }
   return NextResponse.next();
 }
