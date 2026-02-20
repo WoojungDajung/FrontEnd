@@ -1,5 +1,4 @@
 import { ERROR_CODE } from "@/constants/error-code";
-import { saveToken } from "@/lib/auth/token";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -40,20 +39,25 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      const { accessToken, refreshToken } = resData.data;
-      // 토큰 처리
-      await saveToken(accessToken, refreshToken);
-
+      let redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/appointments`;
       // 기존 페이지로
       if (state) {
-        return NextResponse.redirect(
-          `${process.env.NEXT_PUBLIC_BASE_URL}${state}`,
-        );
-      } else {
-        return NextResponse.redirect(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/appointments`,
-        );
+        redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}${state}`;
       }
+      const response = NextResponse.redirect(redirectUrl);
+
+      const { accessToken, refreshToken } = resData.data;
+
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax" as const,
+        path: "/",
+      };
+      response.cookies.set("access-token", accessToken, cookieOptions);
+      response.cookies.set("refresh-token", refreshToken, cookieOptions);
+
+      return response;
     } catch (err) {
       // 에러 처리
       console.log(`에러 캐치:`, err);
