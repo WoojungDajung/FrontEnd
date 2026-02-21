@@ -21,7 +21,7 @@ export default function RootLayout({
         <Providers>
           <>
             <div className="max-w-full w-390 min-h-dvh mx-auto flex justify-center">
-              <div className="w-342 pt-96 pb-40 flex flex-col gap-40">
+              <div className="w-342 pb-40 flex flex-col gap-40">
                 {children}
                 <Footer />
               </div>

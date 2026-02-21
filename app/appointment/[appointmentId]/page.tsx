@@ -76,7 +76,7 @@ const Page = async ({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <main className="flex flex-col gap-4">
+      <main className="flex flex-col gap-8 pt-80">
         <HomeButton />
 
         <div className="flex flex-col gap-24">

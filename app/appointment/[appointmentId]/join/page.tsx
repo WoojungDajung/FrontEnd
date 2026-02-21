@@ -28,7 +28,7 @@ const Page = async ({
   }
 
   return (
-    <main>
+    <main className="pt-90">
       <div className="flex flex-col gap-40">
         <div className="flex flex-col items-center">
           <p className="typo-20-bold text-gray-800">
