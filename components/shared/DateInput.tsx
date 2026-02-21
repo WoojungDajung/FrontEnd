@@ -55,7 +55,7 @@ const DateInput = ({ value, onValueChange, id, name }: DateInputProps) => {
 
   return (
     <div
-      className="input-container flex flex-row gap-8 relative"
+      className="input-container box-border h-56 flex flex-row gap-8 relative"
       data-focus={datePickerOpened}
       ref={containerRef}
     >

@@ -187,14 +187,14 @@ const EditProfileDrawer = ({
           close={close}
         >
           <form
-            className="flex flex-col gap-40"
+            className="h-full flex flex-col justify-between"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="mt-16 flex flex-col gap-16">
               <FormField label="이름" required inputId="nickName">
                 <div
                   className={cn(
-                    "input-container",
+                    "input-container box-border h-56",
                     errors.nickName && "input-container--error",
                   )}
                 >

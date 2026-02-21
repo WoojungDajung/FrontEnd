@@ -44,7 +44,7 @@ const AddressInput = ({
   return (
     <>
       <div
-        className="input-container cursor-pointer flex gap-8 items-center"
+        className="input-container box-border h-56 cursor-pointer flex gap-8 items-center"
         onClick={() => setPostcodePopupOpen(true)}
       >
         <PlaceIcon width={20} height={20} color="var(--color-gray-500)" />

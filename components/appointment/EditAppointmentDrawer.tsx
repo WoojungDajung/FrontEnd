@@ -126,14 +126,14 @@ const EditAppointmentDrawer = ({
           close={close}
         >
           <form
-            className="flex flex-col gap-40"
+            className="flex flex-col h-full justify-between"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="mt-16 flex flex-col gap-16">
               <FormField label="약속 이름" required inputId="appointmentName">
                 <div
                   className={cn(
-                    "input-container",
+                    "input-container box-border h-56",
                     errors.appointmentName && "input-container--error",
                   )}
                 >
