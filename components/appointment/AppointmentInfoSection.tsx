@@ -48,7 +48,7 @@ const AppointmentInfoSection = ({
           </p>
           {isHost && (
             <button
-              className="absolute top-0 right-0 border border-gray-100 bg-white w-32 h-32 rounded-[12px] cursor-pointer"
+              className="absolute top-0 right-0 border border-gray-100 bg-white w-32 h-32 rounded-[12px] cursor-pointer flex justify-center items-center"
               onClick={() => setAppointmentDrawerOpen(true)}
             >
               <PencilIcon />
