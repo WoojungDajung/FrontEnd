@@ -35,9 +35,6 @@ const AppointmentInfoSection = ({
 
   const isHost = appointmentData.appointment.hostYn === "Y";
   const hasRegistered = appointmentData.appointment.profileYn === "Y";
-  const dueDateStr = dayjs(
-    appointmentData.appointment.appointmentDueDate,
-  ).format("YYYY.MM.DD");
 
   return (
     <section className="py-16 flex flex-col gap-24 items-center bg-white border border-gray-100 rounded-[24px]">
@@ -56,11 +53,14 @@ const AppointmentInfoSection = ({
           )}
         </div>
         <div className="w-full flex gap-8 justify-center items-center">
-          <p className="typo-16-regular text-gray-600">
-            {`투표 마감일 ${dueDateStr}`}
-          </p>
-          <div className="typo-12-regular bg-primary-25 text-primary-400 rounded-[40px] px-8 py-4">
-            {appointmentData.appointment.dday}
+          <div className="typo-14-regular text-gray-400 flex flex-row gap-4">
+            <span>투표 마감</span>
+            <span>{appointmentData.appointment.dday}</span>
+          </div>
+          <div className="w-1 h-12 bg-gray-300" />
+          <div className="typo-14-regular text-gray-400 flex flex-row gap-4">
+            <span>참여 인원</span>
+            <span>{`${appointmentData.appointmentUserList.length}명`}</span>
           </div>
         </div>
       </div>
