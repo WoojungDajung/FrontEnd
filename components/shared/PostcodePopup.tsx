@@ -26,7 +26,7 @@ const PostcodePopup = ({ onComplete, open, setOpen }: PostcodePopupProps) => {
     if (!window.daum) return null;
     return new window.daum.Postcode({
       oncomplete,
-      width: "390px",
+      width: "100%",
       height: "100dvh",
     });
   }, [oncomplete]);
@@ -63,14 +63,14 @@ const PostcodePopup = ({ onComplete, open, setOpen }: PostcodePopupProps) => {
         document.getElementById("popup") &&
         open &&
         createPortal(
-          <div className="w-390 h-dvh absolute left-[50dvw] top-0 -translate-x-1/2">
+          <div className="max-w-dvw w-390 h-dvh absolute left-[50dvw] top-0 -translate-x-1/2">
             <div
               className="w-full h-full absolute inset-0 bg-black/60"
               onClick={() => setOpen(false)}
             />
             <div
               ref={ref}
-              className="absolute top-1/2 left-1/2 -translate-1/2"
+              className="w-full absolute top-1/2 left-1/2 -translate-1/2"
             />
           </div>,
           document.getElementById("popup")!,

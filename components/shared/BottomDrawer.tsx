@@ -100,7 +100,7 @@ const BottomDrawer = ({
   if (!portalContainer || !mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 w-390 mx-auto">
+    <div className="fixed inset-0 z-50 max-w-full w-390 mx-auto">
       {/* overlay */}
       <div
         aria-hidden="true"
