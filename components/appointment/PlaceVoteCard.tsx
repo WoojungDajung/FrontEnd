@@ -205,6 +205,7 @@ const ViewPlaceList = ({
         <PlaceItemForView
           key={place.id}
           place={place}
+          voteCount={Number(place.voteCount)}
           totalCount={totalCount}
           votedByMe={isMyVoteLocation(place.id)}
         />

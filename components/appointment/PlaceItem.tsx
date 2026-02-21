@@ -6,6 +6,7 @@ import { useAppointmentPage } from "@/context/AppointmentContext";
 
 interface CommonItemProps {
   place: Location;
+  voteCount: number;
   totalCount: number;
 }
 
@@ -16,6 +17,7 @@ interface PlaceItemProps extends CommonItemProps {
 
 const PlaceItem = ({
   place,
+  voteCount,
   totalCount,
   className,
   onClick,
@@ -27,7 +29,7 @@ const PlaceItem = ({
     selectPlace(place.id);
   };
 
-  const voteCount = Number(place.voteCount);
+  // const voteCount = Number(place.voteCount);
 
   return (
     <>
@@ -79,6 +81,7 @@ const PlaceItemForView = ({
   return (
     <PlaceItem
       place={place}
+      voteCount={Number(place.voteCount)}
       totalCount={totalCount}
       className={cn(
         votedByMe ? "bg-primary-25" : "bg-white",

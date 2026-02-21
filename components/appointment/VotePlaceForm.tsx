@@ -61,15 +61,21 @@ const VotePlaceForm = ({
   return (
     <>
       <div className="flex flex-col gap-16">
-        {places.map((place) => (
-          <PlaceItemForVote
-            key={place.id}
-            place={place}
-            onClick={() => onClickItem(place.id)}
-            voted={isVoted(place.id)}
-            totalCount={totalCount}
-          />
-        ))}
+        {places.map((place) => {
+          const voted = isVoted(place.id);
+          const voteCount = Number(place.voteCount) + (voted ? 1 : 0);
+
+          return (
+            <PlaceItemForVote
+              key={place.id}
+              place={place}
+              onClick={() => onClickItem(place.id)}
+              voted={voted}
+              voteCount={voteCount}
+              totalCount={totalCount}
+            />
+          );
+        })}
       </div>
 
       <div className="w-full px-16 flex justify-between">
