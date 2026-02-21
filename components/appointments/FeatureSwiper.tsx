@@ -74,7 +74,7 @@ const FeatureSwiper = () => {
           <CreateAppointmentForm />
         </SwiperSlide>
         <SwiperSlide>
-          <AppointmentList />
+          {selectedFeatureId === "VIEW_APPOINTMENTS" && <AppointmentList />}
         </SwiperSlide>
       </Swiper>
     </div>
