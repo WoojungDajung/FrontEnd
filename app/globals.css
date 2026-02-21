@@ -50,6 +50,8 @@
 @layer theme {
   :root {
     --spacing: 1px;
+
+    --container-width: 390px;
   }
 }
 

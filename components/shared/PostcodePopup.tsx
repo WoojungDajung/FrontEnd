@@ -63,7 +63,7 @@ const PostcodePopup = ({ onComplete, open, setOpen }: PostcodePopupProps) => {
         document.getElementById("popup") &&
         open &&
         createPortal(
-          <div className="max-w-dvw w-390 h-dvh absolute left-[50dvw] top-0 -translate-x-1/2">
+          <div className="max-w-dvw w-(--container-width) h-dvh absolute left-[50dvw] top-0 -translate-x-1/2">
             <div
               className="w-full h-full absolute inset-0 bg-black/60"
               onClick={() => setOpen(false)}

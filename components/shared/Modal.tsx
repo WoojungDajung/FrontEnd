@@ -46,7 +46,7 @@ const Modal = ({
   if (!portalContainer || !open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 max-w-full w-390 mx-auto">
+    <div className="fixed inset-0 z-50 max-w-full w-(--container-width) mx-auto">
       {/* overlay */}
       <div className="absolute inset-0 bg-black/60" onClick={api.close} />
 
