@@ -37,7 +37,8 @@ async function handler(
   const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/${slug.join("/")}${search}`;
 
   // 토큰 확인
-  const accessToken = process.env.DEV_ACCESS_TOKEN ?? (await getAccessToken());
+  // const accessToken = process.env.DEV_ACCESS_TOKEN ?? (await getAccessToken());
+  const accessToken = await getAccessToken();
 
   if (!accessToken) {
     // 로그인 안 한 상태

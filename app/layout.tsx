@@ -3,6 +3,7 @@ import "./globals.css";
 import { pretendard } from "./fonts";
 import Footer from "@/components/shared/Footer";
 import Providers from "@/components/Providers";
+import DevTool from "@/components/DevTool";
 
 export const metadata: Metadata = {
   title: "만날우정",
@@ -28,6 +29,8 @@ export default function RootLayout({
               <div id="modal" />
             </div>
             <div id="popup" className="z-100 fixed left-0 top-0" />
+
+            <DevTool />
           </>
         </Providers>
       </body>
