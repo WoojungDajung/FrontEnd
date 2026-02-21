@@ -11,6 +11,7 @@ import { cn } from "@/utils/cn";
 import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteAppointment from "@/hooks/useDeleteAppointment";
 import { useToast } from "@/context/ToastContext";
+import { useCallback } from "react";
 
 interface EditAppointmentDrawerProps {
   appointmentId: string;
@@ -41,7 +42,7 @@ const EditAppointmentDrawer = ({
     control,
     formState: { isValid, errors },
     handleSubmit,
-    reset: resetForm,
+    reset,
   } = useForm<FormValues>({
     defaultValues: {
       appointmentName: initialName,
@@ -49,6 +50,13 @@ const EditAppointmentDrawer = ({
     },
     mode: "onChange",
   });
+
+  const resetForm = useCallback(() => {
+    reset({
+      appointmentName: initialName,
+      deadline: initialDueDate,
+    });
+  }, [reset, initialName, initialDueDate]);
 
   /* 약속 정보 수정 */
   const editMutation = useEditAppointment({

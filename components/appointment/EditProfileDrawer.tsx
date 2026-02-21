@@ -11,7 +11,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import AddressInput from "../shared/AddressInput";
 import { Place } from "@/types/shared";
 import { cn } from "@/utils/cn";
-import { useEffect, useEffectEvent } from "react";
+import { useCallback } from "react";
 import useLeaveAppointment from "@/hooks/useLeaveAppointment";
 import { useConfirm } from "@/context/ConfirmContext";
 import { useToast } from "@/context/ToastContext";
@@ -75,18 +75,15 @@ const EditProfileDrawer = ({
     control,
     formState: { isValid, errors, dirtyFields },
     handleSubmit,
-    reset: resetForm,
+    reset,
   } = useForm<FormValue>({
     mode: "onChange",
     defaultValues: profileToFormValue(initialProfile),
   });
 
-  const updateDefaultValues = useEffectEvent((values: FormValue) => {
-    resetForm(values);
-  });
-  useEffect(() => {
-    updateDefaultValues(profileToFormValue(initialProfile));
-  }, [initialProfile]);
+  const resetForm = useCallback(() => {
+    reset(profileToFormValue(initialProfile));
+  }, [reset, initialProfile]);
 
   /* 저장하기 */
   const saveMutation = useMutation({
