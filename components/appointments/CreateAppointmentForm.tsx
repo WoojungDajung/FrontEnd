@@ -63,7 +63,7 @@ const CreateAppointmentForm = () => {
           >
             <input
               className="input typo-16-regular w-full"
-              placeholder="예: 노란고양이파"
+              placeholder="예) 노란고양이파"
               {...register("appointmentName", {
                 required: true,
                 maxLength: 14,
