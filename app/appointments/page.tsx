@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const Page = () => {
   return (
-    <main>
+    <main className="flex flex-col gap-20">
       <div className="flex flex-row gap-8 items-center">
         <div className="flex flex-row gap-4 items-center">
           <Image
