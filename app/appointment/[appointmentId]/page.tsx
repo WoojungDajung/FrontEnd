@@ -15,30 +15,22 @@ import {
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { getMemberProfile } from "@/api/member";
+import dayjs from "dayjs";
+import { getVoteStatus, getVoteStatusByMonth } from "@/api/date";
+import { getLocations } from "@/api/location";
 
-async function getAppointmentServer(appointmentId: string) {
-  const cookieStore = await cookies();
-  return getAppointment(appointmentId, {
-    headers: {
-      cookie: cookieStore.toString(),
-    },
-  });
-}
-
-async function checkJoin(appointmentId: string, queryClient: QueryClient) {
+async function checkJoin(
+  appointmentId: string,
+  queryClient: QueryClient,
+  requestInit: RequestInit,
+) {
   let redirectUrl = "/error";
   const joinUrl = `/appointment/${appointmentId}/join`;
-  const cookieStore = await cookies();
 
   try {
     await queryClient.fetchQuery({
       queryKey: ["appointment-user-profile", appointmentId],
-      queryFn: ({ queryKey }) =>
-        getMemberProfile(queryKey[1], {
-          headers: {
-            cookie: cookieStore.toString(),
-          },
-        }),
+      queryFn: ({ queryKey }) => getMemberProfile(queryKey[1], requestInit),
     });
     return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,14 +55,21 @@ const Page = async ({
 
   const queryClient = getQueryClient();
 
+  const cookieStore = await cookies();
+  const requestInit: RequestInit = {
+    headers: {
+      cookie: cookieStore.toString(),
+    },
+  };
+
   // 해당 방 참여 여부 확인 및 처리
-  await checkJoin(appointmentId, queryClient);
+  await checkJoin(appointmentId, queryClient, requestInit);
 
   let appointmentInfo;
   try {
     appointmentInfo = await queryClient.fetchQuery({
       queryKey: ["appointment", appointmentId],
-      queryFn: async ({ queryKey }) => getAppointmentServer(queryKey[1]),
+      queryFn: async ({ queryKey }) => getAppointment(queryKey[1], requestInit),
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -79,6 +78,24 @@ const Page = async ({
     }
     redirect("/error");
   }
+
+  // prefetch
+  const month = dayjs(new Date()).format("YYYY-MM");
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ["date-vote-status-by-month", appointmentId, month],
+      queryFn: ({ queryKey }) =>
+        getVoteStatusByMonth(queryKey[1], queryKey[2], requestInit),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["date-vote-status", appointmentId],
+      queryFn: ({ queryKey }) => getVoteStatus(queryKey[1], requestInit),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["appointment-locations", appointmentId],
+      queryFn: ({ queryKey }) => getLocations(queryKey[1], requestInit),
+    }),
+  ]);
 
   const isSettled = appointmentInfo.appointment.confirmYn === "Y";
 
