@@ -18,7 +18,7 @@ interface dateVoteSectionProps {
 
 const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
   const [mode, setMode] = useState<"VIEW" | "VOTE">("VIEW");
-  const { selectedParticipantId } = useAppointmentPage();
+  const { selectedParticipantId, selectParticipant } = useAppointmentPage();
 
   const { data: profileData } = useAppointmentUserProfileQuery({
     appointmentId,
@@ -29,6 +29,7 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
   const onClickVoteButton = () => {
     if (!isVotable) return;
 
+    selectParticipant(null);
     setMode("VOTE");
   };
 
