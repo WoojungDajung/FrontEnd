@@ -7,7 +7,11 @@ import PlaceVoteSection from "@/components/appointment/PlaceVoteSection";
 import { ERROR_MESSAGE } from "@/constants/error-message";
 import { AppointmentPageProvider } from "@/context/AppointmentContext";
 import { getQueryClient } from "@/lib/react-query/get-query-client";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { getMemberProfile } from "@/api/member";
@@ -21,16 +25,20 @@ async function getAppointmentServer(appointmentId: string) {
   });
 }
 
-async function checkJoin(appointmentId: string) {
+async function checkJoin(appointmentId: string, queryClient: QueryClient) {
   let redirectUrl = "/error";
   const joinUrl = `/appointment/${appointmentId}/join`;
+  const cookieStore = await cookies();
 
   try {
-    const cookieStore = await cookies();
-    const profile = await getMemberProfile(appointmentId, {
-      headers: {
-        cookie: cookieStore.toString(),
-      },
+    await queryClient.fetchQuery({
+      queryKey: ["appointment-user-profile", appointmentId],
+      queryFn: ({ queryKey }) =>
+        getMemberProfile(queryKey[1], {
+          headers: {
+            cookie: cookieStore.toString(),
+          },
+        }),
     });
     return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,10 +61,10 @@ const Page = async ({
 }) => {
   const { appointmentId } = await params;
 
-  // 해당 방 참여 여부 확인 및 처리
-  await checkJoin(appointmentId);
-
   const queryClient = getQueryClient();
+
+  // 해당 방 참여 여부 확인 및 처리
+  await checkJoin(appointmentId, queryClient);
 
   let appointmentInfo;
   try {
