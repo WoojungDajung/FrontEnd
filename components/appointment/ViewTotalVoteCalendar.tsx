@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import ViewCalendarShell from "./ViewCalendarShell";
 import { cn } from "@/utils/cn";
 import VoteStatusByDateModal from "./VoteStatusByDateModal";
@@ -36,18 +36,27 @@ const ViewTotalVoteCalendar = ({
     return voteRatio;
   }, [data]);
 
-  const onMonthChange = (next: Date) => {
-    setMonth(next);
+  const onMonthChange = useCallback(
+    (next: Date) => {
+      setMonth(next);
 
-    // 이전 달 데이터 prefetch
-    queryClient.prefetchQuery(
-      getDateVoteStatusByMonthQueryOptions(appointmentId, addMonths(next, -1)),
-    );
-    // 다음 달 데이터 prefetch
-    queryClient.prefetchQuery(
-      getDateVoteStatusByMonthQueryOptions(appointmentId, addMonths(next, +1)),
-    );
-  };
+      // 이전 달 데이터 prefetch
+      queryClient.prefetchQuery(
+        getDateVoteStatusByMonthQueryOptions(
+          appointmentId,
+          addMonths(next, -1),
+        ),
+      );
+      // 다음 달 데이터 prefetch
+      queryClient.prefetchQuery(
+        getDateVoteStatusByMonthQueryOptions(
+          appointmentId,
+          addMonths(next, +1),
+        ),
+      );
+    },
+    [queryClient, appointmentId],
+  );
 
   return (
     <div className="relative">
@@ -88,14 +97,14 @@ const DateCell = ({
 }: DateCellProps) => {
   const [dateStatusModalOpen, setDateStatusModalOpen] = useState(false);
 
+  const clickable = !isOutsideMonth && votePercentage > 0;
+
   const onClick = () => {
     if (!clickable) {
       return;
     }
     setDateStatusModalOpen(true);
   };
-
-  const clickable = !isOutsideMonth && votePercentage > 0;
 
   let cellStyle = "";
   if (isOutsideMonth) {
@@ -150,4 +159,4 @@ const DateCell = ({
   );
 };
 
-export default ViewTotalVoteCalendar;
+export default memo(ViewTotalVoteCalendar);

@@ -8,7 +8,7 @@ import { useToast } from "@/context/ToastContext";
 
 interface VotePlaceFormProps {
   places: Location[];
-  myVoteLocationIds: number[];
+  myVotedPlaceIdList: number[];
   totalCount: number;
   appointmentId: string;
   onCompleteVote: () => void;
@@ -16,14 +16,14 @@ interface VotePlaceFormProps {
 
 const VotePlaceForm = ({
   places,
-  myVoteLocationIds,
+  myVotedPlaceIdList,
   totalCount,
   appointmentId,
   onCompleteVote,
 }: VotePlaceFormProps) => {
   const { toast } = useToast();
 
-  const [selected, setSelected] = useState<number[]>(myVoteLocationIds);
+  const [selected, setSelected] = useState<number[]>(myVotedPlaceIdList);
 
   const onClickItem = (placeId: number) => {
     const idx = selected.findIndex((id) => id === placeId);

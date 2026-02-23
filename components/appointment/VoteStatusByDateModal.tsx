@@ -7,7 +7,7 @@ import ClockIcon from "./icons/ClocktIcon";
 interface VoteStatusByDateModalProps {
   date: Date;
   open?: boolean;
-  setOpen?: (open: boolean) => void;
+  setOpen: (open: boolean) => void;
   appointmentId: string;
 }
 
@@ -25,7 +25,7 @@ const VoteStatusByDateModal = ({
     <Modal
       className="py-16"
       open={open}
-      onOpenChange={(open) => setOpen?.(open)}
+      onOpenChange={(open) => setOpen(open)}
     >
       {({ close }) => (
         <div className="flex flex-col gap-16">

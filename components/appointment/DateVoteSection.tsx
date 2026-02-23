@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import CountButton from "./CountButton";
 import Button from "../shared/Button";
 import VoteDateForm from "./VoteDateForm";
@@ -115,4 +115,4 @@ const VoteCountButton = ({ appointmentId }: VoteCountButtonProps) => {
   );
 };
 
-export default DateVoteSection;
+export default memo(DateVoteSection);

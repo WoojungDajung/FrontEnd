@@ -3,19 +3,17 @@
 import { cn } from "@/utils/cn";
 import Button from "../shared/Button";
 import PlaceIcon from "./icons/PlaceIcon";
-import { useCallback, useMemo, useState } from "react";
-import { PlaceItemForView } from "./PlaceItem";
+import { memo, useMemo, useState } from "react";
 import PostcodePopup from "../shared/PostcodePopup";
 import { Address } from "@/types/daum";
-import { Location } from "@/types/apiResponse";
 import useRegisterLocation from "@/hooks/useRegisterLocation";
 import useMyVoteLocationQuery from "@/hooks/useMyVoteLocationQuery";
 import LoadingSpinner from "../shared/LoadingSpinner";
-import PlaceInfoDrawer from "./PlaceInfoDrawer";
 import useLocationsQuery from "@/hooks/useLocationsQuery";
 import VotePlaceForm from "./VotePlaceForm";
 import useAppointmentUserProfileQuery from "@/hooks/useAppointmentUserProfileQuery";
 import { useToast } from "@/context/ToastContext";
+import PlaceViewList from "./PlaceViewList";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
@@ -58,10 +56,6 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
     setPostcodePopupOpen(true);
   };
 
-  const startVote = () => {
-    setMode("VOTE");
-  };
-
   /* 장소 등록 */
   const { mutate, isPending, isSuccess, reset } =
     useRegisterLocation(appointmentId);
@@ -87,7 +81,7 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
           <>
             {mode === "VIEW" ? (
               <>
-                <ViewPlaceList
+                <PlaceViewList
                   locationList={data.locationList}
                   totalCount={totalCount}
                   myVotedPlaceIdList={myVotedPlaceIdList}
@@ -104,7 +98,7 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
                   <Button
                     size="Small"
                     color="Primary"
-                    onClick={startVote}
+                    onClick={() => setMode("VOTE")}
                     disabled={!canVote}
                   >
                     투표하기
@@ -115,7 +109,7 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
               /* mode === "VOTE" (장소 투표 모드) */
               <VotePlaceForm
                 places={data.locationList}
-                myVoteLocationIds={myVotes?.map((vote) => vote.id) ?? []}
+                myVotedPlaceIdList={myVotedPlaceIdList}
                 totalCount={totalCount}
                 appointmentId={appointmentId}
                 onCompleteVote={() => setMode("VIEW")}
@@ -177,41 +171,8 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
           />
         </div>
       )}
-
-      <PlaceInfoDrawer appointmentId={appointmentId} deletable={canAddPlace} />
     </div>
   );
 };
 
-interface ViewPlaceListProps {
-  locationList: Location[];
-  totalCount: number;
-  myVotedPlaceIdList: number[];
-}
-
-const ViewPlaceList = ({
-  locationList,
-  totalCount,
-  myVotedPlaceIdList,
-}: ViewPlaceListProps) => {
-  const isMyVoteLocation = useCallback(
-    (locationId: number) =>
-      myVotedPlaceIdList.find((voteId) => voteId === locationId) !== undefined,
-    [myVotedPlaceIdList],
-  );
-  return (
-    <div className="flex flex-col gap-16">
-      {locationList.map((place) => (
-        <PlaceItemForView
-          key={place.id}
-          place={place}
-          voteCount={Number(place.voteCount)}
-          totalCount={totalCount}
-          votedByMe={isMyVoteLocation(place.id)}
-        />
-      ))}
-    </div>
-  );
-};
-
-export default PlaceVoteCard;
+export default memo(PlaceVoteCard);

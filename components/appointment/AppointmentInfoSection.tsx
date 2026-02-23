@@ -29,7 +29,7 @@ const AppointmentInfoSection = ({
     appointmentId,
   });
 
-  if (appointmentData === undefined) {
+  if (appointmentData === undefined || profileData === undefined) {
     return <></>;
   }
 

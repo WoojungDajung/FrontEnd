@@ -8,7 +8,7 @@ import {
 } from "@/utils/calendar";
 import LeftChevronIcon from "../shared/icons/LeftChevronIcon";
 import RightChevronIcon from "../shared/icons/RightChevronIcon";
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useState } from "react";
 import { cn } from "@/utils/cn";
 
 type CalendarCellMeta = {
@@ -35,10 +35,16 @@ const ViewCalendarShell = ({
   disabledDate,
 }: ViewCalendarShellProps) => {
   const [month, setMonth] = useState(() => startOfMonth(initialMonth));
-  const cells = getDayCells(month);
+  const cells = useMemo(() => getDayCells(month), [month]);
 
-  const canPrev = !minMonth || isAfterOrSameMonth(month, minMonth);
-  const canNext = !maxMonth || isBeforeOrSameMonth(month, maxMonth);
+  const canPrev = useMemo(
+    () => !minMonth || isAfterOrSameMonth(month, minMonth),
+    [month, minMonth],
+  );
+  const canNext = useMemo(
+    () => !maxMonth || isBeforeOrSameMonth(month, maxMonth),
+    [month, maxMonth],
+  );
 
   const onMonthChanged = useEffectEvent((next: Date) => {
     onMonthChange?.(next);

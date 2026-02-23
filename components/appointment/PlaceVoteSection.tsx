@@ -1,9 +1,10 @@
 "use client";
 
 import CountButton from "./CountButton";
+import PlaceInfoDrawer from "./PlaceInfoDrawer";
 import PlaceVoteCard from "./PlaceVoteCard";
 import useLocationsQuery from "@/hooks/useLocationsQuery";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 
 interface PlaceVoteSectionProps {
   appointmentId: string;
@@ -23,6 +24,10 @@ const PlaceVoteSection = ({
       <PlaceVoteCard
         appointmentId={appointmentId}
         disabled={isAppointmentSettled}
+      />
+      <PlaceInfoDrawer
+        appointmentId={appointmentId}
+        deletable={!isAppointmentSettled}
       />
     </section>
   );
@@ -45,4 +50,4 @@ const VoteCountButton = ({ appointmentId }: { appointmentId: string }) => {
   return <CountButton currentCount={votedCount} totalCount={totalCount} />;
 };
 
-export default PlaceVoteSection;
+export default memo(PlaceVoteSection);

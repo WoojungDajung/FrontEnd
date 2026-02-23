@@ -1,7 +1,9 @@
 import {
+  memo,
   MouseEvent,
   useCallback,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -16,7 +18,7 @@ import { useAppointmentPage } from "@/context/AppointmentContext";
 interface ParticipantListProps {
   appointmentId: string;
   isHost: boolean;
-  myProfile: MemberProfile | undefined;
+  myProfile: MemberProfile;
   participants: AppointmentUser[];
 }
 
@@ -28,8 +30,20 @@ const ParticipantList = ({
 }: ParticipantListProps) => {
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
 
-  const me = participants.find((p) => p.id === myProfile?.id);
-  const others = participants.filter((p) => p.id !== myProfile?.id);
+  const { me, others } = useMemo(() => {
+    let me: AppointmentUser | undefined;
+    const others: AppointmentUser[] = [];
+
+    for (const participant of participants) {
+      if (participant.id === myProfile.id) {
+        me = participant;
+      } else {
+        others.push(participant);
+      }
+    }
+
+    return { me, others };
+  }, [participants, myProfile]);
 
   const onClickEditProfileButton = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -97,7 +111,7 @@ const ParticipantList = ({
     const { canToggle, containerHeight } = compute(containerRef.current, 2);
     setCanToggle(canToggle);
     setContainerMaxHeight(containerHeight);
-  }, [participants, containerRef, compute]);
+  }, [participants, compute]);
 
   return (
     <>
@@ -138,27 +152,24 @@ const ParticipantList = ({
             </ParticipantBadge>
           ))}
         </div>
-        {canToggle && (
-          <>
-            {expanded ? (
-              <button onClick={() => setExpanded(false)} className="button">
-                <UpChevronIcon
-                  width={20}
-                  height={20}
-                  color="var(--color-gray-400)"
-                />
-              </button>
-            ) : (
-              <button onClick={() => setExpanded(true)} className="button">
-                <DownChevronIcon
-                  width={20}
-                  height={20}
-                  color="var(--color-gray-400)"
-                />
-              </button>
-            )}
-          </>
-        )}
+        {canToggle &&
+          (expanded ? (
+            <button onClick={() => setExpanded(false)} className="button">
+              <UpChevronIcon
+                width={20}
+                height={20}
+                color="var(--color-gray-400)"
+              />
+            </button>
+          ) : (
+            <button onClick={() => setExpanded(true)} className="button">
+              <DownChevronIcon
+                width={20}
+                height={20}
+                color="var(--color-gray-400)"
+              />
+            </button>
+          ))}
       </div>
 
       {me && myProfile && (
@@ -174,4 +185,4 @@ const ParticipantList = ({
   );
 };
 
-export default ParticipantList;
+export default memo(ParticipantList);
