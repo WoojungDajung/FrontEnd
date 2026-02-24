@@ -2,6 +2,7 @@ import {
   TLocationListResponse,
   TLocationResponse,
   TMyVoteLocationResponse,
+  TVoteStatusResponse,
 } from "@/types/apiResponse";
 import { buildAuthUrl } from "./utils";
 
@@ -190,4 +191,28 @@ export async function voteLocation(
   }
 
   return;
+}
+
+export async function getLocationVoteStatus(
+  appointmentId: string,
+  init?: RequestInit,
+) {
+  const res = await fetch(buildAuthUrl(`/location/vote/${appointmentId}`), {
+    ...init,
+    method: "GET",
+  });
+
+  const resBody = await res.json();
+  const { status_code, message } = resBody;
+  if (!res.ok || status_code !== 200) {
+    if (status_code === 400) {
+      // 해당 유저가 존재하지 않습니다.
+    }
+    if (status_code === 404) {
+      // 방 참여자가 아닙니다.
+    }
+    throw new Error(`${status_code}: ${message}`);
+  }
+
+  return resBody.data as TVoteStatusResponse;
 }

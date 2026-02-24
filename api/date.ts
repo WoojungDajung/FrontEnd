@@ -2,7 +2,7 @@ import {
   TDateVoteByMonthResponse,
   TDateVoteByUserResponse,
   TDateVoteByYMDResponse,
-  TDateVoteResponse,
+  TVoteStatusResponse,
 } from "@/types/apiResponse";
 import { buildAuthUrl } from "./utils";
 
@@ -20,7 +20,7 @@ export async function getVoteStatus(appointmentId: string, init?: RequestInit) {
     throw new Error(`${status_code}: ${message}`);
   }
 
-  return resBody.data as TDateVoteResponse;
+  return resBody.data as TVoteStatusResponse;
 }
 
 export async function getVoteStatusByMonth(

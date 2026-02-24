@@ -3,8 +3,9 @@
 import CountButton from "./CountButton";
 import PlaceInfoDrawer from "./PlaceInfoDrawer";
 import PlaceVoteCard from "./PlaceVoteCard";
-import useLocationsQuery from "@/hooks/useLocationsQuery";
-import { memo, useMemo } from "react";
+import { memo, useState } from "react";
+import VoteStatusModal from "./VoteStatusModal";
+import useLocationVoteStatusQuery from "@/hooks/useLocationVoteStatusQuery";
 
 interface PlaceVoteSectionProps {
   appointmentId: string;
@@ -34,20 +35,29 @@ const PlaceVoteSection = ({
 };
 
 const VoteCountButton = ({ appointmentId }: { appointmentId: string }) => {
-  // 장소 목록 및 투표 현황
-  const { data } = useLocationsQuery({ appointmentId });
+  const [voteStatusModalOpen, setVoteStatusModalOpen] = useState(false);
 
-  const { votedCount, totalCount } = useMemo(() => {
-    if (data === undefined) return { votedCount: 0, totalCount: 0 };
-    const [vc, tc] = data.memberVoteRatio.split("/");
-    return {
-      votedCount: Number(vc),
-      totalCount: Number(tc),
-    };
-  }, [data]);
+  // 장소 목록 및 투표 현황
+  const { data } = useLocationVoteStatusQuery(appointmentId);
 
   if (!data) return <></>;
-  return <CountButton currentCount={votedCount} totalCount={totalCount} />;
+  return (
+    <>
+      <CountButton
+        currentCount={data.votedListCount}
+        totalCount={data.unVotedListCount + data.votedListCount}
+        onClick={() => setVoteStatusModalOpen(true)}
+      />
+
+      {voteStatusModalOpen && (
+        <VoteStatusModal
+          votedMembers={data.votedList}
+          unvotedMembers={data.unVotedList}
+          setOpen={setVoteStatusModalOpen}
+        />
+      )}
+    </>
+  );
 };
 
 export default memo(PlaceVoteSection);

@@ -55,7 +55,7 @@ export type TRegisterMemberProfileResponse = {
   latitude: string;
 };
 
-export type TDateVoteResponse = {
+export type TVoteStatusResponse = {
   votedList: string[]; // 사용자 nickName 배열
   votedListCount: number;
   unVotedList: string[];

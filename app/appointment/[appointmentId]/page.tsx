@@ -17,7 +17,7 @@ import { notFound, redirect } from "next/navigation";
 import { getMemberProfile } from "@/api/member";
 import dayjs from "dayjs";
 import { getVoteStatus, getVoteStatusByMonth } from "@/api/date";
-import { getLocations } from "@/api/location";
+import { getLocations, getLocationVoteStatus } from "@/api/location";
 
 async function checkJoin(
   appointmentId: string,
@@ -90,6 +90,11 @@ const Page = async ({
     queryClient.prefetchQuery({
       queryKey: ["date-vote-status", appointmentId],
       queryFn: ({ queryKey }) => getVoteStatus(queryKey[1], requestInit),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["location-vote-status", appointmentId],
+      queryFn: ({ queryKey }) =>
+        getLocationVoteStatus(queryKey[1], requestInit),
     }),
     queryClient.prefetchQuery({
       queryKey: ["appointment-locations", appointmentId],
