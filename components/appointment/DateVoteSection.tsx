@@ -26,7 +26,7 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
 
   const isVotable = canVote && profileData !== undefined;
 
-  const onClickVoteButton = () => {
+  const onClickVoteButton = async () => {
     if (!isVotable) return;
 
     selectParticipant(null);
@@ -40,7 +40,13 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
         <VoteCountButton appointmentId={appointmentId} />
       </div>
       <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col gap-16 items-center pt-8 pb-16">
-        {selectedParticipantId !== null ? (
+        {mode === "VOTE" && profileData ? (
+          <VoteDateForm
+            appointmentId={appointmentId}
+            onSubmit={() => setMode("VIEW")}
+            userId={profileData.id}
+          />
+        ) : selectedParticipantId !== null ? (
           <>
             <ViewUserVoteCalendar
               appointmentId={appointmentId}
@@ -55,7 +61,7 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
               선택하기
             </Button>
           </>
-        ) : mode === "VIEW" ? (
+        ) : (
           <>
             <ViewTotalVoteCalendar appointmentId={appointmentId} />
             <Button
@@ -67,14 +73,6 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
               선택하기
             </Button>
           </>
-        ) : (
-          profileData && (
-            <VoteDateForm
-              appointmentId={appointmentId}
-              onSubmit={() => setMode("VIEW")}
-              userId={profileData.id}
-            />
-          )
         )}
       </div>
     </section>
