@@ -81,7 +81,10 @@ const VoteDateForm = ({
   };
 
   /* 투표 제출 */
-  const { mutate, isPending, isSuccess } = useVoteDate(appointmentId, userId);
+  const { mutate, isPending, isSuccess, reset } = useVoteDate(
+    appointmentId,
+    userId,
+  );
 
   const submit = useCallback(
     async (status: VoteStatus) => {
@@ -91,7 +94,7 @@ const VoteDateForm = ({
       });
 
       if (!result) return;
-      
+
       const votes: {
         date: string;
         type: "POSSIBLE" | "IMPOSSIBLE" | "UNCERTAIN";
@@ -158,11 +161,12 @@ const VoteDateForm = ({
             toast({
               message: "투표에 실패했습니다. 잠시 후 다시 시도해주세요.",
             });
+            reset();
           },
         },
       );
     },
-    [mutate, onSubmit, toast, confirm],
+    [mutate, reset, onSubmit, toast, confirm],
   );
 
   const tomorrow = useMemo(() => addDays(new Date(), 1), []);

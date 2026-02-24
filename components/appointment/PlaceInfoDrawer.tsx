@@ -129,10 +129,11 @@ const PlaceInfoDrawerContent = ({
         },
         onError: () => {
           toast({ message: "삭제에 실패했어요. 잠시후 다시 시도해주세요." });
+          reset();
         },
       });
     }
-  }, [confirm, toast, mutate, closeModal]);
+  }, [confirm, toast, mutate, reset, closeModal]);
 
   return (
     <DefaultDrawerLayout

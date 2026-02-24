@@ -124,6 +124,7 @@ const EditProfileDrawer = ({
         },
         onError: () => {
           toast({ message: "저장에 실패했어요. 잠시후 다시 시도해주세요." });
+          saveMutation.reset();
         },
       },
     );
@@ -156,6 +157,7 @@ const EditProfileDrawer = ({
           toast({
             message: "약속나가기에 실패했어요. 잠시후 다시 시도해주세요.",
           });
+          leaveMutation.reset();
         },
       });
     }

@@ -74,6 +74,7 @@ const EditAppointmentDrawer = ({
         onError: (error) => {
           console.log("약속 정보 수정 실패:", error);
           toast({ message: "저장에 실패했어요. 잠시후 다시 시도해주세요." });
+          editMutation.reset();
         },
       },
     );
@@ -105,6 +106,7 @@ const EditAppointmentDrawer = ({
         },
         onError: () => {
           toast({ message: "삭제에 실패했어요. 잠시후 다시 시도해주세요." });
+          deleteMutation.reset();
         },
       });
     }
