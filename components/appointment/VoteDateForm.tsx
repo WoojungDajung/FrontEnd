@@ -34,15 +34,11 @@ const VoteDateForm = ({
     uncertain: new Set(),
   });
 
-  const { data, isFetching } = useDateVoteStatusByUserQuery(
-    appointmentId,
-    userId,
-    {
-      staleTime: Infinity,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-    },
-  );
+  const { data } = useDateVoteStatusByUserQuery(appointmentId, userId, {
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
 
   /* 기존 투표 데이터로 초기화  */
   const initialStatusRef = useRef<VoteStatus | null>(null);
@@ -85,7 +81,7 @@ const VoteDateForm = ({
   };
 
   /* 투표 제출 */
-  const { mutate } = useVoteDate(appointmentId, userId);
+  const { mutate, isPending, isSuccess } = useVoteDate(appointmentId, userId);
 
   const submit = async () => {
     const result = await confirm({
@@ -168,15 +164,8 @@ const VoteDateForm = ({
   const tomorrow = useMemo(() => addDays(new Date(), 1), []);
 
   return (
-    <>
-      <div className="relative">
-        <VoteCalendar startDate={tomorrow} value={status} onChange={onChange} />
-        {isFetching && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-white/25 flex justify-center items-center">
-            <LoadingSpinner size={25} open={true} />
-          </div>
-        )}
-      </div>
+    <div className="relative">
+      <VoteCalendar startDate={tomorrow} value={status} onChange={onChange} />
       <div className="w-full flex flex-col gap-4 px-16">
         <div className="flex flex-row gap-16">
           <div className="flex flex-row gap-4 items-center">
@@ -196,15 +185,20 @@ const VoteDateForm = ({
           날짜를 여러 번 터치해서 상태를 바꿀 수 있어요.
         </p>
       </div>
-      <Button
-        size="Medium"
-        color="Primary"
-        onClick={submit}
-        disabled={isFetching}
-      >
+      <Button size="Medium" color="Primary" onClick={submit}>
         저장하기
       </Button>
-    </>
+
+      {(isPending || isSuccess) && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-white/25 flex justify-center items-center">
+          <LoadingSpinner
+            size={25}
+            open={isPending || isSuccess}
+            success={isSuccess}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 
