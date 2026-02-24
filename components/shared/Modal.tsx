@@ -1,9 +1,9 @@
 "use client";
 
 import useControllableOpen from "@/hooks/useControllableOpen";
+import useLockBodyScroll from "@/hooks/useLockBodyScroll";
 import { cn } from "@/utils/cn";
-import { lockBodyScroll } from "@/utils/lockBodyScroll";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 
 interface ModalProps {
@@ -20,28 +20,24 @@ const Modal = ({
   children,
   className,
 }: ModalProps) => {
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
   const [open, setOpen] = useControllableOpen({
     open: openProp,
     defaultOpen,
     onOpenChange,
   });
-
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const portalContainer =
-    typeof document !== "undefined" ? document.getElementById("modal") : null;
-
-  const api = useMemo(() => ({ close: () => setOpen(false) }), [setOpen]);
-
-  useEffect(() => {
-    if (!open) return;
-    lockBodyScroll(true);
-    return () => lockBodyScroll(false);
-  }, [open]);
+  useLockBodyScroll(open);
 
   // useEffect(() => {
   //   if (!open) return;
   //   contentRef.current?.focus();
   // }, [open]);
+
+  const api = useMemo(() => ({ close: () => setOpen(false) }), [setOpen]);
+
+  const portalContainer =
+    typeof document !== "undefined" ? document.getElementById("modal") : null;
 
   if (!portalContainer || !open) return null;
 

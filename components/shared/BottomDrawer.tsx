@@ -1,8 +1,8 @@
 "use client";
 
 import useControllableOpen from "@/hooks/useControllableOpen";
+import useLockBodyScroll from "@/hooks/useLockBodyScroll";
 import { cn } from "@/utils/cn";
-import { lockBodyScroll } from "@/utils/lockBodyScroll";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -34,14 +34,14 @@ function usePresence(open: boolean) {
     } else {
       // 2-1. 사용자가 드로워를 닫으면(open = false)
       // state를 closed로 바꿔서 y가 0이 되게 하기
-      // => 드로워가 아래로 내려감 
+      // => 드로워가 아래로 내려감
       closeDrawer();
     }
   }, [open]);
 
   useEffect(() => {
     // 1-2. 마운트되면, state를 open로 바꿔서 y가 full이 되게 하기
-    // => 드로워가 아래에서 위로 나타남 
+    // => 드로워가 아래에서 위로 나타남
     if (mounted) {
       openDrawer();
     }
@@ -64,23 +64,14 @@ const BottomDrawer = ({
   onVisibleChange,
   children,
 }: Props) => {
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
   const [open, setOpen] = useControllableOpen({
     open: openProp,
     defaultOpen,
     onOpenChange,
   });
-
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const portalContainer =
-    typeof document !== "undefined" ? document.getElementById("drawer") : null;
-
-  const api = useMemo(() => ({ close: () => setOpen(false) }), [setOpen]);
-
-  useEffect(() => {
-    if (!open) return;
-    lockBodyScroll(true);
-    return () => lockBodyScroll(false);
-  }, [open]);
+  useLockBodyScroll(open);
 
   // useEffect(() => {
   //   if (!open) return;
@@ -88,14 +79,17 @@ const BottomDrawer = ({
   // }, [open]);
 
   const { mounted, state } = usePresence(open);
-
   const onStateChanged = useEffectEvent((state: "open" | "closed") => {
     onVisibleChange?.(state === "open");
   });
-
   useEffect(() => {
     onStateChanged(state);
   }, [state]);
+
+  const api = useMemo(() => ({ close: () => setOpen(false) }), [setOpen]);
+
+  const portalContainer =
+    typeof document !== "undefined" ? document.getElementById("drawer") : null;
 
   if (!portalContainer || !mounted) return null;
 
@@ -118,13 +112,13 @@ const BottomDrawer = ({
         className={cn(
           "absolute inset-x-0 bottom-0 rounded-t-[32px] bg-white w-full h-448 overflow-hidden",
           "transform-gpu transition-transform duration-300 ease-out",
-          "data-[state=closed]:translate-y-full data-[state=open]:translate-y-0"
+          "data-[state=closed]:translate-y-full data-[state=open]:translate-y-0",
         )}
       >
         {children(api)}
       </div>
     </div>,
-    portalContainer
+    portalContainer,
   );
 };
 

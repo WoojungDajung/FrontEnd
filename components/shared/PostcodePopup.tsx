@@ -1,5 +1,5 @@
+import useLockBodyScroll from "@/hooks/useLockBodyScroll";
 import { Address, Postcode } from "@/types/daum";
-import { lockBodyScroll } from "@/utils/lockBodyScroll";
 import Script from "next/script";
 import { useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
@@ -41,11 +41,9 @@ const PostcodePopup = ({ onComplete, open, setOpen }: PostcodePopupProps) => {
       if (!postcode.current || !ref.current) return;
       postcode.current.embed(ref.current);
     }
-
-    if (!open) return;
-    lockBodyScroll(true);
-    return () => lockBodyScroll(false);
   }, [open]);
+
+  useLockBodyScroll(open);
 
   const onScriptLoaded = () => {
     console.log("Daum Postcode Script is Loaded");
