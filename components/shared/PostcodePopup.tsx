@@ -14,47 +14,42 @@ const PostcodePopup = ({ onComplete, open, setOpen }: PostcodePopupProps) => {
   const postcode = useRef<Postcode | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
+  const initPostcode = useCallback((oncomplete: (address: Address) => void) => {
+    if (!window.daum) return;
+    postcode.current = new window.daum.Postcode({
+      oncomplete,
+      width: "100%",
+      height: "100dvh",
+    });
+  }, []);
+
   const oncomplete = useCallback(
-    (data: Address) => {
-      onComplete?.(data);
+    (address: Address) => {
+      onComplete?.(address);
       setOpen(false);
     },
     [onComplete, setOpen],
   );
 
-  const createPostcodeInstance = useCallback((): Postcode | null => {
-    if (!window.daum) return null;
-    return new window.daum.Postcode({
-      oncomplete,
-      width: "100%",
-      height: "100dvh",
-    });
-  }, [oncomplete]);
-
   useEffect(() => {
-    postcode.current = createPostcodeInstance();
-  }, [createPostcodeInstance]);
+    initPostcode(oncomplete);
+  }, [initPostcode, oncomplete]);
 
+  /* 팝업이 열렸을 때 */
+  useLockBodyScroll(open);
   useEffect(() => {
     // 검색창 임베딩
-    if (open) {
-      if (!postcode.current || !ref.current) return;
-      postcode.current.embed(ref.current);
-    }
+    if (!open) return;
+    if (!postcode.current || !ref.current) return;
+    postcode.current.embed(ref.current);
   }, [open]);
-
-  useLockBodyScroll(open);
-
-  const onScriptLoaded = () => {
-    console.log("Daum Postcode Script is Loaded");
-    postcode.current = createPostcodeInstance();
-  };
 
   return (
     <>
       <Script
         src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
-        onLoad={onScriptLoaded}
+        onLoad={() => console.log("Daum Postcode Script is Loaded")}
+        onReady={() => initPostcode(oncomplete)}
       />
 
       {typeof document !== "undefined" &&
