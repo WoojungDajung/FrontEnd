@@ -10,6 +10,8 @@ import ViewTotalVoteCalendar from "./ViewTotalVoteCalendar";
 import { useAppointmentPage } from "@/context/AppointmentContext";
 import ViewUserVoteCalendar from "./ViewUserVoteCalendar";
 import useAppointmentUserProfileQuery from "@/hooks/useAppointmentUserProfileQuery";
+import { useQueryClient } from "@tanstack/react-query";
+import { getVoteStatusByUser } from "@/api/date";
 
 interface dateVoteSectionProps {
   appointmentId: string;
@@ -17,6 +19,8 @@ interface dateVoteSectionProps {
 }
 
 const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
+  const queryClient = useQueryClient();
+
   const [mode, setMode] = useState<"VIEW" | "VOTE">("VIEW");
   const { selectedParticipantId, selectParticipant } = useAppointmentPage();
 
@@ -30,6 +34,11 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
     if (!isVotable) return;
 
     selectParticipant(null);
+    await queryClient.prefetchQuery({
+      queryKey: ["date-vote-status-by-user", appointmentId, profileData.id],
+      queryFn: ({ queryKey }) =>
+        getVoteStatusByUser(queryKey[1] as string, queryKey[2] as number),
+    });
     setMode("VOTE");
   };
 

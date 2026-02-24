@@ -37,7 +37,11 @@ const VoteDateForm = ({
   const { data, isFetching } = useDateVoteStatusByUserQuery(
     appointmentId,
     userId,
-    { refetchOnMount: "always" },
+    {
+      staleTime: Infinity,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
   );
 
   /* 기존 투표 데이터로 초기화  */
@@ -152,7 +156,9 @@ const VoteDateForm = ({
             onSubmit();
           },
           onError: () => {
-            toast({ message: "투표에 실패했습니다. 잠시 후 다시 시도해주세요." });
+            toast({
+              message: "투표에 실패했습니다. 잠시 후 다시 시도해주세요.",
+            });
           },
         },
       );
