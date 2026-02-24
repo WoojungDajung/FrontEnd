@@ -5,7 +5,7 @@ import DefaultDrawerLayout from "../shared/DefaultDrawerLayout";
 import useLocationInfoQuery from "@/hooks/useLocationInfoQuery";
 import Link from "next/link";
 import LoadingSpinner from "../shared/LoadingSpinner";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteLocation from "@/hooks/useDeleteLocation";
 import { useToast } from "@/context/ToastContext";
@@ -21,21 +21,22 @@ const PlaceInfoDrawer = ({
 }: PlaceInfoDrawerProps) => {
   const { selectedPlaceId, selectPlace } = useAppointmentPage();
 
-  const onLoadScript = () => {
-    console.log("카카오 맵 sdk loaded");
-    window.kakao.maps.load();
-  };
-
-  const onOpenChange = (open: boolean) => {
-    if (!open) selectPlace(null);
-  };
+  const onOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) selectPlace(null);
+    },
+    [selectPlace],
+  );
 
   return (
     <>
       <Script
         src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}&autoload=false`}
         type="text/javascript"
-        onLoad={onLoadScript}
+        onLoad={() => {
+          console.log("카카오 맵 sdk loaded");
+          window.kakao.maps.load();
+        }}
       />
 
       <BottomDrawer open={selectedPlaceId !== null} onOpenChange={onOpenChange}>
@@ -105,7 +106,7 @@ const PlaceInfoDrawerContent = ({
     placeId,
   );
 
-  const deletePlace = async () => {
+  const deletePlace = useCallback(async () => {
     const result = await confirm({
       title: "삭제하기",
       message: (
@@ -131,18 +132,13 @@ const PlaceInfoDrawerContent = ({
         },
       });
     }
-  };
+  }, [confirm, toast, mutate, closeModal]);
 
   return (
     <DefaultDrawerLayout
       title="장소 정보"
       secondaryAction={
-        deletable
-          ? {
-              label: "삭제하기",
-              onClick: deletePlace,
-            }
-          : undefined
+        deletable ? { label: "삭제하기", onClick: deletePlace } : undefined
       }
       close={closeModal}
     >
