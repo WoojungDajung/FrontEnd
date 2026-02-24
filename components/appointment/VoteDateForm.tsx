@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Button from "../shared/Button";
 import VoteCalendar, { VoteState } from "./VoteCalendar";
 import { addDays, dateToString } from "@/utils/calendar";
@@ -83,12 +83,15 @@ const VoteDateForm = ({
   /* 투표 제출 */
   const { mutate, isPending, isSuccess } = useVoteDate(appointmentId, userId);
 
-  const submit = async () => {
-    const result = await confirm({
-      title: "저장하기",
-      message: "투표를 저장하시겠습니까?",
-    });
-    if (result) {
+  const submit = useCallback(
+    async (status: VoteStatus) => {
+      const result = await confirm({
+        title: "저장하기",
+        message: "투표를 저장하시겠습니까?",
+      });
+
+      if (!result) return;
+      
       const votes: {
         date: string;
         type: "POSSIBLE" | "IMPOSSIBLE" | "UNCERTAIN";
@@ -158,8 +161,9 @@ const VoteDateForm = ({
           },
         },
       );
-    }
-  };
+    },
+    [mutate, onSubmit, toast, confirm],
+  );
 
   const tomorrow = useMemo(() => addDays(new Date(), 1), []);
 
@@ -185,7 +189,7 @@ const VoteDateForm = ({
           날짜를 여러 번 터치해서 상태를 바꿀 수 있어요.
         </p>
       </div>
-      <Button size="Medium" color="Primary" onClick={submit}>
+      <Button size="Medium" color="Primary" onClick={() => submit(status)}>
         저장하기
       </Button>
 
