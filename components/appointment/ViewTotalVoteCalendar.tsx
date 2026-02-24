@@ -149,12 +149,13 @@ const DateCell = ({
       </div>
 
       {/* 투표 현황 모달 */}
-      <VoteStatusByDateModal
-        date={date}
-        open={dateStatusModalOpen}
-        setOpen={setDateStatusModalOpen}
-        appointmentId={appointmentId}
-      />
+      {dateStatusModalOpen && (
+        <VoteStatusByDateModal
+          date={date}
+          setOpen={setDateStatusModalOpen}
+          appointmentId={appointmentId}
+        />
+      )}
     </>
   );
 };

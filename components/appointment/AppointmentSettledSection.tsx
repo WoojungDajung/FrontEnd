@@ -54,13 +54,14 @@ const AppointmentSettledSection = ({
       </p>
 
       {/* 확정 결과 모달 */}
-      <AppointmentResultModal
-        open={resultModalOpen}
-        setOpen={setResultModalOpen}
-        appointment={appointment}
-        appointmentUserCount={appointmentUserCount}
-        result={result}
-      />
+      {resultModalOpen && (
+        <AppointmentResultModal
+          setOpen={setResultModalOpen}
+          appointment={appointment}
+          appointmentUserCount={appointmentUserCount}
+          result={result}
+        />
+      )}
     </section>
   );
 };

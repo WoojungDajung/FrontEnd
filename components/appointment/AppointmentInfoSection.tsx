@@ -134,12 +134,13 @@ const AppointmentInfoSection = ({
         setOpen={setAppointmentDrawerOpen}
       />
       {/* Modal */}
-      <ShareModal
-        appointmentId={appointmentId}
-        appointmentName={appointmentData.appointment.appointmentName}
-        open={shareModalOpen}
-        setOpen={setShareModalOpen}
-      />
+      {shareModalOpen && (
+        <ShareModal
+          appointmentId={appointmentId}
+          appointmentName={appointmentData.appointment.appointmentName}
+          setOpen={setShareModalOpen}
+        />
+      )}
     </section>
   );
 };

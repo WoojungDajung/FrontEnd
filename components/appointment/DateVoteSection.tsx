@@ -90,11 +90,6 @@ const VoteCountButton = ({ appointmentId }: VoteCountButtonProps) => {
 
   const { data } = useDateVoteQuery({ appointmentId });
 
-  const onClickCountButton = () => {
-    if (!data) return;
-    setVoteStatusModalOpen(true);
-  };
-
   if (!data) return <></>;
 
   return (
@@ -102,16 +97,17 @@ const VoteCountButton = ({ appointmentId }: VoteCountButtonProps) => {
       <CountButton
         currentCount={data.votedListCount}
         totalCount={data.unVotedListCount + data.votedListCount}
-        onClick={onClickCountButton}
+        onClick={() => setVoteStatusModalOpen(true)}
       />
 
       {/* 투표 현황 모달 */}
-      <VoteStatusModal
-        votedMembers={data.votedList}
-        unvotedMembers={data.unVotedList}
-        open={voteStatusModalOpen}
-        setOpen={setVoteStatusModalOpen}
-      />
+      {voteStatusModalOpen && (
+        <VoteStatusModal
+          votedMembers={data.votedList}
+          unvotedMembers={data.unVotedList}
+          setOpen={setVoteStatusModalOpen}
+        />
+      )}
     </>
   );
 };

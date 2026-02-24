@@ -22,15 +22,13 @@ import dayjs from "dayjs";
 import { useToast } from "@/context/ToastContext";
 
 interface AppointmentResultModalProps {
-  open?: boolean;
-  setOpen?: (open: boolean) => void;
+  setOpen: (open: boolean) => void;
   appointment: Appointment;
   appointmentUserCount: number;
   result: ConfirmedResult;
 }
 
 const AppointmentResultModal = ({
-  open,
   setOpen,
   appointment,
   appointmentUserCount,
@@ -82,7 +80,7 @@ const AppointmentResultModal = ({
 
   return (
     <Modal
-      open={open}
+      open
       onOpenChange={(open) => setOpen?.(open)}
       className="pt-8 pb-32 flex flex-col gap-32"
     >

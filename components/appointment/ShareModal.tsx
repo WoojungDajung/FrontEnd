@@ -14,14 +14,12 @@ import { useToast } from "@/context/ToastContext";
 interface ShareModalProps {
   appointmentId: string;
   appointmentName: string;
-  open?: boolean;
-  setOpen?: (open: boolean) => void;
+  setOpen: (open: boolean) => void;
 }
 
 const ShareModal = ({
   appointmentId,
   appointmentName,
-  open,
   setOpen,
 }: ShareModalProps) => {
   const { toast } = useToast();
@@ -57,7 +55,7 @@ const ShareModal = ({
 
       <Modal
         className="pt-8 pb-32"
-        open={open}
+        open
         onOpenChange={(open) => setOpen?.(open)}
       >
         {({ close }) => (

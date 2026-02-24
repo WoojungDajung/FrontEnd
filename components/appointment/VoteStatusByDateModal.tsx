@@ -6,27 +6,21 @@ import ClockIcon from "./icons/ClocktIcon";
 
 interface VoteStatusByDateModalProps {
   date: Date;
-  open?: boolean;
   setOpen: (open: boolean) => void;
   appointmentId: string;
 }
 
 const VoteStatusByDateModal = ({
   date,
-  open,
   setOpen,
   appointmentId,
 }: VoteStatusByDateModalProps) => {
-  const { data } = useDateVoteStatusByYMD(appointmentId, date, open ?? false);
+  const { data } = useDateVoteStatusByYMD(appointmentId, date);
 
   if (data === undefined) return <></>;
 
   return (
-    <Modal
-      className="py-16"
-      open={open}
-      onOpenChange={(open) => setOpen(open)}
-    >
+    <Modal className="py-16" open onOpenChange={(open) => setOpen(open)}>
       {({ close }) => (
         <div className="flex flex-col gap-16">
           <div className="w-full flex justify-center items-center relative">
