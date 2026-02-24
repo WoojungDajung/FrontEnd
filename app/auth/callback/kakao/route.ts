@@ -1,4 +1,5 @@
 import { ERROR_CODE } from "@/constants/error-code";
+import { setToken } from "@/lib/auth/token";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -45,19 +46,8 @@ export async function GET(request: NextRequest) {
         redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}${state}`;
       }
       const response = NextResponse.redirect(redirectUrl);
-
       const { accessToken, refreshToken } = resData.data;
-
-      const cookieOptions = {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax" as const,
-        path: "/",
-      };
-      response.cookies.set("access-token", accessToken, cookieOptions);
-      response.cookies.set("refresh-token", refreshToken, cookieOptions);
-
-      return response;
+      return setToken(response, accessToken, refreshToken);
     } catch (err) {
       // 에러 처리
       console.log(`카카오 토큰 처리 중 에러 캐치:`, err);

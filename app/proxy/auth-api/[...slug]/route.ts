@@ -1,10 +1,6 @@
 import { reissueToken } from "@/api/auth";
-import {
-  deleteToken,
-  getAccessToken,
-  getRefreshToken,
-  saveToken,
-} from "@/lib/auth/token";
+import { setToken } from "@/lib/auth/token";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 function buildHeaders(request: Request, accessToken?: string) {
@@ -38,7 +34,8 @@ async function handler(
 
   // 토큰 확인
   // const accessToken = process.env.DEV_ACCESS_TOKEN ?? (await getAccessToken());
-  const accessToken = await getAccessToken();
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access-token")?.value ?? null;
 
   if (!accessToken) {
     // 로그인 안 한 상태
@@ -54,7 +51,7 @@ async function handler(
       ? undefined
       : await request.arrayBuffer();
 
-  let res = await fetch(url, {
+  const res = await fetch(url, {
     method: request.method,
     headers: buildHeaders(request, accessToken),
     body,
@@ -66,45 +63,51 @@ async function handler(
     console.log("요청 실패:", data);
   }
 
-  // 토큰 만료 시
-  if (res.status === 401 || data.status_code === 401) {
-    const refreshToken = await getRefreshToken();
-    // 리프레시 토큰 없음 -> 다시 로그인 필요
-    if (!refreshToken) {
-      deleteToken(); // 로그아웃 처리
-      return NextResponse.json(
-        {
-          code: "AUTH_EXPIRED",
-          message: "Session expired. Please login again.",
-        },
-        { status: 401 },
-      );
-    }
-
-    // 리프레시 토큰으로 액세스 토큰 재발급
-    try {
-      const newToken = await reissueToken(accessToken, refreshToken);
-      await saveToken(newToken);
-      // 재요청
-      res = await fetch(url, {
-        method: request.method,
-        headers: buildHeaders(request, newToken),
-        body,
-      });
-    } catch (error) {
-      // 토큰 재발급 실패 -> 다시 로그인 필요
-      deleteToken(); // 로그아웃 처리
-      return NextResponse.json(
-        {
-          code: "AUTH_EXPIRED",
-          message: "Session expired. Please login again.",
-        },
-        { status: 401 },
-      );
-    }
+  if (res.status !== 401 && data.status_code !== 401) {
+    return NextResponse.json(data, { status: res.status });
   }
 
-  return NextResponse.json(data, { status: res.status });
+  // 토큰 만료 시
+  const refreshToken = cookieStore.get("refresh-token")?.value ?? null;
+  // 리프레시 토큰 없음 -> 다시 로그인 필요
+  if (!refreshToken) {
+    const response = NextResponse.json(
+      {
+        code: "AUTH_EXPIRED",
+        message: "Session expired. Please login again.",
+      },
+      { status: 401 },
+    );
+    response.cookies.delete("access-token");
+    response.cookies.delete("refresh-token");
+    return response;
+  }
+
+  // 리프레시 토큰으로 액세스 토큰 재발급
+  try {
+    const newToken = await reissueToken(accessToken, refreshToken);
+    // 재요청
+    const res = await fetch(url, {
+      method: request.method,
+      headers: buildHeaders(request, newToken),
+      body,
+    });
+
+    const response = NextResponse.json(data, { status: res.status });
+    return setToken(response, accessToken);
+  } catch (error) {
+    // 토큰 재발급 실패 -> 다시 로그인 필요
+    const response = NextResponse.json(
+      {
+        code: "AUTH_EXPIRED",
+        message: "Session expired. Please login again.",
+      },
+      { status: 401 },
+    );
+    response.cookies.delete("access-token");
+    response.cookies.delete("refresh-token");
+    return response;
+  }
 }
 
 export const GET = handler;

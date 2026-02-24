@@ -1,9 +1,10 @@
 import { logout } from "@/api/auth";
-import { getRefreshToken } from "@/lib/auth/token";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const refreshToken = await getRefreshToken();
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get("refresh-token")?.value ?? null;
 
   let body = {};
   let statusCode = 0;
