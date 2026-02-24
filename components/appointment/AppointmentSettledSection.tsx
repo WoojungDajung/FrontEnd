@@ -27,6 +27,8 @@ const AppointmentSettledSection = ({
     setResultModalOpen(true);
   }, []);
 
+  const isHost = appointment.hostYn === "Y";
+
   return (
     <section className="flex flex-col gap-24">
       <div className="pt-32 pb-24 rounded-[24px] flex flex-col items-center gap-16 border border-gray-100 bg-primary-25">
@@ -49,9 +51,11 @@ const AppointmentSettledSection = ({
           확인하기
         </Button>
       </div>
-      <p className="typo-14-regular text-gray-400 text-center">
-        다시 정하고 싶다면 아래에서 마감일을 수정해보세요.
-      </p>
+      {isHost && (
+        <p className="typo-14-regular text-gray-400 text-center">
+          다시 정하고 싶다면 아래에서 마감일을 수정해보세요.
+        </p>
+      )}
 
       {/* 확정 결과 모달 */}
       {resultModalOpen && (
