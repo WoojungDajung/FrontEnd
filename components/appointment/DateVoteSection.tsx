@@ -48,7 +48,7 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
         <p className="typo-16-regular text-gray-800 relative left-8">일정</p>
         <VoteCountButton appointmentId={appointmentId} />
       </div>
-      <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col gap-16 items-center pt-8 pb-16">
+      <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col gap-16 items-center pt-8 pb-16 relative">
         {mode === "VOTE" && profileData ? (
           <VoteDateForm
             appointmentId={appointmentId}

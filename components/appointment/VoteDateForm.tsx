@@ -172,7 +172,7 @@ const VoteDateForm = ({
   const tomorrow = useMemo(() => addDays(new Date(), 1), []);
 
   return (
-    <div className="relative">
+    <>
       <VoteCalendar startDate={tomorrow} value={status} onChange={onChange} />
       <div className="w-full flex flex-col gap-4 px-16">
         <div className="flex flex-row gap-16">
@@ -206,7 +206,7 @@ const VoteDateForm = ({
           />
         </div>
       )}
-    </div>
+    </>
   );
 };
 
