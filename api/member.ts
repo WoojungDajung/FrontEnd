@@ -16,10 +16,10 @@ export async function getMemberProfile(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 400) {
       // 해당 방에 유저 참여 정보가 없음 (=아직 프로필 등록 안한 사용자)
       throw new Error(ERROR_MESSAGE.NOT_JOINED_APPOINTMENT);
@@ -75,10 +75,10 @@ export async function updateMemberProfile(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (res.status === 401 || status_code === 401) {
       // 토큰 만료 또는 유효하지 않은 요청 데이터
     }
@@ -91,17 +91,19 @@ export async function updateMemberProfile(
   return resBody.data as TRegisterMemberProfileResponse;
 }
 
-export async function getMemberAppointments(init?:RequestInit): Promise<TMemberAppointments> {
+export async function getMemberAppointments(
+  init?: RequestInit,
+): Promise<TMemberAppointments> {
   const res = await fetch(buildAuthUrl(`/member/appointments`), {
     ...init,
     method: "GET",
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 401 || res.status === 401) {
       // 토큰 만료 또는 유효하지 않은 요청 데이터
     }

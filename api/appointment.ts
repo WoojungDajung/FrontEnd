@@ -45,10 +45,10 @@ export async function createAppointment(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 400) {
       // 유저가 존재하지 않음
     }
@@ -73,10 +73,10 @@ export async function getAppointment(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 404) {
       //해당 방이 존재하지 않음
       throw new Error(ERROR_MESSAGE.APPOINTMENT_NOT_EXIST);
@@ -149,10 +149,10 @@ export async function joinAppointment(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 404) {
       // 해당 방이 존재하지 않음
     }
@@ -176,10 +176,10 @@ export async function leaveAppointment(
   );
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 401) {
       // 호스트는 나갈 수 없음
     }
@@ -206,10 +206,10 @@ export async function deleteAppointment(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 401) {
       // 삭제 권한 없음 (호스트가 아님)
     }
@@ -239,10 +239,10 @@ export async function getAppointmentPreviewInfo(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 404) {
       //해당 방이 존재하지 않음
       throw new Error(ERROR_MESSAGE.APPOINTMENT_NOT_EXIST);

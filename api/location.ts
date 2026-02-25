@@ -14,10 +14,10 @@ export async function getLocations(appointmentId: string, init?: RequestInit) {
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 400) {
       // 유저가 존재하지 않습니다.
     }
@@ -56,10 +56,10 @@ export async function registerLocation(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 402) {
       // 프로필 미설정(닉네임/출발지)
     }
@@ -87,10 +87,10 @@ export async function getLocation(
   );
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 404) {
       // 방이 존재하지 않습니다.
     }
@@ -115,10 +115,10 @@ export async function deleteLocation(
   );
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 402) {
       // 프로필 미설정(닉네임/출발지)
     }
@@ -142,10 +142,10 @@ export async function getMyVoteLocation(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 402) {
       // 프로필 미설정(닉네임/출발지)
     }
@@ -177,10 +177,10 @@ export async function voteLocation(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 402) {
       // 프로필 미설정(닉네임/출발지)
     }

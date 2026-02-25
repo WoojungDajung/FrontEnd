@@ -13,10 +13,10 @@ export async function getVoteStatus(appointmentId: string, init?: RequestInit) {
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -38,10 +38,10 @@ export async function getVoteStatusByMonth(
   );
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 404) {
       // 방 또는 참여정보를 찾을 수 없음
     }
@@ -71,10 +71,10 @@ export async function getVoteStatusByYMD(
   );
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -110,10 +110,10 @@ export async function voteDate(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     throw new Error(`${status_code}: ${message}`);
   }
 
@@ -131,10 +131,10 @@ export async function getVoteStatusByUser(
   });
 
   const resBody = await res.json();
-  console.log(resBody);
   const { status_code, message } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    console.log(resBody);
     if (status_code === 404) {
       // 방 또는 참여정보를 찾을 수 없음
     }
