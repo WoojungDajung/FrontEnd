@@ -8,22 +8,26 @@ const useVoteLocation = (appointmentId: string) => {
     mutationFn: ({ placeIdList }: { placeIdList: number[] }) =>
       voteLocation(appointmentId, placeIdList),
     onSuccess: async (_, { placeIdList }) => {
-      // 사용자의 투표 현황
-      await queryClient.invalidateQueries({
-        queryKey: ["my-vote-appointment-location", appointmentId],
-      });
-
-      // 투표한 장소의 정보
-      for (const id of placeIdList) {
-        await queryClient.invalidateQueries({
-          queryKey: ["appointment-location", appointmentId, id],
-        });
-      }
-
-      // 모든 장소 내역
-      await queryClient.invalidateQueries({
-        queryKey: ["appointment-locations", appointmentId],
-      });
+      await Promise.all([
+        // 투표 현황
+        queryClient.invalidateQueries({
+          queryKey: ["location-vote-status", appointmentId],
+        }),
+        // 사용자의 투표 현황
+        queryClient.invalidateQueries({
+          queryKey: ["my-vote-appointment-location", appointmentId],
+        }),
+        // 투표한 장소의 정보
+        ...placeIdList.map((placeId) =>
+          queryClient.invalidateQueries({
+            queryKey: ["appointment-location", appointmentId, placeId],
+          }),
+        ),
+        // 모든 장소 내역
+        queryClient.invalidateQueries({
+          queryKey: ["appointment-locations", appointmentId],
+        }),
+      ]);
     },
   });
 };
