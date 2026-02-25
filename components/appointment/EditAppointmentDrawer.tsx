@@ -19,6 +19,7 @@ interface EditAppointmentDrawerProps {
   initialDueDate: Date;
   open?: boolean;
   setOpen?: (open: boolean) => void;
+  isHost: boolean;
 }
 
 interface FormValues {
@@ -32,6 +33,7 @@ const EditAppointmentDrawer = ({
   initialDueDate,
   open,
   setOpen,
+  isHost,
 }: EditAppointmentDrawerProps) => {
   const router = useRouter();
   const confirm = useConfirm();
@@ -128,11 +130,11 @@ const EditAppointmentDrawer = ({
       {({ close }) => (
         <DefaultDrawerLayout
           title="약속 정보"
-          secondaryAction={{
-            label: "약속 없애기",
-            // onClick: () => setDeleteModalOpen(true),
-            onClick: onClickAction,
-          }}
+          secondaryAction={
+            isHost
+              ? { label: "약속 없애기", onClick: onClickAction }
+              : undefined
+          }
           close={close}
         >
           <form

@@ -43,14 +43,12 @@ const AppointmentInfoSection = ({
           <p className="typo-20-bold text-gray-800">
             {appointmentData.appointment.appointmentName}
           </p>
-          {isHost && (
-            <button
-              className="absolute top-0 right-0 border border-gray-100 bg-white w-32 h-32 rounded-[12px] cursor-pointer flex justify-center items-center"
-              onClick={() => setAppointmentDrawerOpen(true)}
-            >
-              <PencilIcon />
-            </button>
-          )}
+          <button
+            className="absolute top-0 right-0 border border-gray-100 bg-white w-32 h-32 rounded-[12px] cursor-pointer flex justify-center items-center"
+            onClick={() => setAppointmentDrawerOpen(true)}
+          >
+            <PencilIcon />
+          </button>
         </div>
         <div className="w-full flex gap-8 justify-center items-center">
           <div className="typo-14-regular text-gray-400 flex flex-row gap-4">
@@ -132,6 +130,7 @@ const AppointmentInfoSection = ({
         ).toDate()}
         open={appointmentDrawerOpen}
         setOpen={setAppointmentDrawerOpen}
+        isHost={isHost}
       />
       {/* Modal */}
       {shareModalOpen && (
