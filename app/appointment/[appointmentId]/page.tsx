@@ -18,6 +18,7 @@ import { getMemberProfile } from "@/api/member";
 import dayjs from "dayjs";
 import { getVoteStatus, getVoteStatusByMonth } from "@/api/date";
 import { getLocations, getLocationVoteStatus } from "@/api/location";
+import CommonLayout from "@/components/CommonLayout";
 
 async function checkJoin(
   appointmentId: string,
@@ -105,34 +106,38 @@ const Page = async ({
   const isSettled = appointmentInfo.appointment.confirmYn === "Y";
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <main className="flex flex-col gap-8 pt-80">
-        <HomeButton />
+    <CommonLayout backgroundColor="var(--color-gray-50)">
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <main className="flex flex-col gap-8 pt-80">
+          <HomeButton />
 
-        <div className="flex flex-col gap-24">
-          {isSettled && appointmentInfo.confirmedResult !== null && (
-            <AppointmentSettledSection
-              appointment={appointmentInfo.appointment}
-              appointmentUserCount={appointmentInfo.appointmentUserList.length}
-              result={appointmentInfo.confirmedResult}
-            />
-          )}
-          <AppointmentPageProvider>
-            <div className="flex flex-col gap-16">
-              <AppointmentInfoSection appointmentId={appointmentId} />
-              <DateVoteSection
-                appointmentId={appointmentId}
-                canVote={!isSettled}
+          <div className="flex flex-col gap-24">
+            {isSettled && appointmentInfo.confirmedResult !== null && (
+              <AppointmentSettledSection
+                appointment={appointmentInfo.appointment}
+                appointmentUserCount={
+                  appointmentInfo.appointmentUserList.length
+                }
+                result={appointmentInfo.confirmedResult}
               />
-              <PlaceVoteSection
-                appointmentId={appointmentId}
-                isAppointmentSettled={isSettled}
-              />
-            </div>
-          </AppointmentPageProvider>
-        </div>
-      </main>
-    </HydrationBoundary>
+            )}
+            <AppointmentPageProvider>
+              <div className="flex flex-col gap-16">
+                <AppointmentInfoSection appointmentId={appointmentId} />
+                <DateVoteSection
+                  appointmentId={appointmentId}
+                  canVote={!isSettled}
+                />
+                <PlaceVoteSection
+                  appointmentId={appointmentId}
+                  isAppointmentSettled={isSettled}
+                />
+              </div>
+            </AppointmentPageProvider>
+          </div>
+        </main>
+      </HydrationBoundary>
+    </CommonLayout>
   );
 };
 

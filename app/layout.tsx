@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { pretendard } from "./fonts";
-import Footer from "@/components/shared/Footer";
 import Providers from "@/components/Providers";
 import DevTool from "@/components/DevTool";
 
@@ -20,11 +19,9 @@ export default function RootLayout({
       <body>
         <Providers>
           <>
-            <div className="max-w-full w-(--container-width) min-h-dvh mx-auto flex justify-center">
-              <div className="w-342 pb-40 flex flex-col gap-40">
-                {children}
-                <Footer />
-              </div>
+            <div className="max-w-full w-(--container-width) mx-auto">
+              {children}
+
               <div id="drawer" />
               <div id="modal" />
             </div>
