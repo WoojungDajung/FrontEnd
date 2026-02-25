@@ -199,7 +199,7 @@ const EditProfileDrawer = ({
                 >
                   <input
                     className="input w-full typo-16-regular"
-                    {...register("nickName", { required: true, maxLength: 14 })}
+                    {...register("nickName", { required: true, maxLength: 8 })}
                   />
                 </div>
               </FormField>

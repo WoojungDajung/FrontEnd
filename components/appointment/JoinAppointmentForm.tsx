@@ -67,7 +67,7 @@ const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
           >
             <input
               className="input typo-16-regular"
-              {...register("nickName", { required: true, maxLength: 14 })}
+              {...register("nickName", { required: true, maxLength: 8 })}
               placeholder="예) 애옹이"
             />
           </div>

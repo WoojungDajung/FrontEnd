@@ -97,7 +97,7 @@ const CreateAppointmentForm = () => {
           >
             <input
               className="input typo-16-regular w-full"
-              {...register("nickName", { required: true, maxLength: 14 })}
+              {...register("nickName", { required: true, maxLength: 8 })}
               placeholder="예) 애옹이"
             />
           </div>
