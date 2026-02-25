@@ -1,8 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import ViewCalendarShell from "./ViewCalendarShell";
 import { cn } from "@/utils/cn";
 import { dateToString } from "@/utils/calendar";
 import useDateVoteStatusByUserQuery from "@/hooks/useDateVoteStatusByUserQuery";
+import VoteStatusByDateModal from "./VoteStatusByDateModal";
 
 // 가능, 애매, 불가능
 type VoteState = "POSSIBLE" | "UNCERTAIN" | "IMPOSSIBLE";
@@ -38,7 +39,13 @@ const ViewUserVoteCalendar = ({
             ? "UNCERTAIN"
             : "IMPOSSIBLE";
 
-        return <DateCell {...meta} voteState={voteState} />;
+        return (
+          <DateCell
+            {...meta}
+            voteState={voteState}
+            appointmentId={appointmentId}
+          />
+        );
       }}
     />
   );
@@ -49,6 +56,7 @@ interface DateCellProps {
   isOutsideMonth: boolean;
   isDisabled: boolean;
   voteState: VoteState;
+  appointmentId: string;
 }
 
 const DateCell = ({
@@ -56,7 +64,17 @@ const DateCell = ({
   isOutsideMonth,
   isDisabled,
   voteState,
+  appointmentId,
 }: DateCellProps) => {
+  const [dateStatusModalOpen, setDateStatusModalOpen] = useState(false);
+
+  const clickable = !isOutsideMonth && voteState !== "IMPOSSIBLE";
+
+  const onClickCell = () => {
+    if (!clickable) return;
+    setDateStatusModalOpen(true);
+  };
+
   let cellStyle = "";
   if (isOutsideMonth) {
     if (date.getDay() === 0) {
@@ -88,10 +106,21 @@ const DateCell = ({
         className={cn(
           "w-40 h-40 typo-14-regular rounded-[8px] flex justify-center items-center",
           cellStyle,
+          clickable && "cursor-pointer",
         )}
+        onClick={onClickCell}
       >
         {date.getDate()}
       </div>
+
+      {/* 투표 현황 모달 */}
+      {dateStatusModalOpen && (
+        <VoteStatusByDateModal
+          date={date}
+          setOpen={setDateStatusModalOpen}
+          appointmentId={appointmentId}
+        />
+      )}
     </>
   );
 };
