@@ -6,7 +6,7 @@ import CommonLayout from "@/components/CommonLayout";
 const Page = () => {
   return (
     <CommonLayout>
-      <div className="flex flex-col gap-96 items-center justify-center pt-90">
+      <div className="flex-1 flex flex-col gap-96 items-center justify-center pt-90">
         <ErrorUI
           mainMessage={"일시적인 오류가 발생했어요..."}
           subMessage={
