@@ -112,15 +112,10 @@ const Page = async ({
           <HomeButton />
 
           <div className="flex flex-col gap-24">
-            {isSettled && appointmentInfo.confirmedResult !== null && (
-              <AppointmentSettledSection
-                appointment={appointmentInfo.appointment}
-                appointmentUserCount={
-                  appointmentInfo.appointmentUserList.length
-                }
-                result={appointmentInfo.confirmedResult}
-              />
-            )}
+            <AppointmentSettledSection
+              appointmentId={appointmentId}
+              isSettled={isSettled}
+            />
             <AppointmentPageProvider>
               <div className="flex flex-col gap-16">
                 <AppointmentInfoSection appointmentId={appointmentId} />

@@ -2,30 +2,29 @@
 
 import Image from "next/image";
 import Button from "../shared/Button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AppointmentResultModal from "./AppointmentResultModal";
-import { Appointment, ConfirmedResult } from "@/types/apiResponse";
+import useAppointmentQuery from "@/hooks/useAppointmentQuery";
 
 interface AppointmentSettledSectionProps {
-  appointment: Appointment;
-  appointmentUserCount: number;
-  result: ConfirmedResult;
+  appointmentId: string;
+  isSettled: boolean;
 }
 
 const AppointmentSettledSection = ({
-  appointment,
-  appointmentUserCount,
-  result,
+  appointmentId,
+  isSettled,
 }: AppointmentSettledSectionProps) => {
-  const [resultModalOpen, setResultModalOpen] = useState(false);
+  const [resultModalOpen, setResultModalOpen] = useState(isSettled);
 
-  // 모달이 열려져 있도록 하기 위한 작업
-  useEffect(() => {
-    // resultModalOpen 초기값을 true로 하는 경우 modal div가 마운트되지 않아서 무시됨
-    // 그래서 대신 마운트 이후 값을 true로 바꾸어 모달이 나타나도록 함
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setResultModalOpen(true);
-  }, []);
+  const { data } = useAppointmentQuery({ appointmentId });
+
+  if (
+    !data ||
+    data.appointment.confirmYn === "N" ||
+    data.confirmedResult === null
+  )
+    return null;
 
   return (
     <section className="flex flex-col gap-24">
@@ -57,9 +56,9 @@ const AppointmentSettledSection = ({
       {resultModalOpen && (
         <AppointmentResultModal
           setOpen={setResultModalOpen}
-          appointment={appointment}
-          appointmentUserCount={appointmentUserCount}
-          result={result}
+          appointment={data.appointment}
+          appointmentUserCount={data.appointmentUserList.length}
+          result={data.confirmedResult}
         />
       )}
     </section>
