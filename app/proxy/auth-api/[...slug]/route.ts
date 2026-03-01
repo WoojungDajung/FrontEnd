@@ -1,4 +1,5 @@
 import { reissueToken } from "@/api/auth";
+import { API_ERROR_CODE } from "@/constants/error-code";
 import { setToken } from "@/lib/auth/token";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -40,7 +41,10 @@ async function handler(
   if (!accessToken) {
     // 로그인 안 한 상태
     return NextResponse.json(
-      { code: "AUTH_REQUIRED", message: "Authentication required" },
+      {
+        code: API_ERROR_CODE.AUTH_REQUIRED,
+        message: "Authentication required",
+      },
       { status: 401 },
     );
   }
@@ -77,7 +81,7 @@ async function handler(
   if (!refreshToken) {
     const response = NextResponse.json(
       {
-        code: "AUTH_EXPIRED",
+        code: API_ERROR_CODE.AUTH_EXPIRED,
         message: "Session expired. Please login again.",
       },
       { status: 401 },
@@ -97,13 +101,26 @@ async function handler(
       body,
     });
 
+    if (res.status === 401 || data.status_code === 401) {
+      const response = NextResponse.json(
+        {
+          code: API_ERROR_CODE.AUTH_EXPIRED,
+          message: "Session expired. Please login again.",
+        },
+        { status: 401 },
+      );
+      response.cookies.delete("access-token");
+      response.cookies.delete("refresh-token");
+      return response;
+    }
+
     const response = NextResponse.json(data, { status: res.status });
     return setToken(response, accessToken);
   } catch (error) {
     // 토큰 재발급 실패 -> 다시 로그인 필요
     const response = NextResponse.json(
       {
-        code: "AUTH_EXPIRED",
+        code: API_ERROR_CODE.AUTH_EXPIRED,
         message: "Session expired. Please login again.",
       },
       { status: 401 },
