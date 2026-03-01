@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/shared/Button";
-import { ERROR_CODE } from "@/constants/error-code";
+import { AUTH_CALLBACK_ERROR_CODE } from "@/constants/error-code";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
@@ -14,8 +14,8 @@ const RetryButton = () => {
 
   const onClickButton = useCallback(() => {
     if (
-      errorCode === ERROR_CODE.AUTH_TOKEN_EXCHANGED_FAILED ||
-      errorCode === ERROR_CODE.AUTH_UNKNOWN_ERROR
+      errorCode === AUTH_CALLBACK_ERROR_CODE.AUTH_TOKEN_EXCHANGED_FAILED ||
+      errorCode === AUTH_CALLBACK_ERROR_CODE.AUTH_UNKNOWN_ERROR
     ) {
       if (next) {
         router.push(`/?next=${next}`);

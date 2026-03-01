@@ -1,4 +1,4 @@
-import { ERROR_CODE } from "@/constants/error-code";
+import { AUTH_CALLBACK_ERROR_CODE } from "@/constants/error-code";
 import { setToken } from "@/lib/auth/token";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       if (!res.ok) {
         // 토큰 획득 실패
         const urlSearchParams = new URLSearchParams({
-          code: ERROR_CODE.AUTH_TOKEN_EXCHANGED_FAILED,
+          code: AUTH_CALLBACK_ERROR_CODE.AUTH_TOKEN_EXCHANGED_FAILED,
         });
         if (state) urlSearchParams.append("next", state);
         return NextResponse.redirect(
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       console.log(`카카오 토큰 처리 중 에러 캐치:`, err);
 
       const urlSearchParams = new URLSearchParams({
-        code: ERROR_CODE.AUTH_UNKNOWN_ERROR,
+        code: AUTH_CALLBACK_ERROR_CODE.AUTH_UNKNOWN_ERROR,
       });
       if (state) urlSearchParams.append("next", state);
       return NextResponse.redirect(
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
   }
 
   const urlSearchParams = new URLSearchParams({
-    code: ERROR_CODE.AUTH_UNKNOWN_ERROR,
+    code: AUTH_CALLBACK_ERROR_CODE.AUTH_UNKNOWN_ERROR,
   });
   if (state) urlSearchParams.append("next", state);
   return NextResponse.redirect(
