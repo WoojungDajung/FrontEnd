@@ -4,7 +4,6 @@ import HomeButton from "@/components/appointment/HomeButton";
 import AppointmentInfoSection from "@/components/appointment/AppointmentInfoSection";
 import AppointmentSettledSection from "@/components/appointment/AppointmentSettledSection";
 import PlaceVoteSection from "@/components/appointment/PlaceVoteSection";
-import { ERROR_MESSAGE } from "@/constants/error-message";
 import { AppointmentPageProvider } from "@/context/AppointmentContext";
 import { getQueryClient } from "@/lib/queryClient";
 import {
@@ -19,6 +18,8 @@ import dayjs from "dayjs";
 import { getVoteStatus, getVoteStatusByMonth } from "@/api/date";
 import { getLocations, getLocationVoteStatus } from "@/api/location";
 import CommonLayout from "@/components/CommonLayout";
+import { ApiError } from "@/lib/error";
+import { API_ERROR_CODE } from "@/constants/error-code";
 
 async function checkJoin(
   appointmentId: string,
@@ -36,12 +37,14 @@ async function checkJoin(
     return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    if (error.message === ERROR_MESSAGE.APPOINTMENT_NOT_EXIST) {
-      notFound();
-    } else if (error.message === ERROR_MESSAGE.LOGIN_REQUIRED) {
-      redirectUrl = "/"; // 로그인 페이지로 이동
-    } else if (error.message === ERROR_MESSAGE.NOT_JOINED_APPOINTMENT) {
-      redirectUrl = joinUrl;
+    if (error instanceof ApiError) {
+      if (error.code === API_ERROR_CODE.APPOINTMENT_NOT_EXISTED) {
+        notFound();
+      } else if (error.isAuthError()) {
+        redirectUrl = "/"; // 로그인 페이지로 이동
+      } else if (error.code === API_ERROR_CODE.NOT_JOINED_APPOINTMENT) {
+        redirectUrl = joinUrl;
+      }
     }
   }
   redirect(redirectUrl);
@@ -74,9 +77,13 @@ const Page = async ({
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    if (error.message === ERROR_MESSAGE.APPOINTMENT_NOT_EXIST) {
+    if (
+      error instanceof ApiError &&
+      error.code === API_ERROR_CODE.APPOINTMENT_NOT_EXISTED
+    ) {
       notFound();
     }
+
     redirect("/error");
   }
 

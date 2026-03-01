@@ -1,10 +1,11 @@
-import { ERROR_MESSAGE } from "@/constants/error-message";
 import {
   TAppointmentPreviewResponse,
   TAppointmentResponse,
 } from "@/types/apiResponse";
 import dayjs from "dayjs";
 import { buildAuthUrl } from "./utils";
+import { ApiError } from "@/lib/error";
+import { API_ERROR_CODE } from "@/constants/error-code";
 
 /**
  * 약속방 생성
@@ -45,14 +46,20 @@ export async function createAppointment(
   });
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
     if (status_code === 400) {
       // 유저가 존재하지 않음
+      throw new ApiError(API_ERROR_CODE.USER_NOT_EXISTED, message, 400);
     }
-    throw new Error(`${status_code}: ${message}`);
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to create an appointment";
+    throw new ApiError("UNKNOWN", msg, status);
   }
   return resBody.data as TAppointmentResponse;
 }
@@ -73,15 +80,20 @@ export async function getAppointment(
   });
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
     if (status_code === 404) {
       //해당 방이 존재하지 않음
-      throw new Error(ERROR_MESSAGE.APPOINTMENT_NOT_EXIST);
+      throw new ApiError(API_ERROR_CODE.APPOINTMENT_NOT_EXISTED, message, 404);
     }
-    throw new Error(`${status_code}: ${message}`);
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to get the appointment";
+    throw new ApiError("UNKNOWN", msg, status);
   }
   return resBody.data as TAppointmentResponse;
 }
@@ -108,13 +120,19 @@ export async function editAppointment(
   });
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
     if (status_code === 404) {
       // 방이 존재하지 않거나 참여자가 아님
+      throw new ApiError(API_ERROR_CODE.APPOINTMENT_NOT_EXISTED, message, 404);
     }
-    throw new Error(`${status_code}: ${message}`);
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to edit the appointment";
+    throw new ApiError("UNKNOWN", msg, status);
   }
 
   return resBody.data as TAppointmentResponse;
@@ -149,14 +167,20 @@ export async function joinAppointment(
   });
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
     if (status_code === 404) {
       // 해당 방이 존재하지 않음
+      throw new ApiError(API_ERROR_CODE.APPOINTMENT_NOT_EXISTED, message, 404);
     }
-    throw new Error(`${status_code}: ${message}`);
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to join the appointment";
+    throw new ApiError("UNKNOWN", msg, status);
   }
 
   return resBody.data as TAppointmentResponse;
@@ -176,17 +200,24 @@ export async function leaveAppointment(
   );
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
     if (status_code === 401) {
       // 호스트는 나갈 수 없음
+      throw new ApiError(API_ERROR_CODE.HOST_NOT_ALLOWED, message, 403);
     }
     if (status_code === 404) {
       // 참여 중인 유저가 아니거나 방이 없음
+      throw new ApiError(API_ERROR_CODE.APPOINTMENT_NOT_EXISTED, message, 404);
     }
-    throw new Error(`${status_code}: ${message}`);
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to leave the appointment";
+    throw new ApiError("UNKNOWN", msg, status);
   }
 
   return;
@@ -206,17 +237,24 @@ export async function deleteAppointment(
   });
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
     if (status_code === 401) {
       // 삭제 권한 없음 (호스트가 아님)
+      throw new ApiError(API_ERROR_CODE.PERMISSION_DENIED, message, 403);
     }
     if (status_code === 404) {
       // 방이 존재하지 않음
+      throw new ApiError(API_ERROR_CODE.APPOINTMENT_NOT_EXISTED, message, 404);
     }
-    throw new Error(`${status_code}: ${message}`);
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to delete the appointment";
+    throw new ApiError("UNKNOWN", msg, status);
   }
 
   return;
@@ -239,15 +277,20 @@ export async function getAppointmentPreviewInfo(
   });
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
     if (status_code === 404) {
       //해당 방이 존재하지 않음
-      throw new Error(ERROR_MESSAGE.APPOINTMENT_NOT_EXIST);
+      throw new ApiError(API_ERROR_CODE.APPOINTMENT_NOT_EXISTED, message, 404);
     }
-    throw new Error(`${status_code}: ${message}`);
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to get the preview of the appointment";
+    throw new ApiError("UNKNOWN", msg, status);
   }
   return resBody.data as TAppointmentPreviewResponse;
 }
