@@ -1,23 +1,53 @@
 import {
+  MutationCache,
+  QueryCache,
   QueryClient,
+  QueryClientConfig,
   defaultShouldDehydrateQuery,
   isServer,
 } from "@tanstack/react-query";
+import { ApiError } from "./error";
+import { API_ERROR_CODE } from "@/constants/error-code";
 
-function makeQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 60 * 1000,
-        gcTime: 10 * 60 * 1000,
-      },
-      dehydrate: {
-        // include pending queries in dehydration
-        shouldDehydrateQuery: (query) =>
-          defaultShouldDehydrateQuery(query) ||
-          query.state.status === "pending",
-      },
+const commonQueryClientConfig: QueryClientConfig = {
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     },
+    dehydrate: {
+      // include pending queries in dehydration
+      shouldDehydrateQuery: (query) =>
+        defaultShouldDehydrateQuery(query) || query.state.status === "pending",
+    },
+  },
+};
+
+// 서버용
+function makeQueryClient() {
+  return new QueryClient(commonQueryClientConfig);
+}
+
+// 클라이언트용
+export function makeBrowserQueryClient(onAuthError: () => void) {
+  return new QueryClient({
+    ...commonQueryClientConfig,
+    queryCache: new QueryCache({
+      onError: (error, query) => {
+        if (error instanceof ApiError && error.isAuthError()) {
+          if (query.meta?.requiresAuth) {
+            onAuthError();
+          }
+        }
+      },
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        if (error instanceof ApiError && error.isAuthError()) {
+          onAuthError();
+        }
+      },
+    }),
   });
 }
 
