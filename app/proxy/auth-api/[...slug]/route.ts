@@ -59,6 +59,10 @@ async function handler(
 
   const data = await res.json();
 
+  if (process.env.NODE_ENV === "development") {
+    console.log(data);
+  }
+
   if (!res.ok) {
     console.log("요청 실패:", data);
   }
