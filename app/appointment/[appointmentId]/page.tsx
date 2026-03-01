@@ -6,7 +6,7 @@ import AppointmentSettledSection from "@/components/appointment/AppointmentSettl
 import PlaceVoteSection from "@/components/appointment/PlaceVoteSection";
 import { ERROR_MESSAGE } from "@/constants/error-message";
 import { AppointmentPageProvider } from "@/context/AppointmentContext";
-import { getQueryClient } from "@/lib/react-query/get-query-client";
+import { getQueryClient } from "@/lib/queryClient";
 import {
   dehydrate,
   HydrationBoundary,

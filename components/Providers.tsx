@@ -2,7 +2,7 @@
 
 import { ConfirmProvider } from "@/context/ConfirmContext";
 import { ToastProvider } from "@/context/ToastContext";
-import { getQueryClient } from "@/lib/react-query/get-query-client";
+import { getQueryClient } from "@/lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 
