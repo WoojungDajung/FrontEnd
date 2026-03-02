@@ -20,6 +20,7 @@ const useDateVoteStatusByUserQuery = (
     queryFn: ({ queryKey }) =>
       getVoteStatusByUser(queryKey[1] as string, queryKey[2] as number),
     ...queryOptions,
+    meta: { requiresAuth: true },
   });
 };
 

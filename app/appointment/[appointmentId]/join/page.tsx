@@ -1,7 +1,8 @@
 import { getAppointmentPreviewInfo } from "@/api/appointment";
 import JoinAppointmentForm from "@/components/appointment/JoinAppointmentForm";
 import CommonLayout from "@/components/CommonLayout";
-import { ERROR_MESSAGE } from "@/constants/error-message";
+import { API_ERROR_CODE } from "@/constants/error-code";
+import { ApiError } from "@/lib/error";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
@@ -22,8 +23,10 @@ const Page = async ({
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    if (error.message === ERROR_MESSAGE.APPOINTMENT_NOT_EXIST) {
-      notFound();
+    if (error instanceof ApiError) {
+      if (error.code === API_ERROR_CODE.APPOINTMENT_NOT_EXISTED) {
+        notFound();
+      }
     }
     redirect("/error");
   }

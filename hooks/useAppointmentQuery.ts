@@ -9,6 +9,7 @@ const useAppointmentQuery = ({ appointmentId }: useAppointmentQueryProps) => {
   return useQuery({
     queryKey: ["appointment", appointmentId],
     queryFn: ({ queryKey }) => getAppointment(queryKey[1]),
+    meta: { requiresAuth: true },
   });
 };
 

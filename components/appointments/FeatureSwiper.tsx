@@ -3,7 +3,6 @@
 import { cn } from "@/utils/cn";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
-
 import "swiper/css";
 import CreateAppointmentForm from "./CreateAppointmentForm";
 import AppointmentList from "./AppointmentList";

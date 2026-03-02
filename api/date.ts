@@ -5,6 +5,8 @@ import {
   TVoteStatusResponse,
 } from "@/types/apiResponse";
 import { buildAuthUrl } from "./utils";
+import { ApiError } from "@/lib/error";
+import { API_ERROR_CODE } from "@/constants/error-code";
 
 export async function getVoteStatus(appointmentId: string, init?: RequestInit) {
   const res = await fetch(buildAuthUrl(`/date/vote/${appointmentId}`), {
@@ -13,11 +15,16 @@ export async function getVoteStatus(appointmentId: string, init?: RequestInit) {
   });
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
-    throw new Error(`${status_code}: ${message}`);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to get the date voting status";
+    throw new ApiError("UNKNOWN", msg, status);
   }
 
   return resBody.data as TVoteStatusResponse;
@@ -38,14 +45,20 @@ export async function getVoteStatusByMonth(
   );
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
     if (status_code === 404) {
       // 방 또는 참여정보를 찾을 수 없음
+      throw new ApiError(API_ERROR_CODE.APPOINTMENT_NOT_EXISTED, message, 404);
     }
-    throw new Error(`${status_code}: ${message}`);
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to get the date voting status by month";
+    throw new ApiError("UNKNOWN", msg, status);
   }
 
   return resBody.data as TDateVoteByMonthResponse;
@@ -71,11 +84,16 @@ export async function getVoteStatusByYMD(
   );
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
-    throw new Error(`${status_code}: ${message}`);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to get date voting status by date(ymd)";
+    throw new ApiError("UNKNOWN", msg, status);
   }
 
   return resBody.data as TDateVoteByYMDResponse;
@@ -110,11 +128,16 @@ export async function voteDate(
   });
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
-    throw new Error(`${status_code}: ${message}`);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to submit date vote";
+    throw new ApiError("UNKNOWN", msg, status);
   }
 
   return resBody.data;
@@ -131,14 +154,20 @@ export async function getVoteStatusByUser(
   });
 
   const resBody = await res.json();
-  const { status_code, message } = resBody;
+  const { status_code, message, code } = resBody;
 
   if (!res.ok || status_code !== 200) {
     console.log(resBody);
+    if (code) {
+      throw new ApiError(code, message, res.status);
+    }
     if (status_code === 404) {
       // 방 또는 참여정보를 찾을 수 없음
+      throw new ApiError(API_ERROR_CODE.APPOINTMENT_NOT_EXISTED, message, 404);
     }
-    throw new Error(`${status_code}: ${message}`);
+    const status = status_code ?? res.status;
+    const msg = message ?? "Failed to get the date voting status by user";
+    throw new ApiError("UNKNOWN", msg, status);
   }
 
   return resBody.data as TDateVoteByUserResponse;
