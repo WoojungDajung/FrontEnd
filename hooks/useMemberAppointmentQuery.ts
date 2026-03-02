@@ -5,6 +5,7 @@ const useMemberAppointmentQuery = () => {
   return useQuery({
     queryKey: ["member-appointments"],
     queryFn: getMemberAppointments,
+    meta: { requiresAuth: true },
   });
 };
 

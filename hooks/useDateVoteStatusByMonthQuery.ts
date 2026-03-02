@@ -1,6 +1,6 @@
 import { getVoteStatusByMonth } from "@/api/date";
 import { TDateVoteByMonthResponse } from "@/types/apiResponse";
-import {  useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import dayjs from "dayjs";
 
 function formatDate(date: Date) {
@@ -19,6 +19,7 @@ export function getDateVoteStatusByMonthQueryOptions(
   return {
     queryKey: ["date-vote-status-by-month", appointmentId, formatDate(month)],
     queryFn: ({ queryKey }) => getVoteStatusByMonth(queryKey[1], queryKey[2]),
+    meta: { requiresAuth: true },
   };
 }
 

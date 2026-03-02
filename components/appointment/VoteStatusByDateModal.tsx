@@ -1,4 +1,4 @@
-import useDateVoteStatusByYMD from "@/hooks/useDateVoteStatusByYMD";
+import useDateVoteStatusByYMDQuery from "@/hooks/useDateVoteStatusByYMDQuery";
 import CloseIcon from "../shared/icons/CloseIcon";
 import Modal from "../shared/Modal";
 import CheckIcon from "./icons/CheckIcon";
@@ -15,7 +15,7 @@ const VoteStatusByDateModal = ({
   setOpen,
   appointmentId,
 }: VoteStatusByDateModalProps) => {
-  const { data } = useDateVoteStatusByYMD(appointmentId, date);
+  const { data } = useDateVoteStatusByYMDQuery(appointmentId, date);
 
   if (data === undefined) return <></>;
 

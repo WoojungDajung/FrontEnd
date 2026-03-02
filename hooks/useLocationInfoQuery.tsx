@@ -14,7 +14,7 @@ const useLocationInfoQuery = ({
     queryKey: ["appointment-location", appointmentId, placeId],
     queryFn: ({ queryKey }) =>
       getLocation(queryKey[1].toString(), Number(queryKey[2])),
-
+    meta: { requiresAuth: true },
   });
 };
 

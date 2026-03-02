@@ -7,7 +7,6 @@ import {
   isServer,
 } from "@tanstack/react-query";
 import { ApiError } from "./error";
-import { API_ERROR_CODE } from "@/constants/error-code";
 
 const commonQueryClientConfig: QueryClientConfig = {
   defaultOptions: {

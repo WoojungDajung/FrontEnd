@@ -9,6 +9,7 @@ const useDateVoteQuery = ({ appointmentId }: useDateVoteQueryProps) => {
   return useQuery({
     queryKey: ["date-vote-status", appointmentId],
     queryFn: ({ queryKey }) => getVoteStatus(queryKey[1]),
+    meta: { requiresAuth: true },
   });
 };
 
