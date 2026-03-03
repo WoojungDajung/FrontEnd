@@ -3,6 +3,7 @@ import "./globals.css";
 import { pretendard } from "./fonts";
 import Providers from "@/components/Providers";
 import DevTool from "@/components/DevTool";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   title: "만날우정",
@@ -16,6 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={pretendard.variable}>
+      <GoogleTagManager gtmId="GTM-T2H4HVC6" />
       <body>
         <Providers>
           <>
