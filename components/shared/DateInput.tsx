@@ -1,6 +1,12 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, useCallback, useEffect } from "react";
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import CalendarIcon from "./icons/CalendarIcon";
 import DatePicker from "./DatePicker";
 import { createPortal } from "react-dom";
@@ -24,8 +30,13 @@ const DateInput = ({ value, onValueChange, id, name }: DateInputProps) => {
 
     const containerRect = containerRef.current.getBoundingClientRect();
     const pickerRect = datePickerRef.current.getBoundingClientRect();
-  
-    const top = containerRect.top - pickerRect.height;
+
+    let top = containerRect.top - pickerRect.height;
+
+    if (top < 0) {
+      top = containerRect.bottom;
+    }
+
     datePickerRef.current.style.top = `${top}px`;
     datePickerRef.current.style.left = `${containerRect.left}px`;
   }, []);
