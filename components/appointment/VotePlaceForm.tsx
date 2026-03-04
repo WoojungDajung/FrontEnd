@@ -58,13 +58,18 @@ const VotePlaceForm = ({
   };
 
   const isVoted = (locationId: number) => selected.includes(locationId);
+  const isVotedAlready = (locationId: number) =>
+    myVotedPlaceIdList.includes(locationId);
 
   return (
     <>
       <div className="flex flex-col gap-16">
         {places.map((place) => {
           const voted = isVoted(place.id);
-          const voteCount = Number(place.voteCount) + (voted ? 1 : 0);
+          const voteCount =
+            Number(place.voteCount) +
+            (voted ? 1 : 0) -
+            (isVotedAlready(place.id) ? 1 : 0);
 
           return (
             <PlaceItemForVote
