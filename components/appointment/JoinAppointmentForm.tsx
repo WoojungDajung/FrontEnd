@@ -94,6 +94,7 @@ const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
       </div>
 
       <Button
+        id="btn_join_appointment"
         size="Large"
         color="Primary"
         className="h-56"
