@@ -13,6 +13,7 @@ import useDeleteAppointment from "@/hooks/useDeleteAppointment";
 import { useToast } from "@/context/ToastContext";
 import { useCallback } from "react";
 import { dateToString, stringToDate } from "@/utils/calendar";
+import { sendGTM } from "@/lib/google-tag-manager";
 
 interface EditAppointmentDrawerProps {
   appointmentId: string;
@@ -21,6 +22,7 @@ interface EditAppointmentDrawerProps {
   open?: boolean;
   setOpen?: (open: boolean) => void;
   isHost: boolean;
+  isConfirmed: boolean;
 }
 
 interface FormValues {
@@ -35,6 +37,7 @@ const EditAppointmentDrawer = ({
   open,
   setOpen,
   isHost,
+  isConfirmed,
 }: EditAppointmentDrawerProps) => {
   const router = useRouter();
   const confirm = useConfirm();
@@ -43,7 +46,7 @@ const EditAppointmentDrawer = ({
   const {
     register,
     control,
-    formState: { isValid, errors, isDirty },
+    formState: { isValid, errors, isDirty, dirtyFields },
     handleSubmit,
     reset,
   } = useForm<FormValues>({
@@ -73,6 +76,13 @@ const EditAppointmentDrawer = ({
       {
         onSuccess: () => {
           toast({ message: "저장이 완료됐어요." });
+          sendGTM({
+            event: "edit_appointment",
+            appointment_id: appointmentId,
+            edit_name: dirtyFields.appointmentName ?? false,
+            edit_deadline: dirtyFields.deadline ?? false,
+            is_after_deadline: isConfirmed,
+          });
         },
         onError: (error) => {
           console.log("약속 정보 수정 실패:", error);
@@ -181,7 +191,11 @@ const EditAppointmentDrawer = ({
                 />
               </FormField>
             </div>
-            <Button size="Large" disabled={isSubmitBtnDisabled}>
+            <Button
+              id="btn_save_appointment"
+              size="Large"
+              disabled={isSubmitBtnDisabled}
+            >
               등록하기
             </Button>
           </form>

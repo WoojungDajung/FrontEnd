@@ -129,6 +129,7 @@ const AppointmentInfoSection = ({
         open={appointmentDrawerOpen}
         setOpen={setAppointmentDrawerOpen}
         isHost={isHost}
+        isConfirmed={appointmentData.appointment.confirmYn === "Y"}
       />
       {/* Modal */}
       {shareModalOpen && (
