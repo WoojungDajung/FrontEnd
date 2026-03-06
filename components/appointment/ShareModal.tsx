@@ -10,6 +10,7 @@ import {
   shareAppointmentOnKakaoTalk,
 } from "@/lib/kakao-share";
 import { useToast } from "@/context/ToastContext";
+import { sendGTM } from "@/lib/google-tag-manager";
 
 interface ShareModalProps {
   appointmentId: string;
@@ -27,12 +28,25 @@ const ShareModal = ({
   const link = `${process.env.NEXT_PUBLIC_BASE_URL}/appointment/${appointmentId}`;
 
   const showMoreShare = () => {
-    navigator.share({ url: link });
+    navigator.share({ url: link }).then(() => {
+      sendGTM({
+        event: "share_link",
+        appointment_id: appointmentId,
+        share_context: "invitation",
+        share_method: "system_share",
+      });
+    });
   };
 
   const copyLink = () => {
     navigator.clipboard.writeText(link).then(() => {
       toast({ message: "복사가 완료됐어요." });
+      sendGTM({
+        event: "share_link",
+        appointment_id: appointmentId,
+        share_context: "invitation",
+        share_method: "link_copy",
+      });
     });
   };
 
@@ -42,6 +56,12 @@ const ShareModal = ({
       appointmentName,
       MESSAGE_TEMPLATE_ID.INVITE,
     );
+    sendGTM({
+      event: "share_link",
+      appointment_id: appointmentId,
+      share_context: "invitation",
+      share_method: "kakao",
+    });
   };
 
   return (
@@ -70,8 +90,10 @@ const ShareModal = ({
                 만날우정, 함께할 친구를 불러보세요!
               </p>
               <div className="flex justify-center gap-24">
+                {/* 카카오톡 공유 버튼 */}
                 <div className="flex flex-col gap-8 items-center">
                   <button
+                    id="btn_share_kakao"
                     className="button w-56 h-56 bg-[#FEE500] rounded-full"
                     onClick={shareOnKakaoTalk}
                   >
@@ -79,8 +101,10 @@ const ShareModal = ({
                   </button>
                   <p className="typo-12-regular text-gray-500">카카오톡</p>
                 </div>
+                {/* 더보기 버튼 */}
                 <div className="flex flex-col gap-8 items-center">
                   <button
+                    id="btn_share_sheet"
                     className="button w-56 h-56 bg-gray-100 rounded-full"
                     onClick={showMoreShare}
                   >
@@ -88,8 +112,10 @@ const ShareModal = ({
                   </button>
                   <p className="typo-12-regular text-gray-500">더보기</p>
                 </div>
+                {/* URL 복사 버튼 */}
                 <div className="flex flex-col gap-8 items-center">
                   <button
+                    id="btn_copy_link"
                     className="button w-56 h-56 bg-gray-100 rounded-full"
                     onClick={copyLink}
                   >
