@@ -84,6 +84,15 @@ export function dateToString(date: Date) {
   return dayjs(date).format("YYYY-MM-DD");
 }
 
+/**
+ *
+ * @param str YYYY-MM-DD 형식의 문자열
+ * @returns Date
+ */
+export function stringToDate(str: string): Date {
+  return dayjs(str).toDate();
+}
+
 export function isAfterOrSameMonth(a: Date, b: Date) {
   return dayjs(a).startOf("month").isSameOrAfter(dayjs(b).startOf("month"));
 }

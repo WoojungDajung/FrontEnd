@@ -2,7 +2,6 @@ import {
   TAppointmentPreviewResponse,
   TAppointmentResponse,
 } from "@/types/apiResponse";
-import dayjs from "dayjs";
 import { buildAuthUrl } from "./utils";
 import { ApiError } from "@/lib/error";
 import { API_ERROR_CODE } from "@/constants/error-code";
@@ -101,17 +100,15 @@ export async function getAppointment(
 export async function editAppointment(
   appointmentId: string,
   appointmentName: string,
-  appointmentDueDate: Date,
+  appointmentDueDate: string, // YYYY-MM-DD 형식의 문자열
   init?: RequestInit,
 ) {
-  const dueDateStr = dayjs(appointmentDueDate).format("YYYY-MM-DD");
-
   const res = await fetch(buildAuthUrl(`/appointment/${appointmentId}`), {
     ...init,
     method: "PUT",
     body: JSON.stringify({
       appointmentName,
-      appointmentDueDate: dueDateStr,
+      appointmentDueDate,
     }),
     headers: {
       ...(init?.headers ?? {}),

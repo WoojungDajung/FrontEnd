@@ -12,11 +12,12 @@ import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteAppointment from "@/hooks/useDeleteAppointment";
 import { useToast } from "@/context/ToastContext";
 import { useCallback } from "react";
+import { dateToString, stringToDate } from "@/utils/calendar";
 
 interface EditAppointmentDrawerProps {
   appointmentId: string;
   initialName: string;
-  initialDueDate: Date;
+  initialDueDate: string; // YYYY-MM-DD
   open?: boolean;
   setOpen?: (open: boolean) => void;
   isHost: boolean;
@@ -24,7 +25,7 @@ interface EditAppointmentDrawerProps {
 
 interface FormValues {
   appointmentName: string;
-  deadline: Date;
+  deadline: string; // YYYY-MM-DD
 }
 
 const EditAppointmentDrawer = ({
@@ -42,7 +43,7 @@ const EditAppointmentDrawer = ({
   const {
     register,
     control,
-    formState: { isValid, errors },
+    formState: { isValid, errors, isDirty },
     handleSubmit,
     reset,
   } = useForm<FormValues>({
@@ -121,6 +122,8 @@ const EditAppointmentDrawer = ({
     }
   };
 
+  const isSubmitBtnDisabled = !isValid || !isDirty;
+
   return (
     <BottomDrawer
       open={open}
@@ -169,14 +172,16 @@ const EditAppointmentDrawer = ({
                   rules={{ required: true }}
                   render={({ field }) => (
                     <DateInput
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={stringToDate(field.value)}
+                      onValueChange={(value) =>
+                        field.onChange(value ? dateToString(value) : undefined)
+                      }
                     />
                   )}
                 />
               </FormField>
             </div>
-            <Button size="Large" disabled={!isValid}>
+            <Button size="Large" disabled={isSubmitBtnDisabled}>
               등록하기
             </Button>
           </form>

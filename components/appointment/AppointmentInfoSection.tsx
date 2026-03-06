@@ -125,9 +125,7 @@ const AppointmentInfoSection = ({
       <EditAppointmentDrawer
         appointmentId={appointmentId}
         initialName={appointmentData.appointment.appointmentName}
-        initialDueDate={dayjs(
-          appointmentData.appointment.appointmentDueDate,
-        ).toDate()}
+        initialDueDate={appointmentData.appointment.appointmentDueDate}
         open={appointmentDrawerOpen}
         setOpen={setAppointmentDrawerOpen}
         isHost={isHost}
