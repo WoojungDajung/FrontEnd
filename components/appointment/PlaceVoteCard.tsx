@@ -18,9 +18,10 @@ import PlaceViewList from "./PlaceViewList";
 interface PlaceVoteCardProps {
   appointmentId: string;
   disabled?: boolean;
+  isHost:boolean;
 }
 
-const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
+const PlaceVoteCard = ({ appointmentId, disabled, isHost }: PlaceVoteCardProps) => {
   const { toast } = useToast();
 
   const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
@@ -113,6 +114,7 @@ const PlaceVoteCard = ({ appointmentId, disabled }: PlaceVoteCardProps) => {
                 myVotedPlaceIdList={myVotedPlaceIdList}
                 totalCount={totalCount}
                 appointmentId={appointmentId}
+                isHost={isHost}
                 onCompleteVote={() => setMode("VIEW")}
               />
             )}

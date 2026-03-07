@@ -28,6 +28,7 @@ const PlaceVoteSection = ({ appointmentId }: PlaceVoteSectionProps) => {
       <PlaceVoteCard
         appointmentId={appointmentId}
         disabled={isAppointmentSettled}
+        isHost={data.appointment.hostYn === "Y"}
       />
       <PlaceInfoDrawer
         appointmentId={appointmentId}

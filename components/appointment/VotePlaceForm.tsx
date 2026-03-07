@@ -2,16 +2,18 @@ import { Location } from "@/types/apiResponse";
 import { PlaceItemForVote } from "./PlaceItem";
 import Button from "../shared/Button";
 import useVoteLocation from "@/hooks/useVoteLocation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { useToast } from "@/context/ToastContext";
 import { sendGTM } from "@/lib/google-tag-manager";
+import { SubmitVoteEventData } from "@/types/gtmEventData";
 
 interface VotePlaceFormProps {
   places: Location[];
   myVotedPlaceIdList: number[];
   totalCount: number;
   appointmentId: string;
+  isHost: boolean;
   onCompleteVote: () => void;
 }
 
@@ -20,6 +22,7 @@ const VotePlaceForm = ({
   myVotedPlaceIdList,
   totalCount,
   appointmentId,
+  isHost,
   onCompleteVote,
 }: VotePlaceFormProps) => {
   const { toast } = useToast();
@@ -40,6 +43,18 @@ const VotePlaceForm = ({
   };
 
   /* 투표 반영 */
+  const sendGTMEvent = useCallback(() => {
+    const data: SubmitVoteEventData= {
+      event: "submit_vote",
+      appointment_id: appointmentId,
+      user_role: isHost ? "host" : "guest",
+      vote_type: "place",
+    }
+    sendGTM({
+
+    });
+  }, [appointmentId,isHost]);
+
   const { mutate, isPending, isSuccess, reset } =
     useVoteLocation(appointmentId);
   const saveVote = () => {
@@ -52,12 +67,7 @@ const VotePlaceForm = ({
         },
         onSettled: () => {
           toast({ message: "투표가 완료됐어요." });
-          sendGTM({
-            event: "submit_vote",
-            appointment_id: appointmentId,
-            vote_type: "place",
-          });
-
+          sendGTMEvent();
           onCompleteVote();
         },
       },
