@@ -127,10 +127,7 @@ const Page = async ({
             <AppointmentPageProvider>
               <div className="flex flex-col gap-16">
                 <AppointmentInfoSection appointmentId={appointmentId} />
-                <DateVoteSection
-                  appointmentId={appointmentId}
-                  canVote={!isSettled}
-                />
+                <DateVoteSection appointmentId={appointmentId} />
                 <PlaceVoteSection
                   appointmentId={appointmentId}
                   isAppointmentSettled={isSettled}

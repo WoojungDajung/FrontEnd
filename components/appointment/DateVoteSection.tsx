@@ -12,13 +12,13 @@ import ViewUserVoteCalendar from "./ViewUserVoteCalendar";
 import useAppointmentUserProfileQuery from "@/hooks/useAppointmentUserProfileQuery";
 import { useQueryClient } from "@tanstack/react-query";
 import { getVoteStatusByUser } from "@/api/date";
+import useAppointmentQuery from "@/hooks/useAppointmentQuery";
 
 interface dateVoteSectionProps {
   appointmentId: string;
-  canVote: boolean;
 }
 
-const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
+const DateVoteSection = ({ appointmentId }: dateVoteSectionProps) => {
   const queryClient = useQueryClient();
 
   const [mode, setMode] = useState<"VIEW" | "VOTE">("VIEW");
@@ -27,8 +27,12 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
   const { data: profileData } = useAppointmentUserProfileQuery({
     appointmentId,
   });
+  const { data: appointmentData } = useAppointmentQuery({ appointmentId });
 
-  const isVotable = canVote && profileData !== undefined;
+  const isVotable =
+    appointmentData !== undefined &&
+    appointmentData.appointment.confirmYn === "N" &&
+    profileData !== undefined;
 
   const onClickVoteButton = async () => {
     if (!isVotable) return;
@@ -49,11 +53,12 @@ const DateVoteSection = ({ appointmentId, canVote }: dateVoteSectionProps) => {
         <VoteCountButton appointmentId={appointmentId} />
       </div>
       <div className="bg-white border border-gray-100 rounded-[24px] flex flex-col gap-16 items-center pt-8 pb-16 relative">
-        {mode === "VOTE" && profileData ? (
+        {mode === "VOTE" && profileData && appointmentData ? (
           <VoteDateForm
             appointmentId={appointmentId}
             onSubmit={() => setMode("VIEW")}
             userId={profileData.id}
+            isHost={appointmentData.appointment.hostYn === "Y"}
           />
         ) : selectedParticipantId !== null ? (
           <>

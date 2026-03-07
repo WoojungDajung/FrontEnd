@@ -13,12 +13,14 @@ interface VoteDateFormProps {
   onSubmit: () => void;
   appointmentId: string;
   userId: number;
+  isHost: boolean;
 }
 
 const VoteDateForm = ({
   onSubmit,
   appointmentId,
   userId,
+  isHost,
 }: VoteDateFormProps) => {
   const confirm = useConfirm();
   const { toast } = useToast();
@@ -38,6 +40,7 @@ const VoteDateForm = ({
     useVoteDateForm({
       appointmentId,
       userId,
+      isHost,
       onSubmitSuccess,
       onSubmitError,
     });

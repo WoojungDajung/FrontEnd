@@ -25,3 +25,18 @@ export interface ShareLinkEventData {
   share_context: "invitation" | "result";
   share_method: ShareMethod;
 }
+
+export interface SubmitVoteEventData {
+  event: "submit_vote";
+  appointment_id: string;
+  user_role: UserRole;
+  vote_type: "schedule" | "place";
+}
+
+export interface SubmitDateEventData {
+  event: "save_date";
+  appointment_id: string;
+  user_role: UserRole;
+  possible_count: number; // '가능' 선택 개수
+  maybe_count: number; // '애매' 선택 개수
+}

@@ -6,6 +6,7 @@ import { dateToString } from "@/utils/calendar";
 import { VoteState } from "@/components/appointment/VoteCalendar";
 import useVoteDate from "./useVoteDate";
 import { sendGTM } from "@/lib/google-tag-manager";
+import { SubmitDateEventData, SubmitVoteEventData } from "@/types/gtmEventData";
 
 type VoteStatus = {
   possible: Set<string>; // YYYY-MM-DD 형식의 문자열
@@ -15,6 +16,7 @@ type VoteStatus = {
 interface useVoteDateFormProps {
   appointmentId: string;
   userId: number;
+  isHost: boolean;
   onSubmitSuccess: () => void;
   onSubmitError: () => void;
 }
@@ -22,6 +24,7 @@ interface useVoteDateFormProps {
 const useVoteDateForm = ({
   appointmentId,
   userId,
+  isHost,
   onSubmitSuccess,
   onSubmitError,
 }: useVoteDateFormProps) => {
@@ -38,14 +41,13 @@ const useVoteDateForm = ({
   });
 
   useEffect(() => {
-    if (!data) return;
     if (initialStatusRef.current) return;
-
+    if (!data) return;
+    const { possibleList, ambList } = data;
     const initialStatus = {
-      possible: new Set(data.possibleList),
-      uncertain: new Set(data.ambList),
+      possible: new Set(possibleList),
+      uncertain: new Set(ambList),
     };
-
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setStatus(initialStatus);
     initialStatusRef.current = initialStatus;
@@ -148,6 +150,29 @@ const useVoteDateForm = ({
     };
   }, []);
 
+  const sendGTMEvent = useCallback(
+    (possibleCount: number, uncertainCount: number) => {
+      const userRole = isHost ? "host" : "guest";
+      const submitData: SubmitVoteEventData = {
+        event: "submit_vote",
+        appointment_id: appointmentId,
+        user_role: userRole,
+        vote_type: "schedule",
+      };
+      sendGTM(submitData);
+
+      const saveDateData: SubmitDateEventData = {
+        event: "save_date",
+        appointment_id: appointmentId,
+        user_role: userRole,
+        possible_count: possibleCount,
+        maybe_count: uncertainCount,
+      };
+      sendGTM(saveDateData);
+    },
+    [appointmentId, isHost],
+  );
+
   const submitForm = () => {
     const { votes, possibleCount, uncertainCount } =
       getVoteDataToSubmit(status);
@@ -156,18 +181,7 @@ const useVoteDateForm = ({
       { votes },
       {
         onSuccess: () => {
-          sendGTM({
-            event: "submit_vote",
-            appointment_id: appointmentId,
-            vote_type: "schedule",
-          });
-          sendGTM({
-            event: "save_date",
-            appointment_id: appointmentId,
-            possible_count: possibleCount, // '가능' 선택 개수
-            maybe_count: uncertainCount, // '애매' 선택 개수
-          });
-
+          sendGTMEvent(possibleCount, uncertainCount);
           onSubmitSuccess();
         },
         onError: () => {
