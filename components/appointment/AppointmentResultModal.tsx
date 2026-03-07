@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useState } from "react";
 import CalendarIcon from "../shared/icons/CalendarIcon";
 import CloseIcon from "../shared/icons/CloseIcon";
 import Modal from "../shared/Modal";
@@ -20,6 +20,10 @@ import {
 import { Appointment, ConfirmedResult } from "@/types/apiResponse";
 import dayjs from "dayjs";
 import { useToast } from "@/context/ToastContext";
+import { sendGTM } from "@/lib/google-tag-manager";
+import { useQueryClient } from "@tanstack/react-query";
+import { getVoteStatusByUser } from "@/api/date";
+import { getMyVoteLocation } from "@/api/location";
 
 interface AppointmentResultModalProps {
   setOpen: (open: boolean) => void;
@@ -34,6 +38,7 @@ const AppointmentResultModal = ({
   appointmentUserCount,
   result,
 }: AppointmentResultModalProps) => {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const confirmedDateStr = useMemo(() => {
@@ -77,6 +82,41 @@ const AppointmentResultModal = ({
       });
     });
   };
+
+  /* 모달 표시되었을 때 GTM 이벤트 전송*/
+  const sendGTMEvent = useEffectEvent(async () => {
+    const { dateVotedList, placeVotedList } = result;
+    const voters = new Set<string>([...dateVotedList, ...placeVotedList]);
+
+    const { possibleList, ambList } = await queryClient.fetchQuery({
+      queryKey: [
+        "date-vote-status-by-user",
+        appointment.appointmentId,
+        appointment.appointmentUserId,
+      ],
+      queryFn: ({ queryKey }) =>
+        getVoteStatusByUser(queryKey[1] as string, queryKey[2] as number),
+    });
+    const hasVotedDate = possibleList.length > 0 || ambList.length > 0;
+
+    const myLocations = await queryClient.fetchQuery({
+      queryKey: ["my-vote-appointment-location", appointment.appointmentId],
+      queryFn: ({ queryKey }) => getMyVoteLocation(queryKey[1]),
+    });
+    const hasVotedLocation = myLocations.length > 0;
+
+    sendGTM({
+      event: "view_result",
+      appointment_id: appointment.appointmentId,
+      voter_count: voters.size, // 일정이나 장소 중 하나라도 투표한 총 인원 수 (n)
+      user_count: appointmentUserCount, // 이 약속방에 참여한 총 인원 수 (n)
+      is_schedule_voted: hasVotedDate,
+      is_place_voted: hasVotedLocation,
+    });
+  });
+  useEffect(() => {
+    sendGTMEvent();
+  }, []);
 
   return (
     <Modal
