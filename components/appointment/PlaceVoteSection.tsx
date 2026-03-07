@@ -6,16 +6,19 @@ import PlaceVoteCard from "./PlaceVoteCard";
 import { memo, useState } from "react";
 import VoteStatusModal from "./VoteStatusModal";
 import useLocationVoteStatusQuery from "@/hooks/useLocationVoteStatusQuery";
+import useAppointmentQuery from "@/hooks/useAppointmentQuery";
 
 interface PlaceVoteSectionProps {
   appointmentId: string;
-  isAppointmentSettled: boolean;
 }
 
-const PlaceVoteSection = ({
-  appointmentId,
-  isAppointmentSettled,
-}: PlaceVoteSectionProps) => {
+const PlaceVoteSection = ({ appointmentId }: PlaceVoteSectionProps) => {
+  const { data } = useAppointmentQuery({ appointmentId });
+
+  if (data === undefined) return null;
+
+  const isAppointmentSettled = data.appointment.confirmYn === "Y";
+
   return (
     <section className="flex flex-col gap-8">
       <div className="w-full flex justify-between items-center">
