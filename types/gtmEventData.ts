@@ -50,3 +50,8 @@ export interface ViewResultEventData {
   is_schedule_voted: boolean;
   is_place_voted: boolean;
 }
+
+export interface LoginCompleteEventData {
+  event: "user_login_complete";
+  member_id: string;
+}

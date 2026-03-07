@@ -12,6 +12,7 @@ const Login = ({ next }: LoginProps) => {
   const router = useRouter();
 
   const onClickButton = () => {
+    sessionStorage.removeItem("login-tracked");
     router.push(getAuthorizationUrl(next));
   };
 
