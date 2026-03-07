@@ -40,12 +40,13 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      let redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/appointments`;
-      // 기존 페이지로
-      if (state) {
-        redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}${state}`;
-      }
-      const response = NextResponse.redirect(redirectUrl);
+      const redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/success`;
+      const urlSearchParams = new URLSearchParams({
+        next: state ?? "/appointments",
+      });
+      const response = NextResponse.redirect(
+        `${redirectUrl}?${urlSearchParams.toString()}`,
+      );
       const { accessToken, refreshToken } = resData.data;
       return setToken(response, accessToken, refreshToken);
     } catch (err) {
