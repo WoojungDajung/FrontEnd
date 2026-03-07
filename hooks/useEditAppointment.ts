@@ -14,7 +14,7 @@ const useEditAppointment = ({ appointmentId }: useEditAppointmentProps) => {
       appointmentDueDate,
     }: {
       appointmentName: string;
-      appointmentDueDate: Date;
+      appointmentDueDate: string; // YYYY-MM-DD 형식의 문자열
     }) => editAppointment(appointmentId, appointmentName, appointmentDueDate),
     onSuccess: async () => {
       await queryClient.invalidateQueries({

@@ -73,7 +73,7 @@ const EditProfileDrawer = ({
   const {
     register,
     control,
-    formState: { isValid, errors, dirtyFields },
+    formState: { isValid, errors, isDirty, dirtyFields },
     handleSubmit,
     reset,
   } = useForm<FormValue>({
@@ -169,6 +169,8 @@ const EditProfileDrawer = ({
     }
   };
 
+  const isSubmitBtnDisabled = !isValid || !isDirty;
+
   return (
     <BottomDrawer
       open={open}
@@ -222,7 +224,11 @@ const EditProfileDrawer = ({
                 />
               </FormField>
             </div>
-            <Button className="w-full" size="Large" disabled={!isValid}>
+            <Button
+              className="w-full"
+              size="Large"
+              disabled={isSubmitBtnDisabled}
+            >
               저장하기
             </Button>
 

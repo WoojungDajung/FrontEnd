@@ -12,19 +12,23 @@ import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteAppointment from "@/hooks/useDeleteAppointment";
 import { useToast } from "@/context/ToastContext";
 import { useCallback } from "react";
+import { dateToString, stringToDate } from "@/utils/calendar";
+import { sendGTM } from "@/lib/google-tag-manager";
+import { EditAppointmentEventData } from "@/types/gtmEventData";
 
 interface EditAppointmentDrawerProps {
   appointmentId: string;
   initialName: string;
-  initialDueDate: Date;
+  initialDueDate: string; // YYYY-MM-DD
   open?: boolean;
   setOpen?: (open: boolean) => void;
   isHost: boolean;
+  isConfirmed: boolean;
 }
 
 interface FormValues {
   appointmentName: string;
-  deadline: Date;
+  deadline: string; // YYYY-MM-DD
 }
 
 const EditAppointmentDrawer = ({
@@ -34,6 +38,7 @@ const EditAppointmentDrawer = ({
   open,
   setOpen,
   isHost,
+  isConfirmed,
 }: EditAppointmentDrawerProps) => {
   const router = useRouter();
   const confirm = useConfirm();
@@ -42,7 +47,7 @@ const EditAppointmentDrawer = ({
   const {
     register,
     control,
-    formState: { isValid, errors },
+    formState: { isValid, errors, isDirty, dirtyFields },
     handleSubmit,
     reset,
   } = useForm<FormValues>({
@@ -72,6 +77,17 @@ const EditAppointmentDrawer = ({
       {
         onSuccess: () => {
           toast({ message: "저장이 완료됐어요." });
+
+          // 구글 태그 매니저 이벤트 전송
+          const gtmEventData: EditAppointmentEventData = {
+            event: "edit_appointment",
+            appointment_id: appointmentId,
+            user_role: isHost ? "host" : "guest",
+            edit_name: dirtyFields.appointmentName ?? false,
+            edit_deadline: dirtyFields.deadline ?? false,
+            is_after_deadline: isConfirmed,
+          };
+          sendGTM(gtmEventData);
         },
         onError: (error) => {
           console.log("약속 정보 수정 실패:", error);
@@ -121,6 +137,8 @@ const EditAppointmentDrawer = ({
     }
   };
 
+  const isSubmitBtnDisabled = !isValid || !isDirty;
+
   return (
     <BottomDrawer
       open={open}
@@ -169,14 +187,20 @@ const EditAppointmentDrawer = ({
                   rules={{ required: true }}
                   render={({ field }) => (
                     <DateInput
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={stringToDate(field.value)}
+                      onValueChange={(value) =>
+                        field.onChange(value ? dateToString(value) : undefined)
+                      }
                     />
                   )}
                 />
               </FormField>
             </div>
-            <Button size="Large" disabled={!isValid}>
+            <Button
+              id="btn_save_appointment"
+              size="Large"
+              disabled={isSubmitBtnDisabled}
+            >
               등록하기
             </Button>
           </form>

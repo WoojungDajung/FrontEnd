@@ -125,12 +125,11 @@ const AppointmentInfoSection = ({
       <EditAppointmentDrawer
         appointmentId={appointmentId}
         initialName={appointmentData.appointment.appointmentName}
-        initialDueDate={dayjs(
-          appointmentData.appointment.appointmentDueDate,
-        ).toDate()}
+        initialDueDate={appointmentData.appointment.appointmentDueDate}
         open={appointmentDrawerOpen}
         setOpen={setAppointmentDrawerOpen}
         isHost={isHost}
+        isConfirmed={appointmentData.appointment.confirmYn === "Y"}
       />
       {/* Modal */}
       {shareModalOpen && (
@@ -138,6 +137,7 @@ const AppointmentInfoSection = ({
           appointmentId={appointmentId}
           appointmentName={appointmentData.appointment.appointmentName}
           setOpen={setShareModalOpen}
+          isHost={isHost}
         />
       )}
     </section>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useState } from "react";
 import CalendarIcon from "../shared/icons/CalendarIcon";
 import CloseIcon from "../shared/icons/CloseIcon";
 import Modal from "../shared/Modal";
@@ -20,6 +20,15 @@ import {
 import { Appointment, ConfirmedResult } from "@/types/apiResponse";
 import dayjs from "dayjs";
 import { useToast } from "@/context/ToastContext";
+import { sendGTM } from "@/lib/google-tag-manager";
+import { useQueryClient } from "@tanstack/react-query";
+import { getVoteStatusByUser } from "@/api/date";
+import { getMyVoteLocation } from "@/api/location";
+import {
+  ShareLinkEventData,
+  ShareMethod,
+  ViewResultEventData,
+} from "@/types/gtmEventData";
 
 interface AppointmentResultModalProps {
   setOpen: (open: boolean) => void;
@@ -34,6 +43,7 @@ const AppointmentResultModal = ({
   appointmentUserCount,
   result,
 }: AppointmentResultModalProps) => {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const confirmedDateStr = useMemo(() => {
@@ -50,8 +60,21 @@ const AppointmentResultModal = ({
   /* 결과 공유 */
   const link = `${process.env.NEXT_PUBLIC_BASE_URL}/appointment/${appointment.appointmentId}`;
 
+  const getGTMShareEventData = (method: ShareMethod): ShareLinkEventData => {
+    const { appointmentId, hostYn } = appointment;
+    return {
+      event: "share_link",
+      appointment_id: appointmentId,
+      user_role: hostYn === "Y" ? "host" : "guest",
+      share_context: "result",
+      share_method: method,
+    };
+  };
+
   const showMoreShare = () => {
-    navigator.share({ url: link });
+    navigator.share({ url: link }).then(() => {
+      sendGTM(getGTMShareEventData("system_share"));
+    });
   };
 
   const copyLink = () => {
@@ -59,6 +82,7 @@ const AppointmentResultModal = ({
       toast({
         message: "복사가 완료됐어요.",
       });
+      sendGTM(getGTMShareEventData("link_copy"));
     });
   };
 
@@ -68,6 +92,7 @@ const AppointmentResultModal = ({
       appointment.appointmentName,
       MESSAGE_TEMPLATE_ID.SHARE_RESULT,
     );
+    sendGTM(getGTMShareEventData("kakao"));
   };
 
   const copyAddress = () => {
@@ -77,6 +102,40 @@ const AppointmentResultModal = ({
       });
     });
   };
+
+  /* 모달 표시되었을 때 GTM 이벤트 전송*/
+  const sendGTMEvent = useEffectEvent(async () => {
+    const { dateVotedList, placeVotedList } = result;
+    const voters = new Set<string>([...dateVotedList, ...placeVotedList]);
+
+    const { possibleList, ambList } = await queryClient.fetchQuery({
+      queryKey: [
+        "date-vote-status-by-user",
+        appointment.appointmentId,
+        appointment.appointmentUserId,
+      ],
+      queryFn: ({ queryKey }) =>
+        getVoteStatusByUser(queryKey[1] as string, queryKey[2] as number),
+    });
+    const myLocations = await queryClient.fetchQuery({
+      queryKey: ["my-vote-appointment-location", appointment.appointmentId],
+      queryFn: ({ queryKey }) => getMyVoteLocation(queryKey[1]),
+    });
+
+    const data: ViewResultEventData = {
+      event: "view_result",
+      appointment_id: appointment.appointmentId,
+      user_role: appointment.hostYn === "Y" ? "host" : "guest",
+      voter_count: voters.size,
+      user_count: appointmentUserCount,
+      is_schedule_voted: possibleList.length > 0 || ambList.length > 0,
+      is_place_voted: myLocations.length > 0,
+    };
+    sendGTM(data);
+  });
+  useEffect(() => {
+    sendGTMEvent();
+  }, []);
 
   return (
     <Modal

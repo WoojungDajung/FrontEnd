@@ -121,3 +121,7 @@ export type TMemberAppointments = {
   }[];
   appointmentCount: string;
 };
+
+export type TMemberIdResponse = {
+  memberId: string;
+};

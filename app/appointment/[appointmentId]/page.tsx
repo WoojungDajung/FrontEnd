@@ -20,6 +20,7 @@ import { getLocations, getLocationVoteStatus } from "@/api/location";
 import CommonLayout from "@/components/CommonLayout";
 import { ApiError } from "@/lib/error";
 import { API_ERROR_CODE } from "@/constants/error-code";
+import AppointmentPageEffect from "@/components/appointment/AppointmentPageEffect";
 
 async function checkJoin(
   appointmentId: string,
@@ -126,18 +127,13 @@ const Page = async ({
             <AppointmentPageProvider>
               <div className="flex flex-col gap-16">
                 <AppointmentInfoSection appointmentId={appointmentId} />
-                <DateVoteSection
-                  appointmentId={appointmentId}
-                  canVote={!isSettled}
-                />
-                <PlaceVoteSection
-                  appointmentId={appointmentId}
-                  isAppointmentSettled={isSettled}
-                />
+                <DateVoteSection appointmentId={appointmentId} />
+                <PlaceVoteSection appointmentId={appointmentId} />
               </div>
             </AppointmentPageProvider>
           </div>
         </main>
+        <AppointmentPageEffect appointmentId={appointmentId} />
       </HydrationBoundary>
     </CommonLayout>
   );

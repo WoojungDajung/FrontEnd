@@ -12,6 +12,8 @@ import { cn } from "@/utils/cn";
 import { Place } from "@/types/shared";
 import useCreateAppointment from "@/hooks/useCreateAppointment";
 import { useToast } from "@/context/ToastContext";
+import { sendGTM } from "@/lib/google-tag-manager";
+import { dateToString } from "@/utils/calendar";
 
 interface FormValues {
   appointmentName: string;
@@ -41,6 +43,12 @@ const CreateAppointmentForm = () => {
       {
         onSuccess: (appointmentId) => {
           // 약속 페이지로 이동
+          sendGTM({
+            event: "create_appointment",
+            appointment_id: appointmentId,
+            deadline_time: dateToString(deadline),
+          });
+
           router.push(`/appointment/${appointmentId}`);
         },
         onError: () => {
@@ -122,7 +130,13 @@ const CreateAppointmentForm = () => {
           />
         </FormField>
       </div>
-      <Button size="Large" color="Primary" type="submit" disabled={!isValid}>
+      <Button
+        id="btn_create_appointment"
+        size="Large"
+        color="Primary"
+        type="submit"
+        disabled={!isValid}
+      >
         약속 정하러 가기
       </Button>
 
