@@ -5,6 +5,7 @@ import useVoteLocation from "@/hooks/useVoteLocation";
 import { useState } from "react";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { useToast } from "@/context/ToastContext";
+import { sendGTM } from "@/lib/google-tag-manager";
 
 interface VotePlaceFormProps {
   places: Location[];
@@ -51,6 +52,12 @@ const VotePlaceForm = ({
         },
         onSettled: () => {
           toast({ message: "투표가 완료됐어요." });
+          sendGTM({
+            event: "submit_vote",
+            appointment_id: appointmentId,
+            vote_type: "place",
+          });
+
           onCompleteVote();
         },
       },

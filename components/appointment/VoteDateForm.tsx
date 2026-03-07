@@ -9,6 +9,7 @@ import useDateVoteStatusByUserQuery from "@/hooks/useDateVoteStatusByUserQuery";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { useConfirm } from "@/context/ConfirmContext";
 import { useToast } from "@/context/ToastContext";
+import { sendGTM } from "@/lib/google-tag-manager";
 
 type VoteStatus = {
   possible: Set<string>; // YYYY-MM-DD 형식의 문자열
@@ -107,6 +108,10 @@ const VoteDateForm = ({
 
       const possibleDates = new Set(status.possible);
       const uncertainDates = new Set(status.uncertain);
+
+      const possibleCount = possibleDates.size;
+      const uncertainCount = uncertainDates.size;
+
       // initialStatus 확인
       if (initialStatus) {
         // 기존에 가능했던 날짜 확인
@@ -155,6 +160,19 @@ const VoteDateForm = ({
         {
           onSuccess: () => {
             toast({ message: "투표가 완료됐어요." });
+
+            sendGTM({
+              event: "submit_vote",
+              appointment_id: appointmentId,
+              vote_type: "schedule",
+            });
+            sendGTM({
+              event: "save_date",
+              appointment_id: appointmentId,
+              possible_count: possibleCount, // '가능' 선택 개수
+              maybe_count: uncertainCount, // '애매' 선택 개수
+            });
+
             onSubmit();
           },
           onError: () => {
@@ -166,7 +184,7 @@ const VoteDateForm = ({
         },
       );
     },
-    [mutate, reset, onSubmit, toast, confirm],
+    [mutate, reset, onSubmit, toast, confirm, appointmentId],
   );
 
   const tomorrow = useMemo(() => addDays(new Date(), 1), []);
