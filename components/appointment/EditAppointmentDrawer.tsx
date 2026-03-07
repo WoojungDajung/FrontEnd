@@ -14,6 +14,7 @@ import { useToast } from "@/context/ToastContext";
 import { useCallback } from "react";
 import { dateToString, stringToDate } from "@/utils/calendar";
 import { sendGTM } from "@/lib/google-tag-manager";
+import { EditAppointmentEventData } from "@/types/gtmEventData";
 
 interface EditAppointmentDrawerProps {
   appointmentId: string;
@@ -76,13 +77,17 @@ const EditAppointmentDrawer = ({
       {
         onSuccess: () => {
           toast({ message: "저장이 완료됐어요." });
-          sendGTM({
+
+          // 구글 태그 매니저 이벤트 전송
+          const gtmEventData: EditAppointmentEventData = {
             event: "edit_appointment",
             appointment_id: appointmentId,
+            user_role: isHost ? "host" : "guest",
             edit_name: dirtyFields.appointmentName ?? false,
             edit_deadline: dirtyFields.deadline ?? false,
             is_after_deadline: isConfirmed,
-          });
+          };
+          sendGTM(gtmEventData);
         },
         onError: (error) => {
           console.log("약속 정보 수정 실패:", error);
