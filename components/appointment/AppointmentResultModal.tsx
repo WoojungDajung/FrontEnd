@@ -24,7 +24,11 @@ import { sendGTM } from "@/lib/google-tag-manager";
 import { useQueryClient } from "@tanstack/react-query";
 import { getVoteStatusByUser } from "@/api/date";
 import { getMyVoteLocation } from "@/api/location";
-import { ShareLinkEventData, ShareMethod } from "@/types/gtmEventData";
+import {
+  ShareLinkEventData,
+  ShareMethod,
+  ViewResultEventData,
+} from "@/types/gtmEventData";
 
 interface AppointmentResultModalProps {
   setOpen: (open: boolean) => void;
@@ -113,22 +117,21 @@ const AppointmentResultModal = ({
       queryFn: ({ queryKey }) =>
         getVoteStatusByUser(queryKey[1] as string, queryKey[2] as number),
     });
-    const hasVotedDate = possibleList.length > 0 || ambList.length > 0;
-
     const myLocations = await queryClient.fetchQuery({
       queryKey: ["my-vote-appointment-location", appointment.appointmentId],
       queryFn: ({ queryKey }) => getMyVoteLocation(queryKey[1]),
     });
-    const hasVotedLocation = myLocations.length > 0;
 
-    sendGTM({
+    const data: ViewResultEventData = {
       event: "view_result",
       appointment_id: appointment.appointmentId,
-      voter_count: voters.size, // 일정이나 장소 중 하나라도 투표한 총 인원 수 (n)
-      user_count: appointmentUserCount, // 이 약속방에 참여한 총 인원 수 (n)
-      is_schedule_voted: hasVotedDate,
-      is_place_voted: hasVotedLocation,
-    });
+      user_role: appointment.hostYn === "Y" ? "host" : "guest",
+      voter_count: voters.size,
+      user_count: appointmentUserCount,
+      is_schedule_voted: possibleList.length > 0 || ambList.length > 0,
+      is_place_voted: myLocations.length > 0,
+    };
+    sendGTM(data);
   });
   useEffect(() => {
     sendGTMEvent();

@@ -40,3 +40,13 @@ export interface SubmitDateEventData {
   possible_count: number; // '가능' 선택 개수
   maybe_count: number; // '애매' 선택 개수
 }
+
+export interface ViewResultEventData {
+  event: "view_result";
+  appointment_id: string;
+  user_role: UserRole;
+  voter_count: number; // 일정이나 장소 중 하나라도 투표한 총 인원 수
+  user_count: number; // 이 약속방에 참여한 총 인원 수
+  is_schedule_voted: boolean;
+  is_place_voted: boolean;
+}
