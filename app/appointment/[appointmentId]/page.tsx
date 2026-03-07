@@ -20,6 +20,7 @@ import { getLocations, getLocationVoteStatus } from "@/api/location";
 import CommonLayout from "@/components/CommonLayout";
 import { ApiError } from "@/lib/error";
 import { API_ERROR_CODE } from "@/constants/error-code";
+import AppointmentPageEffect from "@/components/appointment/AppointmentPageEffect";
 
 async function checkJoin(
   appointmentId: string,
@@ -138,6 +139,7 @@ const Page = async ({
             </AppointmentPageProvider>
           </div>
         </main>
+        <AppointmentPageEffect appointmentId={appointmentId} />
       </HydrationBoundary>
     </CommonLayout>
   );
