@@ -24,6 +24,7 @@ import { sendGTM } from "@/lib/google-tag-manager";
 import { useQueryClient } from "@tanstack/react-query";
 import { getVoteStatusByUser } from "@/api/date";
 import { getMyVoteLocation } from "@/api/location";
+import { ShareLinkEventData, ShareMethod } from "@/types/gtmEventData";
 
 interface AppointmentResultModalProps {
   setOpen: (open: boolean) => void;
@@ -55,8 +56,21 @@ const AppointmentResultModal = ({
   /* 결과 공유 */
   const link = `${process.env.NEXT_PUBLIC_BASE_URL}/appointment/${appointment.appointmentId}`;
 
+  const getGTMShareEventData = (method: ShareMethod): ShareLinkEventData => {
+    const { appointmentId, hostYn } = appointment;
+    return {
+      event: "share_link",
+      appointment_id: appointmentId,
+      user_role: hostYn === "Y" ? "host" : "guest",
+      share_context: "result",
+      share_method: method,
+    };
+  };
+
   const showMoreShare = () => {
-    navigator.share({ url: link });
+    navigator.share({ url: link }).then(() => {
+      sendGTM(getGTMShareEventData("system_share"));
+    });
   };
 
   const copyLink = () => {
@@ -64,6 +78,7 @@ const AppointmentResultModal = ({
       toast({
         message: "복사가 완료됐어요.",
       });
+      sendGTM(getGTMShareEventData("link_copy"));
     });
   };
 
@@ -73,6 +88,7 @@ const AppointmentResultModal = ({
       appointment.appointmentName,
       MESSAGE_TEMPLATE_ID.SHARE_RESULT,
     );
+    sendGTM(getGTMShareEventData("kakao"));
   };
 
   const copyAddress = () => {
