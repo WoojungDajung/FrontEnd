@@ -137,6 +137,7 @@ const AppointmentInfoSection = ({
           appointmentId={appointmentId}
           appointmentName={appointmentData.appointment.appointmentName}
           setOpen={setShareModalOpen}
+          isHost={isHost}
         />
       )}
     </section>

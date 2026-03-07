@@ -1,4 +1,5 @@
 type UserRole = "host" | "guest";
+export type ShareMethod = "kakao" | "system_share" | "link_copy";
 
 export interface EditAppointmentEventData {
   event: "edit_appointment";
@@ -15,4 +16,12 @@ export interface EnterAppointmentPageEventData {
   user_role: UserRole;
   has_schedule_voted: boolean;
   has_place_voted: boolean;
+}
+
+export interface ShareLinkEventData {
+  event: "share_link";
+  appointment_id: string;
+  user_role: UserRole;
+  share_context: "invitation" | "result";
+  share_method: ShareMethod;
 }

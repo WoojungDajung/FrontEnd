@@ -11,42 +11,43 @@ import {
 } from "@/lib/kakao-share";
 import { useToast } from "@/context/ToastContext";
 import { sendGTM } from "@/lib/google-tag-manager";
+import { ShareLinkEventData, ShareMethod } from "@/types/gtmEventData";
 
 interface ShareModalProps {
   appointmentId: string;
   appointmentName: string;
   setOpen: (open: boolean) => void;
+  isHost: boolean;
 }
 
 const ShareModal = ({
   appointmentId,
   appointmentName,
   setOpen,
+  isHost,
 }: ShareModalProps) => {
   const { toast } = useToast();
 
   const link = `${process.env.NEXT_PUBLIC_BASE_URL}/appointment/${appointmentId}`;
 
+  const getGTMShareEventData = (method: ShareMethod): ShareLinkEventData => ({
+    event: "share_link",
+    appointment_id: appointmentId,
+    user_role: isHost ? "host" : "guest",
+    share_context: "invitation",
+    share_method: method,
+  });
+
   const showMoreShare = () => {
     navigator.share({ url: link }).then(() => {
-      sendGTM({
-        event: "share_link",
-        appointment_id: appointmentId,
-        share_context: "invitation",
-        share_method: "system_share",
-      });
+      sendGTM(getGTMShareEventData("system_share"));
     });
   };
 
   const copyLink = () => {
     navigator.clipboard.writeText(link).then(() => {
       toast({ message: "복사가 완료됐어요." });
-      sendGTM({
-        event: "share_link",
-        appointment_id: appointmentId,
-        share_context: "invitation",
-        share_method: "link_copy",
-      });
+      sendGTM(getGTMShareEventData("link_copy"));
     });
   };
 
@@ -56,12 +57,7 @@ const ShareModal = ({
       appointmentName,
       MESSAGE_TEMPLATE_ID.INVITE,
     );
-    sendGTM({
-      event: "share_link",
-      appointment_id: appointmentId,
-      share_context: "invitation",
-      share_method: "kakao",
-    });
+    sendGTM(getGTMShareEventData("kakao"));
   };
 
   return (
