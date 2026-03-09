@@ -22,12 +22,17 @@ const useRegisterLocation = (appointmentId: string) => {
       );
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["appointment-locations", appointmentId],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["my-vote-appointment-location", appointmentId],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["appointment-locations", appointmentId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["my-vote-appointment-location", appointmentId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["location-vote-status", appointmentId],
+        }),
+      ]);
     },
   });
 };
