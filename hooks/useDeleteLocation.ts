@@ -7,9 +7,17 @@ const useDeleteLocation = (appointmentId: string, placeId: number) => {
   return useMutation({
     mutationFn: () => deleteLocation(appointmentId, placeId),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["appointment-locations", appointmentId],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["appointment-locations", appointmentId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["my-vote-appointment-location", appointmentId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["location-vote-status", appointmentId],
+        }),
+      ]);
     },
   });
 };
