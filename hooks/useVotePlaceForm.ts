@@ -1,6 +1,6 @@
 import { sendGTM } from "@/lib/google-tag-manager";
 import { SubmitVoteEventData } from "@/types/gtmEventData";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import useVoteLocation from "./useVoteLocation";
 import { Location } from "@/types/apiResponse";
 
@@ -19,15 +19,14 @@ const useVotePlaceForm = ({
   onSubmitSuccess,
   onSubmitError,
 }: useVotePlaceFormProps) => {
-  const [selected, setSelected] = useState<number[]>(myVotedPlaceIdList);
+  const [selected, setSelected] = useState<number[]>(() => {
+    console.log(myVotedPlaceIdList)
+    return myVotedPlaceIdList
+  });
   const originalVotedPlaceSet = useRef<Set<number>>(
     new Set(myVotedPlaceIdList),
   );
-  const curVotedPlaceSet = useRef<Set<number>>(new Set());
-
-  useEffect(() => {
-    curVotedPlaceSet.current = new Set(selected);
-  }, [selected]);
+  const curVotedPlaceSet = useMemo(() => new Set(selected), [selected]);
 
   const selectPlace = useCallback((placeId: number) => {
     setSelected((prev) => {
@@ -74,20 +73,20 @@ const useVotePlaceForm = ({
     );
   };
 
-  const getPlaceItemStatus = useCallback((place: Location) => {
-    const isVoted = curVotedPlaceSet.current.has(place.id);
+  const getPlaceItemStatus = (place: Location) => {
+    const isVoted = curVotedPlaceSet.has(place.id);
     const isVotedAlready = originalVotedPlaceSet.current.has(place.id);
     const voteCount =
       Number(place.voteCount) + (isVoted ? 1 : 0) - (isVotedAlready ? 1 : 0);
     return { isVoted, voteCount };
-  }, []);
+  };
 
   return {
     selectPlace,
     submitForm,
     isSubmitPending: isPending,
     isSubmitSuccess: isSuccess,
-    getPlaceItemStatus
+    getPlaceItemStatus,
   };
 };
 
