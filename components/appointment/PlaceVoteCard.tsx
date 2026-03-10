@@ -14,14 +14,20 @@ import VotePlaceForm from "./VotePlaceForm";
 import useAppointmentUserProfileQuery from "@/hooks/useAppointmentUserProfileQuery";
 import { useToast } from "@/context/ToastContext";
 import PlaceViewList from "./PlaceViewList";
+import { ApiError } from "@/lib/error";
+import { API_ERROR_CODE } from "@/constants/error-code";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
   disabled?: boolean;
-  isHost:boolean;
+  isHost: boolean;
 }
 
-const PlaceVoteCard = ({ appointmentId, disabled, isHost }: PlaceVoteCardProps) => {
+const PlaceVoteCard = ({
+  appointmentId,
+  disabled,
+  isHost,
+}: PlaceVoteCardProps) => {
   const { toast } = useToast();
 
   const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
@@ -67,8 +73,19 @@ const PlaceVoteCard = ({ appointmentId, disabled, isHost }: PlaceVoteCardProps) 
         onSuccess: () => {
           toast({ message: "등록이 완료됐어요." });
         },
-        onError: () => {
-          toast({ message: "등록에 실패했습니다. 잠시 후 다시 시도해주세요." });
+        onError: (error) => {
+          if (
+            error instanceof ApiError &&
+            error.code === API_ERROR_CODE.ALREADY_EXISTS
+          ) {
+            toast({
+              message: "이미 등록된 장소입니다.",
+            });
+          } else {
+            toast({
+              message: "등록에 실패했습니다. 잠시 후 다시 시도해주세요.",
+            });
+          }
           reset();
         },
       },
