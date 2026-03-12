@@ -195,7 +195,7 @@ const EditProfileDrawer = ({
               <FormField label="이름" required inputId="nickName">
                 <div
                   className={cn(
-                    "input-container box-border",
+                    "input-container box-border py-0 h-56 flex items-center",
                     errors.nickName && "input-container--error",
                   )}
                 >

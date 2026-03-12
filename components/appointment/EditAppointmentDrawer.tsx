@@ -163,7 +163,7 @@ const EditAppointmentDrawer = ({
               <FormField label="약속 이름" required inputId="appointmentName">
                 <div
                   className={cn(
-                    "input-container box-border",
+                    "input-container box-border py-0 h-56 flex items-center",
                     errors.appointmentName && "input-container--error",
                   )}
                 >
