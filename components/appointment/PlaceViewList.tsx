@@ -2,7 +2,7 @@
 
 import { Location } from "@/types/apiResponse";
 import { PlaceItemForView } from "./PlaceItem";
-import { memo, useCallback } from "react";
+import { memo, useMemo } from "react";
 
 interface PlaceViewListProps {
   locationList: Location[];
@@ -15,11 +15,11 @@ const PlaceViewList = ({
   totalCount,
   myVotedPlaceIdList,
 }: PlaceViewListProps) => {
-  const isMyVoteLocation = useCallback(
-    (locationId: number) =>
-      myVotedPlaceIdList.find((voteId) => voteId === locationId) !== undefined,
+  const myVotedPlaceIdSet = useMemo(
+    () => new Set(myVotedPlaceIdList),
     [myVotedPlaceIdList],
   );
+
   return (
     <div className="flex flex-col gap-16">
       {locationList.map((place) => (
@@ -28,7 +28,7 @@ const PlaceViewList = ({
           place={place}
           voteCount={Number(place.voteCount)}
           totalCount={totalCount}
-          votedByMe={isMyVoteLocation(place.id)}
+          votedByMe={myVotedPlaceIdSet.has(place.id)}
         />
       ))}
     </div>

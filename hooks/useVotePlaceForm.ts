@@ -19,10 +19,7 @@ const useVotePlaceForm = ({
   onSubmitSuccess,
   onSubmitError,
 }: useVotePlaceFormProps) => {
-  const [selected, setSelected] = useState<number[]>(() => {
-    console.log(myVotedPlaceIdList)
-    return myVotedPlaceIdList
-  });
+  const [selected, setSelected] = useState<number[]>(myVotedPlaceIdList);
   const originalVotedPlaceSet = useRef<Set<number>>(
     new Set(myVotedPlaceIdList),
   );

@@ -16,6 +16,7 @@ import { useToast } from "@/context/ToastContext";
 import PlaceViewList from "./PlaceViewList";
 import { ApiError } from "@/lib/error";
 import { API_ERROR_CODE } from "@/constants/error-code";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
@@ -28,10 +29,12 @@ const PlaceVoteCard = ({
   disabled,
   isHost,
 }: PlaceVoteCardProps) => {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
+  const [isFetchingForVote, setIsFetchingForVote] = useState(false);
 
   const { data: profileData } = useAppointmentUserProfileQuery({
     appointmentId,
@@ -41,9 +44,7 @@ const PlaceVoteCard = ({
   const canAddPlace = profileData !== undefined && !disabled;
 
   // 장소 목록 및 투표 현황
-  const { data, isFetching } = useLocationsQuery({
-    appointmentId,
-  });
+  const { data } = useLocationsQuery({ appointmentId });
 
   const totalCount = useMemo(() => {
     if (data === undefined) return 0;
@@ -92,6 +93,20 @@ const PlaceVoteCard = ({
     );
   };
 
+  const onClickVoteButton = async () => {
+    setIsFetchingForVote(true);
+    await Promise.all([
+      queryClient.refetchQueries({
+        queryKey: ["appointment-locations", appointmentId],
+      }),
+      queryClient.refetchQueries({
+        queryKey: ["my-vote-location", appointmentId],
+      }),
+    ]);
+    setIsFetchingForVote(false);
+    setMode("VOTE");
+  };
+
   return (
     <div className="relative bg-white border border-gray-100 rounded-[24px] flex flex-col items-center gap-16 items-center py-16">
       {data ? (
@@ -117,7 +132,7 @@ const PlaceVoteCard = ({
                   <Button
                     size="Small"
                     color="Primary"
-                    onClick={() => setMode("VOTE")}
+                    onClick={onClickVoteButton}
                     disabled={!canVote}
                   >
                     투표하기
@@ -180,6 +195,13 @@ const PlaceVoteCard = ({
         setOpen={setPostcodePopupOpen}
         onComplete={addPlace}
       />
+
+      {/* 투표하기 버튼 누르고 최신 데이터를 가져오는 동안 로딩 표시 */}
+      {isFetchingForVote && (
+        <div className="absolute inset-0 grid place-items-center bg-white/40">
+          <LoadingSpinner size={25} open />
+        </div>
+      )}
 
       {(isPending || isSuccess) && (
         <div className="absolute inset-0 grid place-items-center bg-white/40">
