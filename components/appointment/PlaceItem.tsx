@@ -13,6 +13,7 @@ interface CommonItemProps {
 interface PlaceItemProps extends CommonItemProps {
   className?: string;
   onClick?: () => void;
+  disabledShowPlaceInfo?: boolean;
 }
 
 const PlaceItem = ({
@@ -21,6 +22,7 @@ const PlaceItem = ({
   totalCount,
   className,
   onClick,
+  disabledShowPlaceInfo,
 }: PlaceItemProps) => {
   const { selectPlace } = useAppointmentPage();
 
@@ -45,7 +47,13 @@ const PlaceItem = ({
             <div className="typo-16-regular text-gray-800 text-ellipsis">
               {place.name}
             </div>
-            <button className="cursor-pointer" onClick={showPlaceInfoDrawer}>
+            <button
+              className={cn(
+                disabledShowPlaceInfo ? "cursor-default" : "cursor-pointer",
+              )}
+              onClick={showPlaceInfoDrawer}
+              disabled={disabledShowPlaceInfo}
+            >
               <RightChevronIcon
                 width={24}
                 height={24}
@@ -110,6 +118,7 @@ const PlaceItemForVote = ({
       )}
       onClick={onClick}
       place={place}
+      disabledShowPlaceInfo
       {...props}
     />
   );
