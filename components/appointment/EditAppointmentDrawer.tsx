@@ -168,7 +168,7 @@ const EditAppointmentDrawer = ({
                   )}
                 >
                   <input
-                    className="input w-full typo-16-regular h-24"
+                    className="input w-full typo-16-regular"
                     {...register("appointmentName", {
                       required: true,
                       maxLength: 14,
