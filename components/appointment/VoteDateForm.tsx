@@ -5,9 +5,9 @@ import Button from "../shared/Button";
 import VoteCalendar from "./VoteCalendar";
 import { addDays } from "@/utils/calendar";
 import LoadingSpinner from "../shared/LoadingSpinner";
-import { useConfirm } from "@/context/ConfirmContext";
 import useVoteDateForm from "@/hooks/useVoteDateForm";
 import { useToastStore } from "@/store/toastStore";
+import { useConfirmStore } from "@/store/confirmStore";
 
 interface VoteDateFormProps {
   onSubmit: () => void;
@@ -22,7 +22,7 @@ const VoteDateForm = ({
   userId,
   isHost,
 }: VoteDateFormProps) => {
-  const confirm = useConfirm();
+  const confirm = useConfirmStore((state) => state.confirm);
   const toast = useToastStore((state) => state.toast);
 
   const onSubmitSuccess = useCallback(() => {

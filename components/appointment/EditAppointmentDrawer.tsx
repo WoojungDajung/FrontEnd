@@ -8,13 +8,13 @@ import LoadingSpinner from "../shared/LoadingSpinner";
 import { useRouter } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { cn } from "@/utils/cn";
-import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteAppointment from "@/hooks/useDeleteAppointment";
 import { useCallback } from "react";
 import { dateToString, stringToDate } from "@/utils/calendar";
 import { sendGTM } from "@/lib/google-tag-manager";
 import { EditAppointmentEventData } from "@/types/gtmEventData";
 import { useToastStore } from "@/store/toastStore";
+import { useConfirmStore } from "@/store/confirmStore";
 
 interface EditAppointmentDrawerProps {
   appointmentId: string;
@@ -41,7 +41,7 @@ const EditAppointmentDrawer = ({
   isConfirmed,
 }: EditAppointmentDrawerProps) => {
   const router = useRouter();
-  const confirm = useConfirm();
+  const confirm = useConfirmStore((state) => state.confirm);
   const toast = useToastStore((state) => state.toast);
 
   const {
