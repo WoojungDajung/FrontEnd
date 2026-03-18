@@ -10,7 +10,7 @@ import useJoinAppointment from "@/hooks/useJoinAppointment";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import LoadingSpinner from "../shared/LoadingSpinner";
-import { useToast } from "@/context/ToastContext";
+import { useToastStore } from "@/store/toastStore";
 
 interface JoinAppointmentFormProps {
   appointmentId: string;
@@ -23,7 +23,7 @@ interface FormValues {
 
 const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
   const router = useRouter();
-  const { toast } = useToast();
+  const toast = useToastStore((state) => state.toast);
 
   const {
     register,

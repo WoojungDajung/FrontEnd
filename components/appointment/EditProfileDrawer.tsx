@@ -14,8 +14,8 @@ import { cn } from "@/utils/cn";
 import { useCallback } from "react";
 import useLeaveAppointment from "@/hooks/useLeaveAppointment";
 import { useConfirm } from "@/context/ConfirmContext";
-import { useToast } from "@/context/ToastContext";
 import { getAddressLngLat } from "@/api/address";
+import { useToastStore } from "@/store/toastStore";
 
 async function transformPlace(place: Place): Promise<{
   address: string;
@@ -68,7 +68,7 @@ const EditProfileDrawer = ({
   const queryClient = useQueryClient();
 
   const confirm = useConfirm();
-  const { toast } = useToast();
+  const toast = useToastStore((state) => state.toast);
 
   const {
     register,

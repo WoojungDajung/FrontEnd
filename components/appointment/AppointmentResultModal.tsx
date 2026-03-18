@@ -19,7 +19,6 @@ import {
 } from "@/lib/kakao-share";
 import { Appointment, ConfirmedResult } from "@/types/apiResponse";
 import dayjs from "dayjs";
-import { useToast } from "@/context/ToastContext";
 import { sendGTM } from "@/lib/google-tag-manager";
 import { useQueryClient } from "@tanstack/react-query";
 import { getVoteStatusByUser } from "@/api/date";
@@ -29,6 +28,7 @@ import {
   ShareMethod,
   ViewResultEventData,
 } from "@/types/gtmEventData";
+import { useToastStore } from "@/store/toastStore";
 
 interface AppointmentResultModalProps {
   setOpen: (open: boolean) => void;
@@ -44,7 +44,7 @@ const AppointmentResultModal = ({
   result,
 }: AppointmentResultModalProps) => {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const toast = useToastStore(state => state.toast)
 
   const confirmedDateStr = useMemo(() => {
     const date = dayjs(result.confirmedDate).toDate();

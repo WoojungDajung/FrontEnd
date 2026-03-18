@@ -10,11 +10,11 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { cn } from "@/utils/cn";
 import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteAppointment from "@/hooks/useDeleteAppointment";
-import { useToast } from "@/context/ToastContext";
 import { useCallback } from "react";
 import { dateToString, stringToDate } from "@/utils/calendar";
 import { sendGTM } from "@/lib/google-tag-manager";
 import { EditAppointmentEventData } from "@/types/gtmEventData";
+import { useToastStore } from "@/store/toastStore";
 
 interface EditAppointmentDrawerProps {
   appointmentId: string;
@@ -42,7 +42,7 @@ const EditAppointmentDrawer = ({
 }: EditAppointmentDrawerProps) => {
   const router = useRouter();
   const confirm = useConfirm();
-  const { toast } = useToast();
+  const toast = useToastStore((state) => state.toast);
 
   const {
     register,

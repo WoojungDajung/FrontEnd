@@ -12,11 +12,11 @@ import LoadingSpinner from "../shared/LoadingSpinner";
 import useLocationsQuery from "@/hooks/useLocationsQuery";
 import VotePlaceForm from "./VotePlaceForm";
 import useAppointmentUserProfileQuery from "@/hooks/useAppointmentUserProfileQuery";
-import { useToast } from "@/context/ToastContext";
 import PlaceViewList from "./PlaceViewList";
 import { ApiError } from "@/lib/error";
 import { API_ERROR_CODE } from "@/constants/error-code";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToastStore } from "@/store/toastStore";
 
 interface PlaceVoteCardProps {
   appointmentId: string;
@@ -30,7 +30,7 @@ const PlaceVoteCard = ({
   isHost,
 }: PlaceVoteCardProps) => {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const toast = useToastStore((state) => state.toast);
 
   const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);

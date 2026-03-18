@@ -11,9 +11,9 @@ import { createPortal } from "react-dom";
 import { cn } from "@/utils/cn";
 import { Place } from "@/types/shared";
 import useCreateAppointment from "@/hooks/useCreateAppointment";
-import { useToast } from "@/context/ToastContext";
 import { sendGTM } from "@/lib/google-tag-manager";
 import { dateToString } from "@/utils/calendar";
+import { useToastStore } from "@/store/toastStore";
 
 interface FormValues {
   appointmentName: string;
@@ -24,7 +24,7 @@ interface FormValues {
 
 const CreateAppointmentForm = () => {
   const router = useRouter();
-  const { toast } = useToast();
+  const toast = useToastStore((state) => state.toast);
 
   const {
     register,

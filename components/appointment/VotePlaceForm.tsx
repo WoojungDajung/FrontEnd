@@ -3,8 +3,8 @@ import { PlaceItemForVote } from "./PlaceItem";
 import Button from "../shared/Button";
 import { useCallback } from "react";
 import LoadingSpinner from "../shared/LoadingSpinner";
-import { useToast } from "@/context/ToastContext";
 import useVotePlaceForm from "@/hooks/useVotePlaceForm";
+import { useToastStore } from "@/store/toastStore";
 
 interface VotePlaceFormProps {
   places: Location[];
@@ -23,7 +23,7 @@ const VotePlaceForm = ({
   isHost,
   onCompleteVote,
 }: VotePlaceFormProps) => {
-  const { toast } = useToast();
+  const toast = useToastStore((state) => state.toast);
 
   const onSubmitSuccess = useCallback(() => {
     toast({ message: "투표가 완료됐어요." });

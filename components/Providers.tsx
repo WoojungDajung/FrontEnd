@@ -1,7 +1,6 @@
 "use client";
 
 import { ConfirmProvider } from "@/context/ConfirmContext";
-import { ToastProvider } from "@/context/ToastContext";
 import { makeBrowserQueryClient } from "@/lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -19,7 +18,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ConfirmProvider>
-        <ToastProvider>{children}</ToastProvider>
+        {children}
       </ConfirmProvider>
     </QueryClientProvider>
   );

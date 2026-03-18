@@ -8,7 +8,7 @@ import LoadingSpinner from "../shared/LoadingSpinner";
 import { useCallback, useEffect, useRef } from "react";
 import { useConfirm } from "@/context/ConfirmContext";
 import useDeleteLocation from "@/hooks/useDeleteLocation";
-import { useToast } from "@/context/ToastContext";
+import { useToastStore } from "@/store/toastStore";
 
 interface PlaceInfoDrawerProps {
   appointmentId: string;
@@ -73,7 +73,7 @@ const PlaceInfoDrawerContent = ({
   deletable,
 }: PlaceInfoDrawerContentProps) => {
   const confirm = useConfirm();
-  const { toast } = useToast();
+  const toast = useToastStore((state) => state.toast);
 
   const { data } = useLocationInfoQuery({
     appointmentId,

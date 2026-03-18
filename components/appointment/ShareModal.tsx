@@ -9,9 +9,9 @@ import {
   MESSAGE_TEMPLATE_ID,
   shareAppointmentOnKakaoTalk,
 } from "@/lib/kakao-share";
-import { useToast } from "@/context/ToastContext";
 import { sendGTM } from "@/lib/google-tag-manager";
 import { ShareLinkEventData, ShareMethod } from "@/types/gtmEventData";
+import { useToastStore } from "@/store/toastStore";
 
 interface ShareModalProps {
   appointmentId: string;
@@ -26,7 +26,7 @@ const ShareModal = ({
   setOpen,
   isHost,
 }: ShareModalProps) => {
-  const { toast } = useToast();
+  const toast = useToastStore((state) => state.toast);
 
   const link = `${process.env.NEXT_PUBLIC_BASE_URL}/appointment/${appointmentId}`;
 

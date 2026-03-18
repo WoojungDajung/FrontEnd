@@ -6,8 +6,8 @@ import VoteCalendar from "./VoteCalendar";
 import { addDays } from "@/utils/calendar";
 import LoadingSpinner from "../shared/LoadingSpinner";
 import { useConfirm } from "@/context/ConfirmContext";
-import { useToast } from "@/context/ToastContext";
 import useVoteDateForm from "@/hooks/useVoteDateForm";
+import { useToastStore } from "@/store/toastStore";
 
 interface VoteDateFormProps {
   onSubmit: () => void;
@@ -23,7 +23,7 @@ const VoteDateForm = ({
   isHost,
 }: VoteDateFormProps) => {
   const confirm = useConfirm();
-  const { toast } = useToast();
+  const toast = useToastStore((state) => state.toast);
 
   const onSubmitSuccess = useCallback(() => {
     toast({ message: "투표가 완료됐어요." });

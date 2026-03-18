@@ -4,6 +4,7 @@ import { pretendard } from "./fonts";
 import Providers from "@/components/Providers";
 import DevTool from "@/components/DevTool";
 import { GoogleTagManager } from "@next/third-parties/google";
+import { ToastContainer } from "@/components/ToastContainer";
 
 export const metadata: Metadata = {
   title: "만날우정",
@@ -28,7 +29,7 @@ export default function RootLayout({
               <div id="modal" />
             </div>
             <div id="popup" className="z-100 fixed left-0 top-0" />
-
+            <ToastContainer />
             <DevTool />
           </>
         </Providers>
