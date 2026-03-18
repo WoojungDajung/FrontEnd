@@ -30,6 +30,7 @@
     "clsx": "^2.1.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "msw": "^2.12.13",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4",
     "typescript": "^5"
