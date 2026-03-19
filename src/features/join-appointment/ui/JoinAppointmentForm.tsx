@@ -4,13 +4,13 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { cn } from "@/src/shared/utils/cn";
-import useJoinAppointment from "@/src/features/join-appointment/hooks/useJoinAppointment";
 import { useToastStore } from "@/src/shared/toast/toastStore";
 import { Place } from "@/src/shared/types";
 import FormField from "@/src/shared/ui/FormField";
 import AddressInput from "@/src/shared/ui/AddressInput";
 import Button from "@/src/shared/ui/Button";
 import LoadingSpinner from "@/src/shared/ui/LoadingSpinner";
+import useJoinAppointmentForm from "./useJoinAppointmentForm";
 
 interface JoinAppointmentFormProps {
   appointmentId: string;
@@ -32,24 +32,22 @@ const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
     formState: { isValid, errors },
   } = useForm<FormValues>({ mode: "onChange" });
 
-  const { mutate, isPending, isSuccess, reset } =
-    useJoinAppointment(appointmentId);
+  const { submitForm, isSubmitPending, isSubmitSuccess } =
+    useJoinAppointmentForm(appointmentId);
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const { nickName, departureLocation } = data;
-
-    mutate(
+    submitForm(
       { nickName, startingPlace: departureLocation },
       {
-        onSuccess: (appointmentId) => {
+        onSubmitSuccess: (appointmentId) => {
           router.push(`/appointment/${appointmentId}`);
         },
-        onError: () => {
+        onSubmitError: () => {
           toast({
             message:
               "약속방을 참여하는 과정에서 문제가 생겼습니다. 잠시후 다시 시도해주세요.",
           });
-          reset();
         },
       },
     );
@@ -104,13 +102,13 @@ const JoinAppointmentForm = ({ appointmentId }: JoinAppointmentFormProps) => {
         약속 함께하기
       </Button>
 
-      {(isPending || isSuccess) &&
+      {(isSubmitPending || isSubmitSuccess) &&
         createPortal(
           <div className="absolute w-dvw h-dvh grid place-items-center">
             <LoadingSpinner
               size={40}
-              open={isPending || isSuccess}
-              success={isSuccess}
+              open={isSubmitPending || isSubmitSuccess}
+              success={isSubmitSuccess}
             />
           </div>,
           document.getElementById("popup")!,
