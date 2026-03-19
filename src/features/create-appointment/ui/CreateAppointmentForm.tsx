@@ -4,8 +4,6 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { cn } from "@/src/shared/utils/cn";
-import { sendGTM } from "@/src/shared/lib/googleTagManager/sendGTM";
-import { dateToString } from "@/src/shared/utils/calendar";
 import { useToastStore } from "@/src/shared/toast/toastStore";
 import { Place } from "@/src/shared/types";
 import FormField from "@/src/shared/ui/FormField";
@@ -13,7 +11,7 @@ import DateInput from "@/src/shared/ui/DateInput";
 import AddressInput from "@/src/shared/ui/AddressInput";
 import Button from "@/src/shared/ui/Button";
 import LoadingSpinner from "@/src/shared/ui/LoadingSpinner";
-import useCreateAppointment from "../hooks/useCreateAppointment";
+import useCreateAppointmentForm from "./useCreateAppointmentForm";
 
 interface FormValues {
   appointmentName: string;
@@ -33,27 +31,18 @@ const CreateAppointmentForm = () => {
     formState: { isValid, errors },
   } = useForm<FormValues>({ mode: "onChange" });
 
-  /* 약속방 생성 및 프로필 등록 */
-  const { mutate, isPending, reset } = useCreateAppointment();
+  const { submitForm, isSubmitting } = useCreateAppointmentForm();
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const { appointmentName, deadline, nickName, startingPlace } = data;
-    mutate(
+    submitForm(
       { appointmentName, deadline, nickName, startingPlace },
       {
-        onSuccess: (appointmentId) => {
-          // 약속 페이지로 이동
-          sendGTM({
-            event: "create_appointment",
-            appointment_id: appointmentId,
-            deadline_time: dateToString(deadline),
-          });
-
+        onSubmitSucces: (appointmentId) => {
           router.push(`/appointment/${appointmentId}`);
         },
-        onError: () => {
+        onSubmitError: () => {
           toast({ message: "생성에 실패했어요. 잠시 후 다시 시도해주세요." });
-          reset();
         },
       },
     );
@@ -140,7 +129,7 @@ const CreateAppointmentForm = () => {
         약속 정하러 가기
       </Button>
 
-      {isPending &&
+      {isSubmitting &&
         createPortal(
           <div className="absolute w-dvw h-dvh grid place-items-center">
             <LoadingSpinner size={40} open />
