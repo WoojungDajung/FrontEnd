@@ -25,24 +25,11 @@ const VoteDateForm = ({
   const confirm = useConfirmStore((state) => state.confirm);
   const toast = useToastStore((state) => state.toast);
 
-  const onSubmitSuccess = useCallback(() => {
-    toast({ message: "투표가 완료됐어요." });
-    onSubmit();
-  }, [toast, onSubmit]);
-
-  const onSubmitError = useCallback(() => {
-    toast({
-      message: "투표에 실패했습니다. 잠시 후 다시 시도해주세요.",
-    });
-  }, [toast]);
-
   const { status, onChange, submitForm, isSubmitPending, isSubmitSuccess } =
     useVoteDateForm({
       appointmentId,
       userId,
       isHost,
-      onSubmitSuccess,
-      onSubmitError,
     });
 
   const onClickSubmitButton = useCallback(async () => {
@@ -53,8 +40,18 @@ const VoteDateForm = ({
 
     if (!result) return;
 
-    submitForm();
-  }, [confirm, submitForm]);
+    submitForm({
+      onSubmitSuccess: () => {
+        toast({ message: "투표가 완료됐어요." });
+        onSubmit();
+      },
+      onSubmitError: () => {
+        toast({
+          message: "투표에 실패했습니다. 잠시 후 다시 시도해주세요.",
+        });
+      },
+    });
+  }, [confirm, submitForm, toast, onSubmit]);
 
   const showLoading = isSubmitPending || isSubmitSuccess;
 

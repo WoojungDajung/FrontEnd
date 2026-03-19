@@ -8,16 +8,12 @@ interface useVotePlaceFormProps {
   appointmentId: string;
   myVotedPlaceIdList: number[];
   isHost: boolean;
-  onSubmitSuccess: () => void;
-  onSubmitError: () => void;
 }
 
 const useVotePlaceForm = ({
   appointmentId,
   myVotedPlaceIdList,
   isHost,
-  onSubmitSuccess,
-  onSubmitError,
 }: useVotePlaceFormProps) => {
   const [selected, setSelected] = useState<number[]>(myVotedPlaceIdList);
   const originalVotedPlaceSet = useRef<Set<number>>(
@@ -54,17 +50,20 @@ const useVotePlaceForm = ({
   const { mutate, isPending, isSuccess, reset } =
     useVoteLocation(appointmentId);
 
-  const submitForm = () => {
+  const submitForm = (options?:{
+    onSubmitSuccess?:()=>void;
+    onSubmitError?:() => void;
+  }) => {
     mutate(
       { placeIdList: selected },
       {
         onError: () => {
           reset();
-          onSubmitError();
+          options?.onSubmitError?.();
         },
         onSuccess: () => {
           sendGTMEvent();
-          onSubmitSuccess();
+          options?.onSubmitSuccess?.();
         },
       },
     );

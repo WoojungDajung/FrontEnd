@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import Button from "@/src/shared/ui/Button";
 import { useToastStore } from "@/src/shared/toast/toastStore";
 import LoadingSpinner from "@/src/shared/ui/LoadingSpinner";
@@ -25,14 +24,6 @@ const VotePlaceForm = ({
 }: VotePlaceFormProps) => {
   const toast = useToastStore((state) => state.toast);
 
-  const onSubmitSuccess = useCallback(() => {
-    toast({ message: "투표가 완료됐어요." });
-    onCompleteVote();
-  }, [toast, onCompleteVote]);
-  const onSubmitError = useCallback(() => {
-    toast({ message: "투표에 실패했습니다. 잠시 후 다시 시도해주세요." });
-  }, [toast]);
-
   const {
     selectPlace,
     submitForm,
@@ -43,12 +34,18 @@ const VotePlaceForm = ({
     appointmentId,
     myVotedPlaceIdList,
     isHost,
-    onSubmitSuccess,
-    onSubmitError,
   });
 
   const onClickSubmitButton = () => {
-    submitForm();
+    submitForm({
+      onSubmitSuccess: () => {
+        toast({ message: "투표가 완료됐어요." });
+        onCompleteVote();
+      },
+      onSubmitError: () => {
+        toast({ message: "투표에 실패했습니다. 잠시 후 다시 시도해주세요." });
+      },
+    });
   };
 
   const showLoading = isSubmitPending || isSubmitSuccess;

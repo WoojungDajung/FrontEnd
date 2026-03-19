@@ -20,16 +20,12 @@ interface useVoteDateFormProps {
   appointmentId: string;
   userId: number;
   isHost: boolean;
-  onSubmitSuccess: () => void;
-  onSubmitError: () => void;
 }
 
 const useVoteDateForm = ({
   appointmentId,
   userId,
   isHost,
-  onSubmitSuccess,
-  onSubmitError,
 }: useVoteDateFormProps) => {
   const initialStatusRef = useRef<VoteStatus | null>(null);
   const [status, setStatus] = useState<VoteStatus>({
@@ -176,7 +172,10 @@ const useVoteDateForm = ({
     [appointmentId, isHost],
   );
 
-  const submitForm = () => {
+  const submitForm = (options?: {
+    onSubmitSuccess?: () => void;
+    onSubmitError?: () => void;
+  }) => {
     const { votes, possibleCount, uncertainCount } =
       getVoteDataToSubmit(status);
 
@@ -185,11 +184,11 @@ const useVoteDateForm = ({
       {
         onSuccess: () => {
           sendGTMEvent(possibleCount, uncertainCount);
-          onSubmitSuccess();
+          options?.onSubmitSuccess?.();
         },
         onError: () => {
           reset();
-          onSubmitError();
+          options?.onSubmitError?.();
         },
       },
     );
