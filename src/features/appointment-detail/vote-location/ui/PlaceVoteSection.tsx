@@ -1,12 +1,10 @@
 "use client";
 
-import { memo, useState } from "react";
-import CountButton from "../../ui/CountButton";
+import { memo } from "react";
 import PlaceInfoDrawer from "./PlaceInfoDrawer";
 import PlaceVoteCard from "./PlaceVoteCard";
-import VoteStatusModal from "../../ui/VoteStatusModal";
 import useAppointmentQuery from "../../hooks/useAppointmentQuery";
-import useLocationVoteStatusQuery from "../hooks/useLocationVoteStatusQuery";
+import VoteCountButton from "./VoteCountButton";
 
 interface PlaceVoteSectionProps {
   appointmentId: string;
@@ -35,32 +33,6 @@ const PlaceVoteSection = ({ appointmentId }: PlaceVoteSectionProps) => {
         deletable={!isAppointmentSettled}
       />
     </section>
-  );
-};
-
-const VoteCountButton = ({ appointmentId }: { appointmentId: string }) => {
-  const [voteStatusModalOpen, setVoteStatusModalOpen] = useState(false);
-
-  // 장소 목록 및 투표 현황
-  const { data } = useLocationVoteStatusQuery(appointmentId);
-
-  if (!data) return <></>;
-  return (
-    <>
-      <CountButton
-        currentCount={data.votedListCount}
-        totalCount={data.unVotedListCount + data.votedListCount}
-        onClick={() => setVoteStatusModalOpen(true)}
-      />
-
-      {voteStatusModalOpen && (
-        <VoteStatusModal
-          votedMembers={data.votedList}
-          unvotedMembers={data.unVotedList}
-          setOpen={setVoteStatusModalOpen}
-        />
-      )}
-    </>
   );
 };
 
