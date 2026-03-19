@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { pretendard } from "./fonts";
-import Providers from "@/components/Providers";
-import DevTool from "@/components/DevTool";
-import { GoogleTagManager } from "@next/third-parties/google";
-import { ToastContainer } from "@/components/ToastContainer";
-import { ConfirmContainer } from "@/components/ConfirmContainer";
+import Providers from "@/app/_providers/Providers";
+import DevTool from "@/src/shared/dev/DevTool";
+import { ToastContainer } from "@/src/shared/toast/ToastContainer";
+import { ConfirmContainer } from "@/src/shared/confirm/ConfirmContainer";
 
 export const metadata: Metadata = {
   title: "만날우정",

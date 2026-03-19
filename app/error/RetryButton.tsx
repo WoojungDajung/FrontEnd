@@ -1,7 +1,7 @@
 "use client";
 
-import Button from "@/components/shared/Button";
-import { AUTH_CALLBACK_ERROR_CODE } from "@/constants/error-code";
+import { AUTH_CALLBACK_ERROR_CODE } from "@/src/shared/lib/error/errorCode";
+import Button from "@/src/shared/ui/Button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 

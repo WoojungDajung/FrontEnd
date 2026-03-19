@@ -1,8 +1,8 @@
-import Login from "@/components/home/Login";
-import Swiper from "@/components/home/HeroSwiper";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import CommonLayout from "@/components/CommonLayout";
+import CommonLayout from "@/src/shared/ui/layouts/CommonLayout";
+import Login from "@/src/features/auth/ui/Login";
+import HeroSwiper from "@/app/_components/HeroSwiper";
 
 export default async function Home({
   searchParams,
@@ -22,7 +22,7 @@ export default async function Home({
     <CommonLayout>
       <main className="pt-90">
         <div className="flex flex-col gap-32">
-          <Swiper />
+          <HeroSwiper />
           <Login next={nextValue} />
         </div>
       </main>

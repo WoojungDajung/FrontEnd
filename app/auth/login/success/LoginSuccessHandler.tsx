@@ -1,8 +1,8 @@
 "use client";
 
-import { getMemberId } from "@/api/member";
-import { sendGTM } from "@/lib/google-tag-manager";
-import { LoginCompleteEventData } from "@/types/gtmEventData";
+import { sendGTM } from "@/src/shared/lib/googleTagManager/sendGTM";
+import { getMemberId } from "@/src/features/user/api/getMemberId";
+import { LoginCompleteEventData } from "@/src/shared/lib/googleTagManager/gtmEventDataTypes";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useEffectEvent } from "react";

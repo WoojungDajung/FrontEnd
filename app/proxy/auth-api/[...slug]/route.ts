@@ -1,8 +1,8 @@
-import { reissueToken } from "@/api/auth";
-import { API_ERROR_CODE } from "@/constants/error-code";
-import { setToken } from "@/lib/auth/token";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { setToken } from "@/src/features/auth/lib/token";
+import { API_ERROR_CODE } from "@/src/shared/lib/error/errorCode";
+import { reissueToken } from "@/src/features/auth/api/reissueToken";
 
 function buildHeaders(request: Request, accessToken?: string) {
   const headers = new Headers();

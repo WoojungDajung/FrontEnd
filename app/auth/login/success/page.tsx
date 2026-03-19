@@ -1,4 +1,4 @@
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import LoadingSpinner from "@/src/shared/ui/LoadingSpinner";
 import { Suspense } from "react";
 import LoginSuccessHandler from "./LoginSuccessHandler";
 

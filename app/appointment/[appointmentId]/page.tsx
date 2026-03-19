@@ -1,11 +1,10 @@
-import { getAppointment } from "@/api/appointment";
-import DateVoteSection from "@/components/appointment/DateVoteSection";
-import HomeButton from "@/components/appointment/HomeButton";
-import AppointmentInfoSection from "@/components/appointment/AppointmentInfoSection";
-import AppointmentSettledSection from "@/components/appointment/AppointmentSettledSection";
-import PlaceVoteSection from "@/components/appointment/PlaceVoteSection";
-import { AppointmentPageProvider } from "@/context/AppointmentContext";
-import { getQueryClient } from "@/lib/queryClient";
+import { getAppointment } from "@/src/features/appointment-detail/api/getAppointment";
+import DateVoteSection from "@/src/features/appointment-detail/vote-date/ui/DateVoteSection";
+import HomeButton from "@/src/features/appointment-detail/ui/HomeButton";
+import AppointmentSettledSection from "@/src/features/appointment-detail/vote-result/ui/AppointmentSettledSection";
+import PlaceVoteSection from "@/src/features/appointment-detail/vote-location/ui/PlaceVoteSection";
+import { AppointmentPageProvider } from "@/src/features/appointment-detail/context/AppointmentContext";
+import { getQueryClient } from "@/src/shared/lib/queryClient";
 import {
   dehydrate,
   HydrationBoundary,
@@ -13,14 +12,17 @@ import {
 } from "@tanstack/react-query";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import { getMemberProfile } from "@/api/member";
 import dayjs from "dayjs";
-import { getVoteStatus, getVoteStatusByMonth } from "@/api/date";
-import { getLocations, getLocationVoteStatus } from "@/api/location";
-import CommonLayout from "@/components/CommonLayout";
-import { ApiError } from "@/lib/error";
-import { API_ERROR_CODE } from "@/constants/error-code";
-import AppointmentPageEffect from "@/components/appointment/AppointmentPageEffect";
+import CommonLayout from "@/src/shared/ui/layouts/CommonLayout";
+import AppointmentPageEffect from "@/app/appointments/_components/AppointmentPageEffect";
+import { getMemberProfile } from "@/src/features/appointment-detail/appointment-info/api/getMemberProfile";
+import { getDateVoteStatus } from "@/src/features/appointment-detail/vote-date/api/getDateVoteStatus";
+import { getVoteStatusByMonth } from "@/src/features/appointment-detail/vote-date/api/getVoteStatusByMonth";
+import { getLocationVoteStatus } from "@/src/features/appointment-detail/vote-location/api/getLocationVoteStatus";
+import { getLocations } from "@/src/features/appointment-detail/vote-location/api/getLocations";
+import { API_ERROR_CODE } from "@/src/shared/lib/error/errorCode";
+import { ApiError } from "@/src/shared/lib/error/ApiError";
+import AppointmentInfoSection from "@/src/features/appointment-detail/appointment-info/ui/AppointmentInfoSection";
 
 async function checkJoin(
   appointmentId: string,
@@ -98,7 +100,7 @@ const Page = async ({
     }),
     queryClient.prefetchQuery({
       queryKey: ["date-vote-status", appointmentId],
-      queryFn: ({ queryKey }) => getVoteStatus(queryKey[1], requestInit),
+      queryFn: ({ queryKey }) => getDateVoteStatus(queryKey[1], requestInit),
     }),
     queryClient.prefetchQuery({
       queryKey: ["location-vote-status", appointmentId],

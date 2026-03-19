@@ -1,6 +1,6 @@
-import { logout } from "@/api/auth";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { logout } from "@/src/features/auth/api/logout";
 
 export async function POST(req: Request) {
   const cookieStore = await cookies();

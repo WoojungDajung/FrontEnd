@@ -1,5 +1,5 @@
-import { AUTH_CALLBACK_ERROR_CODE } from "@/constants/error-code";
-import { setToken } from "@/lib/auth/token";
+import { setToken } from "@/src/features/auth/lib/token";
+import { AUTH_CALLBACK_ERROR_CODE } from "@/src/shared/lib/error/errorCode";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {

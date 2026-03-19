@@ -1,6 +1,6 @@
-import FeatureSwiper from "@/components/appointments/FeatureSwiper";
-import StarShineIcon from "@/components/appointments/StartShineIcon";
-import CommonLayout from "@/components/CommonLayout";
+import FeatureSwiper from "@/app/appointments/_components/FeatureSwiper";
+import StarShineIcon from "@/src/shared/ui/icons/StartShineIcon";
+import CommonLayout from "@/src/shared/ui/layouts/CommonLayout";
 import Image from "next/image";
 
 const Page = () => {

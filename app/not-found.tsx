@@ -1,6 +1,6 @@
-import CommonLayout from "@/components/CommonLayout";
-import ErrorUI from "@/components/shared/ErrorUI";
 import Link from "next/link";
+import CommonLayout from "@/src/shared/ui/layouts/CommonLayout";
+import ErrorUI from "@/src/shared/ui/ErrorUI";
 
 export default function NotFound() {
   return (

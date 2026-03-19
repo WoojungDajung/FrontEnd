@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import RetryButton from "./RetryButton";
-import ErrorUI from "@/components/shared/ErrorUI";
-import CommonLayout from "@/components/CommonLayout";
+import ErrorUI from "@/src/shared/ui/ErrorUI";
+import CommonLayout from "@/src/shared/ui/layouts/CommonLayout";
 
 const Page = () => {
   return (

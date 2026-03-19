@@ -1,10 +1,10 @@
-import { getAppointmentPreviewInfo } from "@/api/appointment";
-import JoinAppointmentForm from "@/components/appointment/JoinAppointmentForm";
-import CommonLayout from "@/components/CommonLayout";
-import { API_ERROR_CODE } from "@/constants/error-code";
-import { ApiError } from "@/lib/error";
+import { getAppointmentPreviewInfo } from "@/src/features/join-appointment/api/getAppointmentPreviewInfo";
+import JoinAppointmentForm from "@/src/features/join-appointment/ui/JoinAppointmentForm";
+import CommonLayout from "@/src/shared/ui/layouts/CommonLayout";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
+import { API_ERROR_CODE } from "@/src/shared/lib/error/errorCode";
+import { ApiError } from "@/src/shared/lib/error/ApiError";
 
 const Page = async ({
   params,
