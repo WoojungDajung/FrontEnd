@@ -1,48 +1,12 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useCallback } from "react";
-import { cn } from "@/src/shared/utils/cn";
-import { getAddressLngLat } from "@/src/shared/api/getAddressLngLat";
 import { useToastStore } from "@/src/shared/toast/toastStore";
 import { useConfirmStore } from "@/src/shared/confirm/confirmStore";
 import BottomDrawer from "@/src/shared/ui/BottomDrawer";
 import DefaultDrawerLayout from "@/src/shared/ui/layouts/DefaultDrawerLayout";
-import FormField from "@/src/shared/ui/FormField";
-import AddressInput from "@/src/shared/ui/AddressInput";
-import Button from "@/src/shared/ui/Button";
-import LoadingSpinner from "@/src/shared/ui/LoadingSpinner";
-import { Place } from "@/src/shared/types";
 import { MemberProfile } from "../../types";
-import { updateMemberProfile } from "../api/updateMemberProfile";
 import useLeaveAppointment from "../hooks/useLeaveAppointment";
-
-async function transformPlace(place: Place): Promise<{
-  address: string;
-  startingPlace: string;
-  longitude: string;
-  latitude: string;
-}> {
-  const { longitude, latitude } = await getAddressLngLat(place.address);
-  return {
-    address: place.address,
-    startingPlace: place.placeName ?? place.address,
-    longitude,
-    latitude,
-  };
-}
-
-function profileToFormValue(profile: MemberProfile): FormValue {
-  return {
-    nickName: profile.memberNickName ?? "",
-    // 사용자가 기존에 입력 안 한 경우, 빈 문자열 "" -> null 처리
-    startingPlace: profile.startingPlace
-      ? {
-          address: profile.startingPlace,
-        }
-      : null,
-  };
-}
+import EditProfileForm from "./EditProfileForm";
+import LoadingSpinner from "@/src/shared/ui/LoadingSpinner";
 
 interface EditProfileDrawerProps {
   appointmentId: string;
@@ -50,11 +14,6 @@ interface EditProfileDrawerProps {
   canLeaveAppointment: boolean;
   open?: boolean;
   setOpen?: (open: boolean) => void;
-}
-
-interface FormValue {
-  nickName: string;
-  startingPlace: Place | null;
 }
 
 const EditProfileDrawer = ({
@@ -65,75 +24,13 @@ const EditProfileDrawer = ({
   setOpen,
 }: EditProfileDrawerProps) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
-
   const confirm = useConfirmStore((state) => state.confirm);
   const toast = useToastStore((state) => state.toast);
-
-  const {
-    register,
-    control,
-    formState: { isValid, errors, isDirty, dirtyFields },
-    handleSubmit,
-    reset,
-  } = useForm<FormValue>({
-    mode: "onChange",
-    defaultValues: profileToFormValue(initialProfile),
-  });
-
-  const resetForm = useCallback(() => {
-    reset(profileToFormValue(initialProfile));
-  }, [reset, initialProfile]);
-
-  /* 저장하기 */
-  const saveMutation = useMutation({
-    mutationFn: async ({
-      nickName,
-      startingPlace,
-    }: {
-      nickName: string;
-      startingPlace?: Place | null;
-    }) => {
-      const place = startingPlace
-        ? await transformPlace(startingPlace)
-        : startingPlace;
-
-      await updateMemberProfile(appointmentId, nickName, place);
-    },
-  });
-
-  const onSubmit: SubmitHandler<FormValue> = (data) => {
-    const { nickName, startingPlace } = data;
-
-    // dirtyFields.startingPlace !== true -> 변화 없음
-    // 이 경우 출발 장소는 업데이트 X => undefined 처리
-    const placeVal = dirtyFields.startingPlace ? startingPlace : undefined;
-
-    saveMutation.mutate(
-      { nickName, startingPlace: placeVal },
-      {
-        onSuccess: async () => {
-          toast({ message: "저장이 완료됐어요." });
-
-          await queryClient.invalidateQueries({
-            queryKey: ["appointment-user-profile", appointmentId],
-          });
-          await queryClient.invalidateQueries({
-            queryKey: ["appointment", appointmentId],
-          });
-        },
-        onError: () => {
-          toast({ message: "저장에 실패했어요. 잠시후 다시 시도해주세요." });
-          saveMutation.reset();
-        },
-      },
-    );
-  };
 
   /* 약속 나가기 */
   const leaveMutation = useLeaveAppointment(appointmentId);
 
-  const leaveAppointment = async () => {
+  const onClickLeaveBtn = async () => {
     const result = await confirm({
       title: "약속나가기",
       message: (
@@ -163,100 +60,40 @@ const EditProfileDrawer = ({
     }
   };
 
-  const onVisibleChange = (visibility: boolean) => {
-    if (!visibility) {
-      resetForm();
-    }
-  };
-
-  const isSubmitBtnDisabled = !isValid || !isDirty;
-
   return (
-    <BottomDrawer
-      open={open}
-      onOpenChange={setOpen}
-      onVisibleChange={onVisibleChange}
-    >
+    <BottomDrawer open={open} onOpenChange={setOpen}>
       {({ close }) => (
         <DefaultDrawerLayout
           title="내 정보"
           secondaryAction={
             canLeaveAppointment
-              ? { label: "약속 나가기", onClick: leaveAppointment }
+              ? { label: "약속 나가기", onClick: onClickLeaveBtn }
               : undefined
           }
           close={close}
         >
-          <form
-            className="h-full flex flex-col justify-between"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className="mt-16 flex flex-col gap-16">
-              <FormField label="이름" required inputId="nickName">
-                <div
-                  className={cn(
-                    "input-container box-border py-0 h-56 flex items-center",
-                    errors.nickName && "input-container--error",
-                  )}
-                >
-                  <input
-                    className="input w-full typo-16-regular"
-                    {...register("nickName", { required: true, maxLength: 8 })}
-                  />
-                </div>
-              </FormField>
-              <FormField
-                label="출발 장소"
-                inputId="startingPlace"
-                description="장소 투표 결과가 같을 경우, 모두의 출발지에서 가까운 중간 지점을 추천해 드려요."
-              >
-                <Controller
-                  name="startingPlace"
-                  control={control}
-                  render={({ field }) => (
-                    <AddressInput
-                      inputId="startingPlace"
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="서울 강서구 마곡동로 161"
-                    />
-                  )}
-                />
-              </FormField>
+          {open && (
+            <EditProfileForm
+              appointmentId={appointmentId}
+              initialProfile={initialProfile}
+              onSubmitSuccess={() => {
+                close();
+              }}
+            />
+          )}
+
+          {(leaveMutation.isPending || leaveMutation.isSuccess) && (
+            <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
+              <LoadingSpinner
+                size={40}
+                open
+                success={leaveMutation.isSuccess}
+                onClose={() => {
+                  leaveMutation.reset();
+                }}
+              />
             </div>
-            <Button
-              className="w-full"
-              size="Large"
-              disabled={isSubmitBtnDisabled}
-            >
-              저장하기
-            </Button>
-
-            {(saveMutation.isPending || saveMutation.isSuccess) && (
-              <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
-                <LoadingSpinner
-                  size={40}
-                  open={saveMutation.isPending || saveMutation.isSuccess}
-                  success={saveMutation.isSuccess}
-                  onClose={() => {
-                    // 성공 표시 후 드로워가 닫히도록 하기
-                    close();
-                    saveMutation.reset();
-                  }}
-                />
-              </div>
-            )}
-
-            {(leaveMutation.isPending || leaveMutation.isSuccess) && (
-              <div className="absolute inset-0 w-full h-full bg-white/40 grid place-items-center">
-                <LoadingSpinner
-                  size={40}
-                  open={leaveMutation.isPending || leaveMutation.isSuccess}
-                  success={leaveMutation.isSuccess}
-                />
-              </div>
-            )}
-          </form>
+          )}
         </DefaultDrawerLayout>
       )}
     </BottomDrawer>
