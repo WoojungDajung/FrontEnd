@@ -146,7 +146,7 @@ const AppointmentResultModal = ({
       {({ close }) => (
         <>
           <div className="w-full px-8 flex justify-end">
-            <button className="button" onClick={close}>
+            <button aria-label="닫기" className="button" onClick={close}>
               <CloseIcon />
             </button>
           </div>
@@ -224,6 +224,7 @@ const AppointmentResultModal = ({
                         </p>
                         {showDateReason ? (
                           <button
+                            aria-label="일정 추천 이유 접기"
                             onClick={() => setShowDateReason(false)}
                             className="button"
                           >
@@ -235,6 +236,7 @@ const AppointmentResultModal = ({
                           </button>
                         ) : (
                           <button
+                            aria-label="일정 추천 이유 펼치기"
                             onClick={() => setShowDateReason(true)}
                             className="button"
                           >
@@ -328,7 +330,11 @@ const AppointmentResultModal = ({
                         <p className="typo-14-regular text-gray-500">
                           {result.confirmedPlaceAddress}
                         </p>
-                        <button className="button" onClick={copyAddress}>
+                        <button
+                          aria-label="주소 복사"
+                          className="button"
+                          onClick={copyAddress}
+                        >
                           <CopyIcon
                             width={24}
                             height={24}
@@ -347,6 +353,7 @@ const AppointmentResultModal = ({
                         </p>
                         {showPlaceReason ? (
                           <button
+                            aria-label="장소 추천 이유 접기"
                             onClick={() => setShowPlaceReason(false)}
                             className="button"
                           >
@@ -358,6 +365,7 @@ const AppointmentResultModal = ({
                           </button>
                         ) : (
                           <button
+                            aria-label="장소 추천 이유 펼치기"
                             onClick={() => setShowPlaceReason(true)}
                             className="button"
                           >
@@ -421,6 +429,7 @@ const AppointmentResultModal = ({
             />
             <div className="flex flex-col gap-8 items-center">
               <button
+                aria-label="카카오톡"
                 className="button w-56 h-56 bg-[#FEE500] rounded-full"
                 onClick={shareOnKakaoTalk}
               >
@@ -430,6 +439,7 @@ const AppointmentResultModal = ({
             </div>
             <div className="flex flex-col gap-8 items-center">
               <button
+                aria-label="더보기"
                 className="button w-56 h-56 bg-gray-100 rounded-full"
                 onClick={showMoreShare}
               >
@@ -439,6 +449,7 @@ const AppointmentResultModal = ({
             </div>
             <div className="flex flex-col gap-8 items-center">
               <button
+                aria-label="링크 복사"
                 className="button w-56 h-56 bg-gray-100 rounded-full"
                 onClick={copyLink}
               >

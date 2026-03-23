@@ -80,7 +80,7 @@ const ShareModal = ({
         {({ close }) => (
           <>
             <div className="w-full px-8 flex justify-end">
-              <button className="button" onClick={close}>
+              <button aria-label="닫기" className="button" onClick={close}>
                 <CloseIcon />
               </button>
             </div>

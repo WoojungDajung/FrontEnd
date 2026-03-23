@@ -135,7 +135,11 @@ const ParticipantList = ({
               <span className="typo-14-regular text-gray-800">
                 {me.nickName}
               </span>
-              <button className="button" onClick={onClickEditProfileButton}>
+              <button
+                aria-label="프로필 수정"
+                className="button"
+                onClick={onClickEditProfileButton}
+              >
                 <PencilIcon width={16} height={16} />
               </button>
             </ParticipantBadge>
@@ -155,7 +159,11 @@ const ParticipantList = ({
         </div>
         {canToggle &&
           (expanded ? (
-            <button onClick={() => setExpanded(false)} className="button">
+            <button
+              aria-label="접기"
+              onClick={() => setExpanded(false)}
+              className="button"
+            >
               <UpChevronIcon
                 width={20}
                 height={20}
@@ -163,7 +171,11 @@ const ParticipantList = ({
               />
             </button>
           ) : (
-            <button onClick={() => setExpanded(true)} className="button">
+            <button
+              aria-label="펼치기"
+              onClick={() => setExpanded(true)}
+              className="button"
+            >
               <DownChevronIcon
                 width={20}
                 height={20}

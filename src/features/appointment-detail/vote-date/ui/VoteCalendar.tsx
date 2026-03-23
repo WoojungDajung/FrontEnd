@@ -102,6 +102,7 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
       {/* Header */}
       <div className="w-full py-12 flex gap-8 justify-center items-center">
         <button
+          aria-label="이전 달"
           onClick={() => setCurMonth((m) => addMonths(m, -1))}
           disabled={!canPrev}
           className="button"
@@ -116,6 +117,7 @@ const VoteCalendar = ({ startDate, value, onChange }: VoteCalendarProps) => {
         <p className="w-224 typo-16-regular text-gray-800 block text-center">{`${curMonth.getFullYear()}년 ${curMonth.getMonth() + 1}월`}</p>
 
         <button
+          aria-label="다음 달"
           onClick={() => setCurMonth((m) => addMonths(m, 1))}
           className="button"
         >

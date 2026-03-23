@@ -58,6 +58,7 @@ const ViewCalendarShell = ({
       {/* Header */}
       <div className="w-full py-12 flex gap-8 justify-center items-center">
         <button
+          aria-label="이전 달"
           onClick={() => setMonth((m) => addMonths(m, -1))}
           disabled={!canPrev}
           className="button"
@@ -74,6 +75,7 @@ const ViewCalendarShell = ({
         </p>
 
         <button
+          aria-label="다음 달"
           onClick={() => setMonth((m) => addMonths(m, 1))}
           className="button"
           disabled={!canNext}
