@@ -4,12 +4,12 @@
  */
 
 import type { Config } from "jest";
-import nextJest from 'next/jest.js'
+import nextJest from "next/jest.js";
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
-  dir: './',
-})
+  dir: "./",
+});
 
 const config: Config = {
   // All imported modules in your tests should be mocked automatically
@@ -156,7 +156,7 @@ const config: Config = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  testEnvironment: "jsdom",
+  testEnvironment: "jest-fixed-jsdom",
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
@@ -185,13 +185,11 @@ const config: Config = {
   // testRunner: "jest-circus/runner",
 
   // A map from regular expressions to paths to transformers
-  // transform: undefined,
-
+  transform: {
+    "^.+\\.(js|jsx|ts|tsx|mjs)$": ["babel-jest", { presets: ["next/babel"] }],
+  },
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  // transformIgnorePatterns: [
-  //   "\\\\node_modules\\\\",
-  //   "\\.pnp\\.[^\\\\]+$"
-  // ],
+  transformIgnorePatterns: ["/node_modules/(?!(msw|@mswjs|until-async)/)"],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,
@@ -206,4 +204,21 @@ const config: Config = {
   // watchman: true,
 };
 
-export default createJestConfig(config);
+// const jestConfig = createJestConfig(config);
+// export default jestConfig;
+export default async () => {
+  const nextConfig = await createJestConfig(config)();
+
+  return {
+    ...nextConfig,
+
+    transform: {
+      "^.+\\.(js|jsx|ts|tsx|mjs)$": [
+        "babel-jest",
+        { configFile: "./babel.jest.config.cjs" },
+      ],
+    },
+
+    transformIgnorePatterns: ["/node_modules/(?!(msw|@mswjs|until-async)/)"],
+  };
+};
