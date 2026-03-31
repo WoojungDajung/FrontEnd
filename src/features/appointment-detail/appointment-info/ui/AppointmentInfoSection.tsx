@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useMounted } from "@/src/shared/hooks/useMounted";
 import Button from "@/src/shared/ui/Button";
 import PencilIcon from "./icons/PencilIcon";
 import PlusIcon from "./icons/PlusIcon";
@@ -19,6 +20,7 @@ const AppointmentInfoSection = ({
 }: AppointmentInfoSectionProps) => {
   const [appointmentDrawerOpen, setAppointmentDrawerOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const mounted = useMounted();
 
   const { data: appointmentData } = useAppointmentQuery({ appointmentId });
   const { data: profileData } = useAppointmentUserProfileQuery({
@@ -39,7 +41,9 @@ const AppointmentInfoSection = ({
             {appointmentData.appointment.appointmentName}
           </p>
           <button
+            aria-label="약속 정보 수정"
             className="absolute top-0 right-0 border border-gray-100 bg-white w-32 h-32 rounded-[12px] cursor-pointer flex justify-center items-center"
+            disabled={!mounted}
             onClick={() => setAppointmentDrawerOpen(true)}
           >
             <PencilIcon />

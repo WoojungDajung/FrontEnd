@@ -2,6 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { memo, useMemo, useState } from "react";
+import { useMounted } from "@/src/shared/hooks/useMounted";
 import { Address } from "@/types/daum";
 import { cn } from "@/src/shared/utils/cn";
 import { useToastStore } from "@/src/shared/toast/toastStore";
@@ -35,6 +36,7 @@ const PlaceVoteCard = ({
   const [mode, setMode] = useState<"VOTE" | "VIEW">("VIEW");
   const [postcodePopupOpen, setPostcodePopupOpen] = useState(false);
   const [isFetchingForVote, setIsFetchingForVote] = useState(false);
+  const mounted = useMounted();
 
   const { data: profileData } = useAppointmentUserProfileQuery({
     appointmentId,
@@ -133,7 +135,7 @@ const PlaceVoteCard = ({
                     size="Small"
                     color="Primary"
                     onClick={onClickVoteButton}
-                    disabled={!canVote}
+                    disabled={!canVote || !mounted}
                   >
                     투표하기
                   </Button>

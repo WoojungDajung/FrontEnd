@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useState } from "react";
+import { useMounted } from "@/src/shared/hooks/useMounted";
 import { useQueryClient } from "@tanstack/react-query";
 import Button from "@/src/shared/ui/Button";
 import VoteDateForm from "./VoteDateForm";
@@ -20,6 +21,7 @@ const DateVoteSection = ({ appointmentId }: dateVoteSectionProps) => {
   const queryClient = useQueryClient();
 
   const [mode, setMode] = useState<"VIEW" | "VOTE">("VIEW");
+  const mounted = useMounted();
   const { selectedParticipantId, selectParticipant } = useAppointmentPage();
 
   const { data: profileData } = useAppointmentUserProfileQuery({
@@ -68,7 +70,7 @@ const DateVoteSection = ({ appointmentId }: dateVoteSectionProps) => {
               size="Medium"
               color="Primary"
               onClick={onClickVoteButton}
-              disabled={!isVotable}
+              disabled={!isVotable || !mounted}
             >
               선택하기
             </Button>
@@ -80,7 +82,7 @@ const DateVoteSection = ({ appointmentId }: dateVoteSectionProps) => {
               size="Medium"
               color="Primary"
               onClick={onClickVoteButton}
-              disabled={!isVotable}
+              disabled={!isVotable || !mounted}
             >
               선택하기
             </Button>
